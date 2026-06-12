@@ -45,8 +45,10 @@ const withoutCausalChallenge = (base: DeliberationAgents): DeliberationAgents =>
     },
   });
 
-/** − probe lens: the lens still scores, but its EVI trigger is removed (never recommends probing). */
-const withoutProbeLens = (base: DeliberationAgents): DeliberationAgents =>
+/** − probe lens: the lens still scores, but its EVI trigger is removed (never recommends probing).
+ *  Exported: the UI's "rerun without the probe gate" button uses this — the causal
+ *  lever a judge can flip themselves, same seed, same counterparty. */
+export const withoutProbeLens = (base: DeliberationAgents): DeliberationAgents =>
   wrap(base, {
     doctrinePosition: async (...args: Parameters<DeliberationAgents["doctrinePosition"]>) => {
       const position = await base.doctrinePosition(...args);

@@ -8,7 +8,7 @@ import { MockAgents } from "./agents/mock.js";
 import { runNegotiation } from "./protocol/loop.js";
 import { runBaseline } from "./harness/baseline.js";
 import { runAbComparison } from "./harness/ab.js";
-import { runAblation } from "./harness/ablation.js";
+import { runAblation, withoutProbeLens } from "./harness/ablation.js";
 import { runHoldout } from "./harness/holdout.js";
 import { runCalibration } from "./harness/calibration.js";
 import { GameMaster } from "./gm/gameMaster.js";
@@ -104,6 +104,9 @@ app.get("/api/negotiate", async (req, res) => {
   const mode = String(req.query.gm ?? "deterministic");
   // Pacing control: 1× for the lean-back demo, 2×/4× when a judge wants to drive.
   const speed = Math.max(1, Math.min(4, Number(req.query.speed) || 1));
+  // The causal lever: ?ablate=probe reruns with the EVI probe gate removed —
+  // same seed, same counterparty, one mechanism missing.
+  const negotiationAgents = req.query.ablate === "probe" ? withoutProbeLens(agents) : agents;
 
   const send = (obj: unknown): void => { res.write(`data: ${JSON.stringify(obj)}\n\n`); };
   const sessionId = randomUUID();
@@ -172,7 +175,7 @@ app.get("/api/negotiate", async (req, res) => {
       mode === "adversary" ? new QwenAdversaryGM(entry.type)
       : mode === "human" ? new HumanGM(entry.type, (p) => waitForHuman(p))
       : new GameMaster(entry.type, entry.seed, speaker);
-    await runNegotiation(agents, gm, entry.id, entry.type, {
+    await runNegotiation(negotiationAgents, gm, entry.id, entry.type, {
       sink: async (event) => {
         send(event);
         await sleep((EVENT_DELAY[event.type] ?? 0) / speed);

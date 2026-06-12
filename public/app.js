@@ -172,9 +172,17 @@ function run() {
   $("#pipeline-rail").classList.toggle("hidden", gmMode === "duel");
   $("#pipeline-rail").classList.remove("complete");
   state.autoFollow = true;
+  // The causal lever: a rerun with the EVI probe gate removed — same seed, same world.
+  const ablated = state.ablateNext === true;
+  state.ablateNext = false;
+  state.ablatedRun = ablated;
+  if (ablated) {
+    $("#rounds").appendChild(el("div", "ablate-banner",
+      `⊘ PROBE GATE REMOVED — same seed, same counterparty, one mechanism missing`));
+  }
   const src = new EventSource(
     `/api/negotiate?scenario=${encodeURIComponent(id)}&gm=${encodeURIComponent(gmMode)}` +
-      `&speed=${state.speed}`,
+      `&speed=${state.speed}${ablated ? "&ablate=probe" : ""}`,
   );
   state.source = src;
   src.onmessage = (e) => handle(JSON.parse(e.data));
@@ -1031,6 +1039,22 @@ function renderTerminal(t) {
       `<span class="disp-big">${t.dealSurvived ? money(t.surplusCaptured) : "WALK"}</span>` +
       `<span class="disp-sub">${t.dealSurvived ? `surplus captured · ${t.outcome}` : "counterparty walked"} · trust ${Math.round(t.trustFinal)} (${trustWord})</span>` +
     `</div>` + declass + cf;
+
+  // The lever a judge can flip: rerun this exact negotiation without the probe gate.
+  if (state.mode === "deterministic" && !state.ablatedRun) {
+    const btn = el("button", "ablate-btn", "⊘ rerun without the probe gate — same seed");
+    btn.addEventListener("click", () => {
+      state.gateBaseline = { surplus: t.surplusCaptured, deal: t.dealSurvived };
+      state.ablateNext = true;
+      run();
+    });
+    band.appendChild(btn);
+  } else if (state.ablatedRun && state.gateBaseline) {
+    band.insertAdjacentHTML("beforeend",
+      `<div class="disp-cf">probe gate removed this run · with the gate (the run before): ` +
+      `<b>${state.gateBaseline.deal ? money(state.gateBaseline.surplus) : "WALK"}</b> — the mechanism is the difference</div>`);
+  }
+
   $("#rounds").appendChild(band);
   follow(band);
 }

@@ -682,6 +682,20 @@ a.stat:hover { background: var(--panel-2); }
   margin-right: 0.35rem; white-space: nowrap;
 }
 
+/* The causal lever: rerun-without-the-probe-gate */
+.ablate-btn {
+  background: transparent; color: var(--accent-bright);
+  border: 1px solid rgba(201,162,39,0.5); font-family: var(--mono);
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  padding: 0.4rem 0.8rem; cursor: pointer;
+}
+.ablate-btn:hover { background: rgba(201,162,39,0.12); }
+.ablate-banner {
+  padding: 0.5rem 0.8rem; font-family: var(--mono); font-size: 0.7rem;
+  font-weight: 700; letter-spacing: 0.12em; color: var(--accent-bright);
+  border: 1px dashed rgba(201,162,39,0.5); background: rgba(201,162,39,0.05);
+}
+
 /* Masthead: the two-beat causal story */
 .claim-causal {
   margin: 0.35rem 0 0.6rem; font-size: 0.84rem; line-height: 1.55; color: var(--muted);
