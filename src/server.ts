@@ -201,8 +201,9 @@ app.get("/api/ablation", async (_req, res) => {
 });
 
 // Hold-out suite: adversarially-authored worlds the council was never tuned on (S7-1).
-app.get("/api/holdout", async (_req, res) => {
-  res.json(await runHoldout(new MockAgents()));
+// ?lenses=1 adds the single-lens collapse per world — the "why not just Learning?" data.
+app.get("/api/holdout", async (req, res) => {
+  res.json(await runHoldout(new MockAgents(), 10, { singleLens: req.query.lenses === "1" }));
 });
 
 // Belief calibration: terminal-posterior confusion matrix vs ground truth (S7-3).

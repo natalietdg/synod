@@ -67,8 +67,10 @@ const withUniformArbiter = (base: DeliberationAgents): DeliberationAgents =>
     },
   });
 
-/** Single lens: all weight on one doctrine — the council collapsed to one worldview. */
-const withSingleLens = (base: DeliberationAgents, lens: DoctrineId): DeliberationAgents =>
+/** Single lens: all weight on one doctrine — the council collapsed to one worldview.
+ *  Exported: the hold-out harness uses it to answer "why not just Learning?" on
+ *  worlds the council was never tuned on. */
+export const withSingleLens = (base: DeliberationAgents, lens: DoctrineId): DeliberationAgents =>
   wrap(base, {
     arbiterWeights: async (ctx: ContextVector, _read: EmpathyRead): Promise<ArbiterVerdict> => {
       const weights = {} as Record<DoctrineId, number>;

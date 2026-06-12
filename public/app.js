@@ -133,6 +133,7 @@ async function init() {
   }
   loadAb();
   loadAblation();
+  loadHoldout();
 }
 
 function updateScenarioCard() {
@@ -1122,6 +1123,36 @@ async function loadAblation() {
       <td>${money(r.deceptiveSurplusMean)}</td>
     </tr>`;
   }
+  table.innerHTML = head + body;
+}
+
+async function loadHoldout() {
+  const table = $("#holdout-table");
+  if (!table) return;
+  const report = await (await fetch("/api/holdout?lenses=1")).json();
+  const lensNames = Object.keys(report.rows[0]?.lenses ?? {});
+  const cell = (s) => `${money(s.surplusMean)}${s.dealRate < 1 ? ` <span class="walktag">(${pctFmt(s.dealRate)})</span>` : ""}`;
+  let head = `<tr><th>hold-out world</th><th>baseline</th><th class="synod-col">council</th>${lensNames.map((n) => `<th>${n} only</th>`).join("")}</tr>`;
+  let body = "";
+  const totals = { baseline: 0, council: 0, ...Object.fromEntries(lensNames.map((n) => [n, 0])) };
+  for (const r of report.rows) {
+    totals.baseline += r.baseline.surplusMean;
+    totals.council += r.council.surplusMean;
+    for (const n of lensNames) totals[n] += r.lenses[n].surplusMean;
+    body += `<tr>
+      <td>${r.title} <span class="hint" title="${r.targets.replace(/"/g, "&quot;")}">(targets: ${r.targets.split(" — ")[0]})</span></td>
+      <td>${cell(r.baseline)}</td>
+      <td class="synod-col">${cell(r.council)}</td>
+      ${lensNames.map((n) => `<td>${cell(r.lenses[n])}</td>`).join("")}
+    </tr>`;
+  }
+  const best = Math.max(totals.council, ...lensNames.map((n) => totals[n]));
+  body += `<tr>
+    <td><b>total</b></td>
+    <td>${money(totals.baseline)}</td>
+    <td class="synod-col ${totals.council >= best ? "win" : ""}">${money(totals.council)}</td>
+    ${lensNames.map((n) => `<td class="${totals[n] >= best ? "win" : ""}">${money(totals[n])}</td>`).join("")}
+  </tr>`;
   table.innerHTML = head + body;
 }
 

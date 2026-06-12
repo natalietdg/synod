@@ -2,6 +2,8 @@ import { GameMaster } from "../gm/gameMaster.js";
 import { HOLDOUT_WORLDS, type HoldoutWorld } from "../gm/holdout.js";
 import { runNegotiation } from "../protocol/loop.js";
 import { runBaseline } from "./baseline.js";
+import { withSingleLens } from "./ablation.js";
+import { DOCTRINES, LENSES } from "../core/types.js";
 import type { DeliberationAgents } from "../agents/index.js";
 
 export interface HoldoutStats {
@@ -17,6 +19,8 @@ export interface HoldoutRow {
   targets: string;
   baseline: HoldoutStats;
   council: HoldoutStats;
+  /** Optional single-lens collapse per world — the "why not just Learning?" data. */
+  lenses?: Record<string, { surplusMean: number; dealRate: number }>;
 }
 
 export interface HoldoutReport {
@@ -40,6 +44,7 @@ const toStats = (outcomes: { surplusCaptured: number; dealSurvived: boolean }[])
 export async function runHoldout(
   agents: DeliberationAgents,
   nSeeds = 10,
+  opts: { singleLens?: boolean } = {},
 ): Promise<HoldoutReport> {
   const rows: HoldoutRow[] = [];
 
@@ -59,12 +64,31 @@ export async function runHoldout(
         dealSurvived: c.terminal.dealSurvived,
       });
     }
+
+    // Single-lens collapse on the same seeds: which worldview would you have bet on?
+    let lenses: HoldoutRow["lenses"];
+    if (opts.singleLens) {
+      lenses = {};
+      for (const d of DOCTRINES) {
+        const outcomes = [];
+        for (let i = 0; i < nSeeds; i++) {
+          const seed = 7919 * (w + 1) + i * 997;
+          const gm = new GameMaster(world.type, seed, undefined, world.profile);
+          const res = await runNegotiation(withSingleLens(agents, d), gm, world.id, world.type);
+          outcomes.push({ surplusCaptured: res.terminal.surplusCaptured, dealSurvived: res.terminal.dealSurvived });
+        }
+        const s = toStats(outcomes);
+        lenses[LENSES[d].cogFunction] = { surplusMean: s.surplusMean, dealRate: s.dealRate };
+      }
+    }
+
     rows.push({
       id: world.id,
       title: world.title,
       targets: world.targets,
       baseline: toStats(baselineOutcomes),
       council: toStats(councilOutcomes),
+      ...(lenses ? { lenses } : {}),
     });
   }
 
