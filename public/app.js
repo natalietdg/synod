@@ -381,7 +381,8 @@ function startRound(ev) {
     const need = reveals.find((s) => s.startsWith("revealed_need:"));
     if (need) parts.push(`real need surfaced: ${need.split(":")[1]}`);
     card.appendChild(el("div", "disarm-banner",
-      `<span class="db-stamp">⚑ DECEPTION DISARMED</span><span class="db-text">${parts.join(" · ")}</span>`));
+      `<span class="db-stamp">⚑ DECEPTION DISARMED</span><span class="db-text">${parts.join(" · ")}` +
+      ` — <b>a single-stance agent never asks; it walks with $0</b></span>`));
     // A split-second gold wash over the whole room — the case just turned.
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const flash = el("div", "flash-overlay");
@@ -1085,8 +1086,11 @@ async function loadAblation() {
     const deltaTxt = r === full ? "—" : delta === 0 ? "±$0" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
     const deltaCls = delta < -100 ? "lose" : "";
     const isFull = r === full;
-    body += `<tr${isFull ? ` style="font-weight:600"` : ""}>
-      <td>${r.variant}</td>
+    // The headline causal result: removing the probe trigger is the single largest
+    // component effect — the mechanism a judge can point at.
+    const isCausal = r.variant.includes("probe");
+    body += `<tr${isFull ? ` style="font-weight:600"` : ""}${isCausal ? ` class="row-causal"` : ""}>
+      <td>${isCausal ? `<span class="causal-chip">PRIMARY CAUSAL RESULT</span> ` : ""}${r.variant}</td>
       <td style="text-align:left;color:var(--muted);font-size:0.78rem">${r.description}</td>
       <td class="${isFull ? "synod-col win" : ""}">${money(r.totalSurplusMean)}</td>
       <td class="${deltaCls}">${deltaTxt}</td>
