@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Synod — the negotiation council</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- ====== MASTHEAD — the claim, the proof, the controls ====== -->
+    <header class="masthead">
+      <div class="class-strip">
+        <span>SYNOD · COUNCIL PROCEEDINGS</span>
+        <span class="cs-mid">EVERY DECISION IS A FILED PROCEEDING</span>
+        <span id="provider-badge">…</span>
+      </div>
+
+      <div class="mast-main">
+        <div class="mast-brand">
+          <h1>SYNOD</h1>
+          <p class="tagline">Most agent societies divide labor.<br/>This one divides <em>judgment</em>.</p>
+        </div>
+
+        <div class="mast-claim">
+          <p class="claim">
+            A five-lens negotiation council that <strong>detects deceptive counterparties</strong>
+            and closes deals single-stance agents walk away from — every decision
+            Bayesian-updated, deterministically scored, and cryptographically receipted.
+          </p>
+          <p class="claim-deploy">
+            <span class="cd-lbl">PLUGS IN AS</span> an MCP council any deal-desk agent can
+            consult (<code>negotiate · receipts · ablations</code>) — covering vendor renewals,
+            procurement floors, adversarial RFPs, and M&amp;A term sheets (see each scenario's
+            operation brief).
+          </p>
+          <div class="stat-strip">
+            <a class="stat" href="#exhibit-a">
+              <b>$0 → $3,000</b>
+              <span>vs a deceptive counterparty — the baseline gets bluffed and walks; Synod probes and closes</span>
+            </a>
+            <a class="stat" href="#exhibit-a">
+              <b>100% / 0%</b>
+              <span>Synod's deal rate vs the baseline's on adversarial types</span>
+            </a>
+            <a class="stat" href="#exhibit-b">
+              <b>n = 10</b>
+              <span>independent seeded runs · deterministic engine · signed receipts</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="convene-bar">
+        <span class="cb-label">Select counterparty</span>
+        <select id="scenario-select" aria-label="Counterparty"></select>
+        <button id="run-btn">Convene the council</button>
+        <button id="speed-btn" class="ghost-btn" title="Stream pacing">1×</button>
+        <button id="guide-btn" class="ghost-btn" title="What everything means">GUIDE</button>
+        <span class="hint" id="truth-hint"></span>
+      </div>
+
+      <!-- Pipeline spine: the data flow, made visible. Lights up as events stream. -->
+      <div id="pipeline-rail" class="pipeline-rail hidden" aria-hidden="true"></div>
+    </header>
+
+    <main>
+      <section class="column negotiation">
+        <h2 class="sec-head"><span class="sec-no">01</span> Proceedings</h2>
+        <div id="scenario-card" class="scenario-card"></div>
+        <div id="rounds" class="rounds"></div>
+      </section>
+
+      <section class="column trajectory">
+        <h2 class="sec-head"><span class="sec-no">02</span> Trajectory</h2>
+        <div class="panel">
+          <h3>Lens weights by round <span class="hint">shadow of the Bayesian update</span> <span class="iicon" data-tip="How much influence each lens had that round. The shift between rounds IS the Bayesian update made visible: as belief resolves, the context vector changes, and the Arbiter re-weights accordingly. ↑pp badges mark the lens that gained the most weight versus the prior round.">i</span></h3>
+          <div id="weight-trajectory" class="traj"></div>
+          <div id="legend" class="legend"></div>
+        </div>
+        <div class="panel">
+          <h3>Belief over hidden type <span class="iicon" data-tip="The Council&apos;s running probability estimate of which counterparty type it faces: Relationship-oriented (walks if bullied), Soft-floor (firm real reservation), or Deceptive (hides competitor leverage + real need). Updates each round from the GM&apos;s visible signals.">i</span></h3>
+          <div id="belief-trajectory" class="traj"></div>
+        </div>
+        <div id="terminal-panel" class="panel terminal hidden">
+          <h3>Disposition <span class="hint">hidden type revealed</span></h3>
+          <div id="terminal-body"></div>
+        </div>
+      </section>
+    </main>
+
+    <section class="ab-section" id="exhibit-a">
+      <h2 class="sec-head"><span class="sec-no">03</span> Exhibit A — strong single agent vs Synod
+        <span class="hint">identical Game Master · n=10 seeds per type · mean ± σ surplus captured</span></h2>
+      <table id="ab-table" class="ab-table"><tbody><tr><td>Run a negotiation to populate.</td></tr></tbody></table>
+      <p class="ab-note">
+        The Deceptive type is the proof of concept: the baseline reads "competitor leverage" at face value,
+        pushes harder, and the counterparty walks — $0 every run. Synod probes, disarms the deception, and
+        closes the deal — $3,000 every run. On probing: in the <b>deterministic council</b> the Learning lens
+        is hard-gated by the EVI rule (probe iff information value exceeds cost); in <b>live mode</b> the EVI
+        is an advisory referee — the LLM worldviews may override it in either direction, and every divergence
+        is named on screen and recorded in the round receipt. The ±$0 variance is structural, not accidental:
+        both outcomes are reproducible because the decisive factor is whether the council probes, not
+        counterparty randomness.
+        <br/><br/>
+        The Soft surface type shows the range advantage: Synod ($3,468 ± $98) captures more surplus with
+        higher variance than the baseline ($2,906 ± $19) — the baseline's tighter spread reflects its
+        single-stance predictability, which is exactly what the deceptive type punishes.
+      </p>
+    </section>
+
+    <section class="ab-section" id="exhibit-b">
+      <h2 class="sec-head"><span class="sec-no">04</span> Exhibit B — ablation study
+        <span class="hint">remove one component at a time · same seeds · n=10 per type</span></h2>
+      <table id="ablation-table" class="ab-table"><tbody><tr><td>Computing ablations…</td></tr></tbody></table>
+      <p class="ab-note">
+        Removing the EVI probe trigger costs <b>$1,584</b> of total surplus and collapses the Deceptive
+        result to $1,423 — the probe rule earns its seat. The single-lens rows are the deeper argument:
+        collapsing the council to one worldview spans <b>$2,941 to $8,968</b> depending on which lens you
+        bet on — and the winner is only knowable in hindsight. The full council matches the best single
+        lens <em>ex ante</em>, without knowing which worldview the scenario will reward. Two honest nulls,
+        reported as found: the causal-challenge concession rarely flips a round in the deterministic
+        council (its force is real but small here; live-Qwen defenders concede on merit), and uniform
+        weighting costs only $45 on this suite — the Arbiter's terrain reading shows up in confidence
+        calibration more than raw surplus. We publish what the harness returns, not what flatters the architecture.
+      </p>
+    </section>
+
+    <footer class="colophon">
+      <span>SYNOD — a society that divides judgment</span>
+      <span>five lenses · Bayesian belief · EVI-gated probing · deterministic scoring · signed receipts</span>
+    </footer>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

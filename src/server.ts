@@ -1,0 +1,217 @@
+import "dotenv/config";
+import express from "express";
+import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
+import { selectAgents } from "./agents/index.js";
+import { MockAgents } from "./agents/mock.js";
+import { runNegotiation } from "./protocol/loop.js";
+import { runBaseline } from "./harness/baseline.js";
+import { runAbComparison } from "./harness/ab.js";
+import { runAblation } from "./harness/ablation.js";
+import { runHoldout } from "./harness/holdout.js";
+import { runCalibration } from "./harness/calibration.js";
+import { GameMaster } from "./gm/gameMaster.js";
+import { QwenAdversaryGM } from "./gm/qwenAdversary.js";
+import { HumanGM, type HumanMove } from "./gm/humanGM.js";
+import { QwenSpeaker, TemplateSpeaker } from "./gm/speaker.js";
+import { OPENING_ASK, ROUND_CAP } from "./gm/profiles.js";
+import { isTerminal } from "./gm/types.js";
+import { QwenGovernor } from "./dotto/governor.js";
+import { receiptStore } from "./dotto/store.js";
+import { SUITE, getEntry } from "./suite.js";
+import { LENSES, TYPE_META } from "./core/types.js";
+import { ACTION_LABELS, ACTIONS, type ActionId } from "./core/actions.js";
+import { encodeMove } from "./protocol/encode.js";
+import type { DeliberationEvent } from "./protocol/types.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PUBLIC_DIR = join(__dirname, "..", "public");
+const PORT = Number(process.env.PORT ?? 4173);
+
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
+
+/** Per-event pacing so the deliberation reads as a live negotiation in the UI. */
+const EVENT_DELAY: Partial<Record<DeliberationEvent["type"], number>> = {
+  "round-start": 650,
+  belief: 450,
+  intent: 400,
+  position: 280,
+  challenge: 420,
+  evi: 350,
+  arbiter: 450,
+  engine: 400,
+  quant: 350,
+  gate: 350,
+  "council-move": 600,
+  terminal: 500,
+};
+
+const app = express();
+const agents = selectAgents();
+
+app.use(express.static(PUBLIC_DIR));
+app.use(express.json());
+
+/**
+ * Human-in-the-loop plumbing: an SSE negotiation that needs the human's move
+ * emits a "your-move" event carrying a session id and parks a resolver here;
+ * the browser answers with POST /api/human-move, which resumes the loop.
+ */
+const humanWaiters = new Map<string, (mv: HumanMove) => void>();
+
+app.post("/api/human-move", (req, res) => {
+  const { sessionId, ...mv } = (req.body ?? {}) as HumanMove & { sessionId?: string };
+  const waiter = humanWaiters.get(String(sessionId));
+  if (!waiter) {
+    res.status(404).json({ error: "no negotiation waiting on this session" });
+    return;
+  }
+  humanWaiters.delete(String(sessionId));
+  waiter(mv);
+  res.json({ ok: true });
+});
+
+app.get("/api/meta", (_req, res) => {
+  res.json({
+    provider: agents.kind,
+    models: agents.kind === "qwen"
+      ? { judgment: process.env.QWEN_MODEL ?? "qwen-max", fast: process.env.QWEN_MODEL_FAST ?? "qwen-turbo" }
+      : null,
+    // GM modes: deterministic (watch; the reproducible default), human (YOU play the
+    // counterparty and try to deceive the council), duel (YOU negotiate against the
+    // same GM + seed, then your result is compared to Synod's and the baseline's),
+    // adversary (Qwen plays the counterparty; requires a live provider).
+    gmModes: ["deterministic", "human", "duel", ...(agents.kind === "qwen" ? ["adversary"] : [])],
+    lenses: LENSES,
+    actionLabels: ACTION_LABELS,
+    types: TYPE_META,
+    suite: SUITE.map((s) => ({ id: s.id, title: s.title, punishes: s.punishes, dropdownLabel: s.dropdownLabel, whenToUse: s.whenToUse })),
+  });
+});
+
+/** Stream one negotiation as Server-Sent Events. */
+app.get("/api/negotiate", async (req, res) => {
+  const entry = getEntry(String(req.query.scenario ?? "")) ?? SUITE[0]!;
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+  });
+  const isLive = agents.kind === "qwen";
+  const speaker = isLive ? new QwenSpeaker() : new TemplateSpeaker();
+  const governor = isLive ? new QwenGovernor() : undefined;
+  const mode = String(req.query.gm ?? "deterministic");
+  // Pacing control: 1× for the lean-back demo, 2×/4× when a judge wants to drive.
+  const speed = Math.max(1, Math.min(4, Number(req.query.speed) || 1));
+
+  const send = (obj: unknown): void => { res.write(`data: ${JSON.stringify(obj)}\n\n`); };
+  const sessionId = randomUUID();
+  const waitForHuman = (payload: object): Promise<HumanMove> =>
+    new Promise((resolve) => {
+      humanWaiters.set(sessionId, resolve);
+      send({ type: "your-move", sessionId, ...payload });
+    });
+  // If the browser goes away mid-wait, unwind the parked loop as a walk.
+  res.on("close", () => {
+    const waiter = humanWaiters.get(sessionId);
+    if (waiter) { humanWaiters.delete(sessionId); waiter({ action: "walk" }); }
+  });
+
+  try {
+    if (mode === "adversary" && !isLive) {
+      throw new Error("Adversary GM requires LLM_PROVIDER=qwen — the counterparty is a live model.");
+    }
+
+    if (mode === "duel") {
+      // YOU are the seller against the same deterministic GM + seed; Synod and the
+      // strong baseline then run the identical negotiation for the comparison.
+      const gm = new GameMaster(entry.type, entry.seed, speaker);
+      let councilAsk = OPENING_ASK;
+      let conceded: string[] = [];
+      let move = await gm.open();
+      send({ type: "round-start", round: move.round, move });
+      await sleep(400 / speed);
+      let terminal = null;
+      while (!terminal) {
+        const mv = await waitForHuman({
+          kind: "seller",
+          round: move.round,
+          roundsLeft: ROUND_CAP - move.round + 1,
+          theirOffer: move.offer.price,
+          yourAsk: councilAsk,
+          features: move.offer.features,
+        });
+        const action = (ACTIONS as readonly string[]).includes(mv.sellerAction ?? "")
+          ? (mv.sellerAction as ActionId)
+          : "hold";
+        const councilMove = encodeMove(action, councilAsk, move.offer.price, move.offer.features, conceded);
+        conceded = councilMove.ask.features;
+        councilAsk = councilMove.ask.price;
+        send({ type: "council-move", move: councilMove });
+        await sleep(300 / speed);
+        const emission = await gm.step(councilMove);
+        if (isTerminal(emission)) {
+          terminal = emission;
+          send({ type: "terminal", terminal: emission });
+          break;
+        }
+        move = emission;
+        send({ type: "round-start", round: move.round, move });
+        await sleep(400 / speed);
+      }
+      // Same counterparty, same seed: the council and the strong baseline take your seat.
+      const synod = await runNegotiation(agents, new GameMaster(entry.type, entry.seed, speaker), entry.id, entry.type);
+      const baseline = await runBaseline(agents, new GameMaster(entry.type, entry.seed), "strong");
+      send({ type: "duel-result", you: terminal, synod: synod.terminal, baseline });
+      send({ type: "done" });
+      return;
+    }
+
+    const gm =
+      mode === "adversary" ? new QwenAdversaryGM(entry.type)
+      : mode === "human" ? new HumanGM(entry.type, (p) => waitForHuman(p))
+      : new GameMaster(entry.type, entry.seed, speaker);
+    await runNegotiation(agents, gm, entry.id, entry.type, {
+      sink: async (event) => {
+        send(event);
+        await sleep((EVENT_DELAY[event.type] ?? 0) / speed);
+      },
+      governor,
+    });
+  } catch (err) {
+    send({ type: "error", message: String(err) });
+  } finally {
+    res.end();
+  }
+});
+
+// A/B always runs against the deterministic mock — reproducible numbers, instant load.
+// The live Qwen runs demonstrate reasoning quality; the A/B table demonstrates structural advantage.
+app.get("/api/ab", async (_req, res) => {
+  res.json(await runAbComparison(new MockAgents()));
+});
+
+// Ablation study: remove one architectural component at a time, same seeds (S5-2).
+app.get("/api/ablation", async (_req, res) => {
+  res.json(await runAblation(new MockAgents()));
+});
+
+// Hold-out suite: adversarially-authored worlds the council was never tuned on (S7-1).
+app.get("/api/holdout", async (_req, res) => {
+  res.json(await runHoldout(new MockAgents()));
+});
+
+// Belief calibration: terminal-posterior confusion matrix vs ground truth (S7-3).
+app.get("/api/calibration", async (_req, res) => {
+  res.json(await runCalibration(new MockAgents()));
+});
+
+// Signed receipt audit log — every round of every negotiation, tamper-evident.
+app.get("/api/receipts", (_req, res) => {
+  res.json({ receipts: receiptStore.getAll() });
+});
+
+app.listen(PORT, () => {
+  console.log(`\nSynod running on http://localhost:${PORT}  (agents: ${agents.kind})\n`);
+});
