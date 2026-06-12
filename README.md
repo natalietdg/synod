@@ -293,6 +293,32 @@ The on-screen weight trajectory is the visible shadow of this: as the Bayesian b
 converges on a counterparty type, the context vector shifts, and the Arbiter re-weights
 the lenses accordingly. The weight distribution is itself an updating, evidence-driven decision.
 
+## Boundaries — what Synod cannot do yet
+
+Found by adversarial testing (much of it by judges and rival models), published because
+the failure modes are as informative as the wins:
+
+1. **It never walks away on its own.** In a "no-zone" test (counterparty's true ceiling
+   $7,500, below our $8,000 floor — no mutually beneficial deal exists), the council
+   chose the `walk` action in **0/10 runs**: it ground through three futile rounds every
+   time until the simulator ended things. Within its payoff model this is coherent —
+   every closable deal clears the floor by construction — but the model's type-space has
+   no concept of a doomed negotiation, so futility recognition doesn't exist. A real
+   deployment needs a BATNA-aware stopping rule.
+2. **Cheap-talk immunity cuts both ways.** The belief layer ignores verbal claims by
+   design (a bluffer and an honest buyer can say identical things), which makes it
+   bluff-resistant — and blind to genuinely informative honest speech. An honest buyer
+   whose constraints are purely verbal gets read skeptically until they act.
+3. **Beliefs are noisy; the policy is what's robust.** The calibration matrix shows
+   confusions between behaviourally-similar types, and live human play can drive the
+   posterior to a wrong label. What the duels show is that classification error does
+   not cascade: the council still negotiates appropriately and converges on surplus.
+   Synod is a **decision system under epistemic uncertainty**, not a truth-finder —
+   judge it on its moves, which is what the receipts record.
+4. **The unscripted-adversary comparison is unfinished.** Against a qwen-turbo
+   counterparty that stonewalls everyone identically, council and baseline converge to
+   the same cap outcome — an uninformative cell, pending a stronger adversary model.
+
 ## Honest caveat
 
 The lens scores, the belief priors, and the payoffs are estimates (closed-form offline, LLM
