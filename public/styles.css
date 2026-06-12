@@ -766,10 +766,13 @@ a.stat:hover { background: var(--panel-2); }
 }
 .converge.fade { opacity: 0; }
 .beam {
-  fill: none; stroke-linecap: round;
+  fill: none; stroke-linecap: square;
   stroke-dasharray: 1; stroke-dashoffset: 1;
-  filter: drop-shadow(0 0 3px rgba(227,191,69,0.35));
-  animation: beam-draw 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: beam-draw 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+.beam-bus {
+  stroke: var(--accent-bright); stroke-width: 1.5; opacity: 0.8;
+  animation-duration: 0.6s;
 }
 @keyframes beam-draw { to { stroke-dashoffset: 0; } }
 
@@ -843,8 +846,11 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 /* ====== INTERACTIVE TOUR — moving spotlight + terse coachmarks ====== */
 .tour-spot {
   position: absolute; z-index: 95; pointer-events: none;
-  border: 1px solid var(--accent-bright); border-radius: 4px;
-  box-shadow: 0 0 0 100vmax rgba(6, 8, 11, 0.72), 0 0 18px rgba(227,191,69,0.35);
+  border: 1px solid var(--accent-bright);
+  /* border-radius MUST stay 0: the dimming shadow's corner radius grows by its
+     spread, so any radius here becomes a giant black curve across the page. */
+  border-radius: 0;
+  box-shadow: 0 0 0 100vmax rgba(6, 8, 11, 0.72);
   transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tour-card {

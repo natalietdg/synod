@@ -828,27 +828,40 @@ function drawConvergence(engine) {
   svg.setAttribute("width", String(r.card.clientWidth));
   svg.setAttribute("height", String(r.card.clientHeight));
 
+  // Circuit-bus layout: each lens emits a short horizontal tick to a shared
+  // vertical rail at the right edge; the rail flows down and turns into the
+  // verdict. Orthogonal and schematic — no spaghetti.
+  const busX = r.card.clientWidth - 14;
   let i = 0;
+  let topY = Infinity;
   for (const dctr of ORDER) {
     const lensEl = r.lensEls[dctr];
     const pos = r.positions[dctr];
     if (!lensEl || !pos) continue;
     const chip = lensEl.querySelector(".lens-fav") ?? lensEl;
     const c = chip.getBoundingClientRect();
-    const sx = c.left + c.width / 2 - cardRect.left;
+    const sx = c.right - cardRect.left + 4;
     const sy = c.top + c.height / 2 - cardRect.top;
-    const midY = sy + (ty - sy) * 0.55;
-    const path = document.createElementNS(NS, "path");
-    path.setAttribute("d", `M ${sx} ${sy} C ${sx} ${midY}, ${tx} ${midY}, ${tx} ${ty}`);
-    path.setAttribute("pathLength", "1");
-    path.setAttribute("class", "beam");
+    topY = Math.min(topY, sy);
+    const tick = document.createElementNS(NS, "path");
+    tick.setAttribute("d", `M ${sx} ${sy} L ${busX} ${sy}`);
+    tick.setAttribute("pathLength", "1");
+    tick.setAttribute("class", "beam");
     const agree = topAction(pos.scores) === engine.recommendation;
-    path.style.stroke = LENS_COLORS[dctr];
-    path.style.strokeWidth = agree ? "2.5" : "1.1";
-    path.style.opacity = agree ? "0.85" : "0.35";
-    path.style.animationDelay = `${i * 90}ms`;
-    svg.appendChild(path);
+    tick.style.stroke = LENS_COLORS[dctr];
+    tick.style.strokeWidth = agree ? "2.5" : "1";
+    tick.style.opacity = agree ? "0.9" : "0.35";
+    tick.style.animationDelay = `${i * 70}ms`;
+    svg.appendChild(tick);
     i++;
+  }
+  if (i > 0 && Number.isFinite(topY)) {
+    const bus = document.createElementNS(NS, "path");
+    bus.setAttribute("d", `M ${busX} ${topY} L ${busX} ${ty} L ${tx} ${ty}`);
+    bus.setAttribute("pathLength", "1");
+    bus.setAttribute("class", "beam beam-bus");
+    bus.style.animationDelay = `${i * 70 + 120}ms`;
+    svg.appendChild(bus);
   }
   r.card.appendChild(svg);
   setTimeout(() => svg.classList.add("fade"), 1700);
