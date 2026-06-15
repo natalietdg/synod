@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { randomUUID } from "node:crypto";
+import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { selectAgents } from "./agents/index.js";
@@ -28,6 +29,15 @@ import type { DeliberationEvent } from "./protocol/types.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, "..", "public");
 const PORT = Number(process.env.PORT ?? 4173);
+
+/** The commit the evaluation ran on — a verifiable provenance stamp. */
+const BUILD_COMMIT = (() => {
+  try {
+    return execSync("git rev-parse --short HEAD", { cwd: join(__dirname, ".."), encoding: "utf8" }).trim();
+  } catch {
+    return "unknown";
+  }
+})();
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
@@ -78,6 +88,15 @@ app.get("/api/meta", (_req, res) => {
     models: agents.kind === "qwen"
       ? { judgment: process.env.QWEN_MODEL ?? "qwen-max", fast: process.env.QWEN_MODEL_FAST ?? "qwen-turbo" }
       : null,
+    // Provenance: who authored each side of the evaluation, frozen on which commit.
+    provenance: {
+      commit: BUILD_COMMIT,
+      holdoutAuthor: "Claude (Anthropic) — a different vendor than the system under test",
+      holdoutFrozen: "authored and committed before evaluation; see src/gm/holdout.ts",
+      baseline: "strong single-agent persona — same action set, move encoding, GM, and seed as the council; only the council structure is removed",
+      seeds: "fixed schedule (entry.seed + i·997), n=10 per type",
+      determinism: "engine, belief update, EVI, Quant, gate are pure code — never an LLM",
+    },
     // GM modes: deterministic (watch; the reproducible default), human (YOU play the
     // counterparty and try to deceive the council), duel (YOU negotiate against the
     // same GM + seed, then your result is compared to Synod's and the baseline's),

@@ -682,6 +682,23 @@ a.stat:hover { background: var(--panel-2); }
   margin-right: 0.35rem; white-space: nowrap;
 }
 
+/* Provenance card */
+.prov-card { border: 1px solid var(--line); background: var(--panel); }
+.prov-row {
+  display: grid; grid-template-columns: 12rem 1fr; gap: 1rem;
+  padding: 0.5rem 0.9rem; border-bottom: 1px solid var(--line-soft);
+  font-size: 0.82rem; line-height: 1.5;
+}
+.prov-row:last-child { border-bottom: none; }
+.prov-k {
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);
+  align-self: start; padding-top: 0.15rem;
+}
+.prov-v { color: var(--muted); }
+.prov-v code { font-family: var(--mono); color: var(--accent-bright); }
+@media (max-width: 720px) { .prov-row { grid-template-columns: 1fr; gap: 0.2rem; } }
+
 /* The causal lever: rerun-without-the-probe-gate */
 .ablate-btn {
   background: transparent; color: var(--accent-bright);

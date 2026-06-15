@@ -119,6 +119,7 @@ async function init() {
   sel.addEventListener("change", updateScenarioCard);
   updateScenarioCard();
   $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction} <span style="color:var(--muted);font-size:0.65rem">${lens(d).name}</span></span>`).join("");
+  renderProvenance();
   $("#run-btn").addEventListener("click", run);
   $("#speed-btn").addEventListener("click", () => {
     state.speed = state.speed >= 4 ? 1 : state.speed * 2;
@@ -1130,6 +1131,23 @@ async function loadAblation() {
     </tr>`;
   }
   table.innerHTML = head + body;
+}
+
+function renderProvenance() {
+  const card = $("#provenance-card");
+  const p = state.meta.provenance;
+  if (!card || !p) return;
+  const rows = [
+    ["hold-out worlds", p.holdoutAuthor],
+    ["", p.holdoutFrozen],
+    ["baseline", p.baseline],
+    ["seeds", p.seeds],
+    ["determinism", p.determinism],
+    ["evaluated on commit", `<code>${p.commit}</code>`],
+  ];
+  card.innerHTML = rows.map(([k, v]) =>
+    `<div class="prov-row"><span class="prov-k">${k}</span><span class="prov-v">${v}</span></div>`,
+  ).join("");
 }
 
 async function loadHoldout() {
