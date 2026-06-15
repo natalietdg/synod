@@ -120,7 +120,7 @@ async function init() {
   updateScenarioCard();
   $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction} <span style="color:var(--muted);font-size:0.65rem">${lens(d).name}</span></span>`).join("");
   renderProvenance();
-  $("#run-btn").addEventListener("click", run);
+  $("#run-btn").addEventListener("click", () => run());
   $("#speed-btn").addEventListener("click", () => {
     state.speed = state.speed >= 4 ? 1 : state.speed * 2;
     $("#speed-btn").textContent = `${state.speed}×`;
@@ -135,6 +135,16 @@ async function init() {
   loadAb();
   loadAblation();
   loadHoldout();
+
+  // Make the agent society the hero: auto-run the canonical negotiation on load so
+  // Proceedings is already populated (outcome-first verdict cards) when a judge
+  // scrolls past the hook — instead of an empty box above the tables. Mock only:
+  // never auto-spend live Qwen tokens (the user drives those runs deliberately).
+  if (state.meta.provider !== "qwen") {
+    $("#scenario-select").value = "type-c-deceptive";
+    updateScenarioCard();
+    setTimeout(() => run({ auto: true }), 700);
+  }
 }
 
 function updateScenarioCard() {
@@ -156,24 +166,27 @@ function reset() {
   state.prevOffer = null; state.beliefByRound = {};
 }
 
-function run() {
+function run(opts = {}) {
+  const auto = opts.auto === true; // auto: populate proceedings on load — no masthead collapse, no scroll grab
   if (state.source) state.source.close();
   reset();
   $("#run-btn").disabled = true;
-  const id = $("#scenario-select").value;
+  const id = auto ? "type-c-deceptive" : $("#scenario-select").value;
   state.scenarioId = id;
-  const gmMode = $("#gm-select")?.value ?? "deterministic";
+  const gmMode = auto ? "deterministic" : ($("#gm-select")?.value ?? "deterministic");
   state.mode = gmMode;
-  $("#truth-hint").textContent =
-    gmMode === "human" ? "you ARE the counterparty — make the council guess wrong"
+  $("#truth-hint").textContent = auto ? ""
+    : gmMode === "human" ? "you ARE the counterparty — make the council guess wrong"
     : gmMode === "duel" ? "same counterparty, same seed — beat the council if you can"
     : "type hidden until final round";
-  // The masthead has been read; give the proceedings the screen.
-  document.body.classList.add("running");
+  // On manual convene, the masthead has been read — give the proceedings the screen.
+  // On auto-run-on-load, keep the masthead: the judge is still reading the hook.
+  document.body.classList.toggle("running", !auto);
   // The spine tracks council deliberation — in duel mode YOU are the council.
-  $("#pipeline-rail").classList.toggle("hidden", gmMode === "duel");
+  $("#pipeline-rail").classList.toggle("hidden", auto || gmMode === "duel");
   $("#pipeline-rail").classList.remove("complete");
-  state.autoFollow = true;
+  state.autoFollow = !auto;
+  const speed = auto ? 4 : state.speed;
   // The causal lever: a rerun with the EVI probe gate removed — same seed, same world.
   const ablated = state.ablateNext === true;
   state.ablateNext = false;
@@ -184,7 +197,7 @@ function run() {
   }
   const src = new EventSource(
     `/api/negotiate?scenario=${encodeURIComponent(id)}&gm=${encodeURIComponent(gmMode)}` +
-      `&speed=${state.speed}${ablated ? "&ablate=probe" : ""}`,
+      `&speed=${speed}${ablated ? "&ablate=probe" : ""}`,
   );
   state.source = src;
   src.onmessage = (e) => handle(JSON.parse(e.data));
