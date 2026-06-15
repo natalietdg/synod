@@ -82,6 +82,7 @@ body {
   color: var(--accent-bright); letter-spacing: 0.02em; margin-bottom: 0.2rem;
 }
 .stat span { font-size: 0.7rem; color: var(--muted); line-height: 1.45; display: block; }
+.stat-caption { margin: 0.5rem 0 0; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.02em; }
 
 .convene-bar {
   display: flex; align-items: center; gap: 0.7rem;
@@ -246,6 +247,9 @@ main > .column { min-width: 0; }
 .lens-q-full {
   font-family: var(--serif); font-style: italic; font-size: 0.8rem;
   color: var(--muted); margin-top: 0.5rem;
+}
+.lens-role {
+  font-family: var(--serif); font-style: italic; font-size: 0.78rem; color: var(--muted);
 }
 .lens-persona {
   font-family: var(--mono); font-size: 0.6rem; color: var(--muted);
@@ -682,7 +686,17 @@ a.stat:hover { background: var(--panel-2); }
   margin-right: 0.35rem; white-space: nowrap;
 }
 
-/* Provenance card */
+/* Provenance — collapsed by default; researchers open it, judges skip it */
+.prov-details > summary {
+  cursor: pointer; list-style: none;
+  font-family: var(--mono); font-size: 0.78rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.16em; color: var(--ink);
+  padding-bottom: 0.5rem; border-bottom: 1px solid var(--line);
+}
+.prov-details > summary::-webkit-details-marker { display: none; }
+.prov-details > summary .sec-no { color: var(--accent); margin-right: 0.6rem; }
+.prov-details > summary .hint { letter-spacing: 0; text-transform: none; font-weight: 400; }
+.prov-details[open] > summary { margin-bottom: 0.8rem; }
 .prov-card { border: 1px solid var(--line); background: var(--panel); }
 .prov-row {
   display: grid; grid-template-columns: 12rem 1fr; gap: 1rem;
@@ -738,25 +752,26 @@ a.stat:hover { background: var(--panel-2); }
 
 /* Filed rounds: completed rounds collapse to a one-line story strip —
    THEM → READ → COUNCIL → SENT. Click to reopen the full record. */
-.round.filed > *:not(.round-head):not(.round-strip) { display: none; }
+/* Outcome-first: a filed round shows only its verdict card; the debate is one click. */
+.round.filed > *:not(.round-head):not(.round-verdict) { display: none; }
 .round.filed { padding-bottom: 0.6rem; }
 .round.filed .round-head { margin-bottom: 0.35rem; }
-.round-strip {
-  display: flex; align-items: baseline; gap: 0.55rem; flex-wrap: wrap;
-  font-size: 0.8rem; cursor: pointer; padding: 0.15rem 0;
-  transition: opacity 0.2s;
+.round-verdict {
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  font-size: 0.85rem; padding: 0.2rem 0;
 }
-.round-strip:hover { opacity: 0.85; }
-.rs-seg i {
-  font-family: var(--mono); font-style: normal; font-size: 0.54rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted);
-  margin-right: 0.35rem;
+.rv-flag { color: var(--accent-bright); }
+.rv-them { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+.rv-arr { color: var(--accent); font-weight: 700; }
+.rv-verdict { font-weight: 700; color: var(--good); font-size: 0.98rem; }
+.rv-meta { font-size: 0.78rem; color: var(--muted); }
+.rv-meta span { font-weight: 600; }
+.rv-debate {
+  margin-left: auto; background: transparent; color: var(--accent-bright);
+  border: 1px solid rgba(201,162,39,0.4); font-family: var(--mono);
+  font-size: 0.66rem; letter-spacing: 0.04em; padding: 0.25rem 0.6rem; cursor: pointer;
 }
-.rs-arr { color: var(--line); }
-.rs-sent { color: var(--good); font-weight: 600; }
-.rs-flag { color: var(--accent-bright); }
-.rs-caret { margin-left: auto; color: var(--muted); font-size: 0.72rem; transition: transform 0.2s; }
-.round:not(.filed) .rs-caret { transform: rotate(90deg); }
+.rv-debate:hover { background: rgba(201,162,39,0.12); }
 
 /* ====== HUMAN-IN-THE-LOOP DOCKS (deceive / duel modes) ====== */
 .human-dock {

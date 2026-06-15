@@ -340,34 +340,38 @@ function fileRound(r) {
   if (!r || r.filed || !r.card) return;
   r.filed = true;
 
-  const tally = (() => {
-    const counts = {};
-    for (const p of Object.values(r.positions)) {
-      const fav = topAction(p.scores);
-      counts[fav] = (counts[fav] || 0) + 1;
-    }
-    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    if (!sorted.length) return "";
-    const [act, n] = sorted[0];
-    return `${n}–${ORDER.length - n} ${label(act)}`;
-  })();
-
-  const b = r.beliefData;
+  // Outcome-first verdict card: situation → decision → who led, who dissented.
+  // The full deliberation is one click away ("view the debate"), not dumped here.
+  const rec = r.engineResult?.recommendation ?? r.sentMove?.action ?? null;
+  const w = r.weights ?? {};
+  const haveW = ORDER.some((d) => w[d] != null);
+  const lead = haveW ? ORDER.reduce((a, b) => ((w[b] ?? 0) > (w[a] ?? 0) ? b : a)) : null;
+  let diss = null, dw = -1;
+  for (const d of ORDER) {
+    const p = r.positions[d];
+    if (p && rec && topAction(p.scores) !== rec && (w[d] ?? 0) > dw) { dw = w[d] ?? 0; diss = d; }
+  }
+  if (!diss) diss = r.challengerDoctrine ?? null;
+  const conf = r.engineResult ? `${Math.round(r.engineResult.confidence * 100)}%` : null;
   const sig = r.signal ? r.signal.replace(/:.*$/, "").replace(/_/g, " ") : "";
-  const segs = [
-    `<span class="rs-seg"><i>them</i>${money(r.offerPrice)}${sig ? ` · ${sig}` : ""}</span>`,
-  ];
-  if (b) segs.push(`<span class="rs-seg"><i>read</i><span class="bseg-${b.dominant}-txt">${TYPE_SHORT[b.dominant]} ${Math.round(b.after[b.dominant] * 100)}%</span></span>`);
-  if (tally) segs.push(`<span class="rs-seg"><i>council</i>${tally}</span>`);
-  if (r.sentMove) segs.push(`<span class="rs-seg rs-sent"><i>sent</i>${label(r.sentMove.action)} @ ${money(r.sentMove.ask.price)}</span>`);
+  const lensTag = (d) => d ? `<span style="color:${LENS_COLORS[d]}">${lens(d).cogFunction}</span>` : "";
 
-  const strip = el("div", "round-strip",
-    (r.disarmed ? `<span class="rs-flag" title="deception disarmed this round">⚑</span>` : "") +
-    segs.join(`<span class="rs-arr">→</span>`) +
-    `<span class="rs-caret">▸</span>`);
+  const card = el("div", "round-verdict");
+  card.innerHTML =
+    (r.disarmed ? `<span class="rv-flag" title="deception disarmed this round">⚑</span>` : "") +
+    `<span class="rv-them">${money(r.offerPrice)}${sig ? ` · ${sig}` : ""}</span>` +
+    `<span class="rv-arr">→</span>` +
+    `<span class="rv-verdict">${rec ? label(rec) : "—"}</span>` +
+    (lead ? `<span class="rv-meta">${lensTag(lead)} led${diss && diss !== lead ? ` · ${lensTag(diss)} dissented` : ""}${conf ? ` · conf ${conf}` : ""}</span>` : "") +
+    `<button class="rv-debate">▶ view the debate</button>`;
+
   const head = r.card.querySelector(".round-head");
-  head.insertAdjacentElement("afterend", strip);
-  strip.addEventListener("click", () => r.card.classList.toggle("filed"));
+  head.insertAdjacentElement("afterend", card);
+  card.querySelector(".rv-debate").addEventListener("click", () => {
+    const opening = r.card.classList.contains("filed");
+    r.card.classList.toggle("filed");
+    card.querySelector(".rv-debate").textContent = opening ? "▼ hide the debate" : "▶ view the debate";
+  });
   r.card.classList.add("filed");
 }
 
@@ -523,12 +527,12 @@ function renderLens(p) {
   node.innerHTML = `
     <div class="lens-head">
       <span class="lens-name">${m.cogFunction}</span>
-      <span class="lens-persona">${m.name}</span>
+      <span class="lens-role">${m.question}</span>
       <span class="lens-fav">${label(favAction)}</span>
       <span class="caret">▸</span>
     </div>
     <div class="lens-body">
-      <div class="lens-q-full">${m.question} <span class="lens-dim">· ${m.dimension}</span></div>
+      <div class="lens-q-full"><b>${m.name}</b> · owns: ${m.dimension}</div>
       <div class="lens-meta"><b>${m.coreBelief}</b><br/>${m.thinkingStyle} <span class="hint">· math: ${m.math} · watch: ${m.failureMode}</span></div>
       <div class="lens-rationale">${p.rationale}</div>
       <div class="scores"></div>

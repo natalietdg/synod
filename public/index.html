@@ -26,41 +26,25 @@
 
         <div class="mast-claim">
           <p class="claim">
-            A five-lens negotiation council that <strong>detects deceptive counterparties</strong>
-            and closes deals single-stance agents walk away from — every decision
-            Bayesian-updated, deterministically scored, and cryptographically receipted.
+            Counterparties hide what they really want — and a single-stance negotiator gets
+            bluffed into walking away from a deal worth closing. <strong>Synod is a council of
+            five AI negotiators that decides when to trust, probe, concede, or walk.</strong>
           </p>
-          <p class="claim-causal">
-            <b>One mechanism wins the battle</b> — the probe gate (<b>−$1,584</b> without it).
-            <b>The society wins the war</b> — no single worldview survives every counterparty.
-          </p>
-          <div class="workflow">
-            <span class="wf-lbl">HOW A DEAL DESK USES IT</span>
-            <div class="wf-flow">
-              <span class="wf-step">counterparty move / RFP</span>
-              <span class="wf-arr">→</span>
-              <span class="wf-step wf-core">Synod council <em>(one MCP call)</em></span>
-              <span class="wf-arr">→</span>
-              <span class="wf-step">recommended action <em>+ dissent on record + signed receipt</em></span>
-              <span class="wf-arr">→</span>
-              <span class="wf-step">human approves &amp; sends</span>
-            </div>
-            <span class="wf-note">the council is the negotiator; the desk keeps the gavel. Vendor renewals · procurement floors · adversarial RFPs · M&amp;A.</span>
-          </div>
           <div class="stat-strip">
             <a class="stat" href="#exhibit-a">
-              <b>$0 → $3,000</b>
-              <span>vs a deceptive counterparty — the baseline gets bluffed and walks; Synod probes and closes</span>
+              <b>$0</b>
+              <span>a single agent vs a deceptive counterparty — bluffed, walks away</span>
             </a>
             <a class="stat" href="#exhibit-a">
-              <b>100% / 0%</b>
-              <span>Synod's deal rate vs the baseline's on adversarial types</span>
+              <b>$3,000</b>
+              <span>Synod, same counterparty — probes, disarms the bluff, closes</span>
             </a>
             <a class="stat" href="#exhibit-b">
-              <b>n = 10</b>
-              <span>independent seeded runs · deterministic engine · signed receipts</span>
+              <b>−$1,584</b>
+              <span>what Synod loses without the probe gate — the one decision that wins</span>
             </a>
           </div>
+          <p class="stat-caption">n=10 seeded, reproducible runs · deterministic engine · signed receipts · the rest is evidence below</p>
         </div>
       </div>
 
@@ -102,6 +86,20 @@
       </section>
     </main>
 
+    <div class="workflow">
+      <span class="wf-lbl">HOW A DEAL DESK USES IT</span>
+      <div class="wf-flow">
+        <span class="wf-step">counterparty move / RFP</span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step wf-core">Synod council <em>(one MCP call)</em></span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step">recommended action <em>+ dissent on record + signed receipt</em></span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step">human approves &amp; sends</span>
+      </div>
+      <span class="wf-note">the council is the negotiator; the desk keeps the gavel. Vendor renewals · procurement floors · adversarial RFPs · M&amp;A.</span>
+    </div>
+
     <section class="ab-section" id="exhibit-a">
       <h2 class="sec-head"><span class="sec-no">03</span> Exhibit A — strong single agent vs Synod
         <span class="hint">identical Game Master · n=10 seeds per type · mean ± σ surplus captured</span></h2>
@@ -120,13 +118,9 @@
         <span class="hint">remove one component at a time · same seeds · n=10 per type</span></h2>
       <table id="ablation-table" class="ab-table"><tbody><tr><td>Computing ablations…</td></tr></tbody></table>
       <p class="ab-note">
-        <b>−$1,584 without the probe gate — the headline causal result</b> (Deceptive collapses to $1,423).
-        Or flip the lever yourself: after any run, <i>rerun without the probe gate</i>, same seed.
-        The single-lens rows are the second result: <b>$2,941–$8,968</b> depending on which worldview you
-        bet on — only knowable in hindsight; the council never has to guess.
-        <b>Why not just Learning? → Exhibit C.</b>
-        <span class="hint">Honest nulls, published as measured: the challenge concession rarely flips a
-        round here, and uniform weighting costs only $45.</span>
+        <b>Remove the probe gate: −$1,584.</b> Single-lens strategies range $2,941–$8,968 depending on
+        which worldview you bet on — Synod avoids betting on the wrong one. <span class="hint">Flip the
+        lever yourself after any run; honest nulls (challenge ±$0, uniform Arbiter −$45) published as measured.</span>
       </p>
     </section>
 
@@ -135,22 +129,20 @@
         <span class="hint">5 hold-out worlds authored adversarially by a rival model · frozen before evaluation · n=10</span></h2>
       <table id="holdout-table" class="ab-table"><tbody><tr><td>Computing hold-out suite…</td></tr></tbody></table>
       <p class="ab-note">
-        <b>The council is first on total and never catastrophic — and the fatal lens changes by world.</b>
-        Gain is wiped to $0 on three worlds; Intent craters on Probe-punisher; Position is weakest there
-        but <i>wins</i> Stonewall; Survival is strong but loses Probe-punisher. There is no single lens you
-        could pick in advance and survive all five — the winner is only knowable in hindsight, and it moves.
-        Even on the world built to punish probing, the council beats Learning-alone:
-        <b>the other four lenses are what keep the probe instinct from becoming the trap</b>. That is the
-        answer to "isn't it just the probe gate?" — the gate wins the bluff; the council is what stops the
-        gate from over-firing everywhere else.
-        <span class="hint">Worlds: src/gm/holdout.ts (provenance note inside) · GET /api/holdout?lenses=1</span>
+        <b>No single worldview survives every world — and the council never has to bet on one.</b>
+        The fatal lens moves: Gain is wiped to $0 on three worlds, Position wins Stonewall but craters
+        elsewhere. Pick wrong in advance and you lose up to everything; the council is first on total and
+        never catastrophic. <span class="hint">5 worlds authored by a rival model, frozen before
+        evaluation · src/gm/holdout.ts · GET /api/holdout?lenses=1</span>
       </p>
     </section>
 
     <section class="ab-section" id="provenance">
-      <h2 class="sec-head"><span class="sec-no">06</span> Provenance
-        <span class="hint">who authored each side · what's deterministic · what commit this ran on</span></h2>
-      <div id="provenance-card" class="prov-card"></div>
+      <details class="prov-details">
+        <summary><span class="sec-no">06</span> Provenance
+          <span class="hint">who authored each side · what's deterministic · what commit — click to open</span></summary>
+        <div id="provenance-card" class="prov-card"></div>
+      </details>
     </section>
 
     <footer class="colophon">
