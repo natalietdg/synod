@@ -52,9 +52,26 @@
         <span class="cb-label">Select counterparty</span>
         <select id="scenario-select" aria-label="Counterparty"></select>
         <button id="run-btn">Convene the council</button>
+        <button id="compose-btn" class="ghost-btn" title="Build your own counterparty">⚙ compose</button>
         <button id="speed-btn" class="ghost-btn" title="Stream pacing">1×</button>
         <button id="guide-btn" class="ghost-btn" title="What everything means">GUIDE</button>
         <span class="hint" id="truth-hint"></span>
+      </div>
+
+      <!-- Composer: dial a counterparty nobody pre-authored; the deterministic council
+           negotiates it live (mock, free). -->
+      <div id="composer" class="composer hidden">
+        <span class="cmp-lbl">BUILD YOUR COUNTERPARTY <span class="hint">— watch the lenses respond to terrain you set · runs on the deterministic engine, free</span></span>
+        <div class="cmp-dials">
+          <label class="cmp-dial">true ceiling <output id="cmp-res-out">$11,500</output>
+            <input id="cmp-res" type="range" min="7500" max="14000" step="250" value="11500" /></label>
+          <label class="cmp-dial">deception <output id="cmp-dec-out">10%</output>
+            <input id="cmp-dec" type="range" min="0" max="90" step="5" value="10" /></label>
+          <label class="cmp-dial">patience <output id="cmp-pat-out">4 rounds</output>
+            <input id="cmp-pat" type="range" min="2" max="6" step="1" value="4" /></label>
+          <label class="cmp-check"><input id="cmp-comp" type="checkbox" /> has a real competing quote</label>
+          <button id="cmp-run">Convene on this counterparty</button>
+        </div>
       </div>
 
       <!-- Pipeline spine: the data flow, made visible. Lights up as events stream. -->

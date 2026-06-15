@@ -127,6 +127,7 @@ async function init() {
   });
   $("#guide-btn").addEventListener("click", startTour);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") endTour(); });
+  setupComposer();
   buildSpine();
   // The user taking the wheel pauses auto-follow until the next run.
   for (const evt of ["wheel", "touchstart"]) {
@@ -145,6 +146,23 @@ async function init() {
     updateScenarioCard();
     setTimeout(() => run({ auto: true }), 700);
   }
+}
+
+/** The composer: live-label the dials and run the council on a custom counterparty. */
+function setupComposer() {
+  const res = $("#cmp-res"), dec = $("#cmp-dec"), pat = $("#cmp-pat"), comp = $("#cmp-comp");
+  if (!res) return;
+  const sync = () => {
+    $("#cmp-res-out").textContent = money(Number(res.value));
+    $("#cmp-dec-out").textContent = `${dec.value}%`;
+    $("#cmp-pat-out").textContent = `${pat.value} rounds`;
+  };
+  for (const el of [res, dec, pat]) el.addEventListener("input", sync);
+  sync();
+  $("#compose-btn").addEventListener("click", () => $("#composer").classList.toggle("hidden"));
+  $("#cmp-run").addEventListener("click", () => run({
+    custom: { reservation: res.value, deception: dec.value, patience: pat.value, competitor: comp.checked ? "1" : "0" },
+  }));
 }
 
 function updateScenarioCard() {
@@ -195,9 +213,15 @@ function run(opts = {}) {
     $("#rounds").appendChild(el("div", "ablate-banner",
       `⊘ PROBE GATE REMOVED — same seed, same counterparty, one mechanism missing`));
   }
+  // Composer params (token-free, deterministic): a counterparty nobody pre-authored.
+  state.customRun = !!opts.custom;
+  const customQs = opts.custom
+    ? `&reservation=${opts.custom.reservation}&deception=${opts.custom.deception}` +
+      `&patience=${opts.custom.patience}&competitor=${opts.custom.competitor}`
+    : "";
   const src = new EventSource(
     `/api/negotiate?scenario=${encodeURIComponent(id)}&gm=${encodeURIComponent(gmMode)}` +
-      `&speed=${speed}${ablated ? "&ablate=probe" : ""}`,
+      `&speed=${speed}${ablated ? "&ablate=probe" : ""}${customQs}`,
   );
   state.source = src;
   src.onmessage = (e) => handle(JSON.parse(e.data));
@@ -1036,7 +1060,15 @@ function renderTerminal(t) {
   // and stonewalls IS behaving deceptively, and the read should say so.
   const entry = state.meta.suite.find((s) => s.id === state.scenarioId);
   let declass = "";
-  if (entry && state.mode === "human") {
+  if (state.customRun) {
+    const lb = state.round?.lastBelief;
+    const dom = lb ? TYPES.reduce((a, b) => (lb[b] > lb[a] ? b : a)) : null;
+    const read = dom
+      ? ` — the council read this terrain as closest to <span class="bseg-${dom}-txt">${TYPE_SHORT[dom]} ${Math.round(lb[dom] * 100)}%</span>`
+      : "";
+    declass =
+      `<div class="declass"><span class="dcl-lbl">CUSTOM COUNTERPARTY</span> a counterparty you composed${read}</div>`;
+  } else if (entry && state.mode === "human") {
     const lb = state.round?.lastBelief;
     const dom = lb ? TYPES.reduce((a, b) => (lb[b] > lb[a] ? b : a)) : null;
     const read = dom

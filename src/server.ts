@@ -16,7 +16,7 @@ import { GameMaster } from "./gm/gameMaster.js";
 import { QwenAdversaryGM } from "./gm/qwenAdversary.js";
 import { HumanGM, type HumanMove } from "./gm/humanGM.js";
 import { QwenSpeaker, TemplateSpeaker } from "./gm/speaker.js";
-import { OPENING_ASK, ROUND_CAP } from "./gm/profiles.js";
+import { OPENING_ASK, ROUND_CAP, profileOf, type TypeProfile } from "./gm/profiles.js";
 import { isTerminal } from "./gm/types.js";
 import { QwenGovernor } from "./dotto/governor.js";
 import { receiptStore } from "./dotto/store.js";
@@ -109,6 +109,30 @@ app.get("/api/meta", (_req, res) => {
   });
 });
 
+/**
+ * The composer: turn the user's dials into a counterparty profile. Returns null
+ * when no custom params are present (the normal preset path). Base is the soft-floor
+ * profile; only the dialed fields are overridden, each clamped to a sane range.
+ */
+function buildCustomProfile(q: Record<string, unknown>): TypeProfile | null {
+  const keys = ["reservation", "deception", "patience", "competitor"] as const;
+  if (!keys.some((k) => q[k] != null)) return null;
+  const base = { ...profileOf("soft_floor") };
+  const num = (v: unknown, lo: number, hi: number, dflt: number) => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : dflt;
+  };
+  const reservation = num(q.reservation, 7_500, 14_000, base.reservation);
+  base.reservation = reservation;
+  base.deception = num(q.deception, 0, 90, base.deception);
+  base.initialPatience = num(q.patience, 2, 6, base.initialPatience);
+  base.competitorInPlay = q.competitor === "1" || q.competitor === "true";
+  // Keep the opening offer and firm floor consistent with the chosen ceiling.
+  base.openingOffer = Math.min(base.openingOffer, reservation - 500);
+  if (base.firmFloorOffer) base.firmFloorOffer = Math.min(base.firmFloorOffer, reservation);
+  return base;
+}
+
 /** Stream one negotiation as Server-Sent Events. */
 app.get("/api/negotiate", async (req, res) => {
   const entry = getEntry(String(req.query.scenario ?? "")) ?? SUITE[0]!;
@@ -190,11 +214,16 @@ app.get("/api/negotiate", async (req, res) => {
       return;
     }
 
+    // Custom counterparty (the composer): override a base profile with the dials the
+    // user set, then run the deterministic council on terrain nobody pre-authored.
+    const customProfile = buildCustomProfile(req.query);
+    const scenarioId = customProfile ? "custom" : entry.id;
     const gm =
       mode === "adversary" ? new QwenAdversaryGM(entry.type)
       : mode === "human" ? new HumanGM(entry.type, (p) => waitForHuman(p))
+      : customProfile ? new GameMaster(entry.type, entry.seed, speaker, customProfile)
       : new GameMaster(entry.type, entry.seed, speaker);
-    await runNegotiation(negotiationAgents, gm, entry.id, entry.type, {
+    await runNegotiation(negotiationAgents, gm, scenarioId, entry.type, {
       sink: async (event) => {
         send(event);
         await sleep((EVENT_DELAY[event.type] ?? 0) / speed);
