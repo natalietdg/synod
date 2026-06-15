@@ -1114,8 +1114,14 @@ async function loadAblation() {
     // The headline causal result: removing the probe trigger is the single largest
     // component effect — the mechanism a judge can point at.
     const isCausal = r.variant.includes("probe");
+    // The Learning row is the loaded gun ("ties the full council"). Carry the
+    // holster with it: it ties HERE, loses to the council on hold-out worlds.
+    const isLearning = r.variant.includes("Learning");
+    const tieNote = isLearning
+      ? ` <span class="hint">— ties here; the council beats it on adversarial worlds → Exhibit C</span>`
+      : "";
     body += `<tr${isFull ? ` style="font-weight:600"` : ""}${isCausal ? ` class="row-causal"` : ""}>
-      <td>${isCausal ? `<span class="causal-chip">PRIMARY CAUSAL RESULT</span> ` : ""}${r.variant}</td>
+      <td>${isCausal ? `<span class="causal-chip">PRIMARY CAUSAL RESULT</span> ` : ""}${r.variant}${tieNote}</td>
       <td style="text-align:left;color:var(--muted);font-size:0.78rem">${r.description}</td>
       <td class="${isFull ? "synod-col win" : ""}">${money(r.totalSurplusMean)}</td>
       <td class="${deltaCls}">${deltaTxt}</td>
