@@ -159,10 +159,31 @@ function setupComposer() {
   };
   for (const el of [res, dec, pat]) el.addEventListener("input", sync);
   sync();
-  $("#compose-btn").addEventListener("click", () => $("#composer").classList.toggle("hidden"));
+  $("#compose-btn").addEventListener("click", () => {
+    $("#composer").classList.toggle("hidden");
+    $("#freetext").classList.add("hidden");
+  });
   $("#cmp-run").addEventListener("click", () => run({
     custom: { reservation: res.value, deception: dec.value, patience: pat.value, competitor: comp.checked ? "1" : "0" },
   }));
+
+  // Free-text mode (live Qwen only): a "describe it" button appears when supported.
+  if ((state.meta.gmModes ?? []).includes("freetext")) {
+    const ftBtn = el("button", "ghost-btn");
+    ftBtn.id = "freetext-btn";
+    ftBtn.title = "Describe a counterparty in words (live Qwen)";
+    ftBtn.textContent = "✎ describe";
+    $("#compose-btn").insertAdjacentElement("afterend", ftBtn);
+    ftBtn.addEventListener("click", () => {
+      $("#freetext").classList.toggle("hidden");
+      $("#composer").classList.add("hidden");
+    });
+    const off = $("#ft-off");
+    off.addEventListener("input", () => { $("#ft-off-out").textContent = money(Number(off.value)); });
+    $("#ft-run").addEventListener("click", () => run({
+      freetext: { text: $("#ft-text").value, offer: off.value },
+    }));
+  }
 }
 
 function updateScenarioCard() {
@@ -191,7 +212,10 @@ function run(opts = {}) {
   $("#run-btn").disabled = true;
   const id = auto ? "type-c-deceptive" : $("#scenario-select").value;
   state.scenarioId = id;
-  const gmMode = auto ? "deterministic" : ($("#gm-select")?.value ?? "deterministic");
+  const gmMode = auto ? "deterministic"
+    : opts.freetext ? "freetext"
+    : opts.custom ? "deterministic"
+    : ($("#gm-select")?.value ?? "deterministic");
   state.mode = gmMode;
   $("#truth-hint").textContent = auto ? ""
     : gmMode === "human" ? "you ARE the counterparty — make the council guess wrong"
@@ -215,9 +239,12 @@ function run(opts = {}) {
   }
   // Composer params (token-free, deterministic): a counterparty nobody pre-authored.
   state.customRun = !!opts.custom;
+  state.freetextRun = !!opts.freetext;
   const customQs = opts.custom
     ? `&reservation=${opts.custom.reservation}&deception=${opts.custom.deception}` +
       `&patience=${opts.custom.patience}&competitor=${opts.custom.competitor}`
+    : opts.freetext
+    ? `&text=${encodeURIComponent(opts.freetext.text)}&offer=${encodeURIComponent(opts.freetext.offer)}`
     : "";
   const src = new EventSource(
     `/api/negotiate?scenario=${encodeURIComponent(id)}&gm=${encodeURIComponent(gmMode)}` +

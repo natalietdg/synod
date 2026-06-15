@@ -18,6 +18,10 @@ import { HumanGM, type HumanMove } from "./gm/humanGM.js";
 import { QwenSpeaker, TemplateSpeaker } from "./gm/speaker.js";
 import { OPENING_ASK, ROUND_CAP, profileOf, type TypeProfile } from "./gm/profiles.js";
 import { isTerminal } from "./gm/types.js";
+import { deliberateRound } from "./protocol/round.js";
+import { computeContext } from "./protocol/context.js";
+import { UNIFORM_PRIOR } from "./belief/update.js";
+import type { RoundInput } from "./agents/index.js";
 import { QwenGovernor } from "./dotto/governor.js";
 import { receiptStore } from "./dotto/store.js";
 import { SUITE, getEntry } from "./suite.js";
@@ -101,7 +105,7 @@ app.get("/api/meta", (_req, res) => {
     // counterparty and try to deceive the council), duel (YOU negotiate against the
     // same GM + seed, then your result is compared to Synod's and the baseline's),
     // adversary (Qwen plays the counterparty; requires a live provider).
-    gmModes: ["deterministic", "human", "duel", ...(agents.kind === "qwen" ? ["adversary"] : [])],
+    gmModes: ["deterministic", "human", "duel", ...(agents.kind === "qwen" ? ["adversary", "freetext"] : [])],
     lenses: LENSES,
     actionLabels: ACTION_LABELS,
     types: TYPE_META,
@@ -210,6 +214,29 @@ app.get("/api/negotiate", async (req, res) => {
       const synod = await runNegotiation(agents, new GameMaster(entry.type, entry.seed, speaker), entry.id, entry.type);
       const baseline = await runBaseline(agents, new GameMaster(entry.type, entry.seed), "strong");
       send({ type: "duel-result", you: terminal, synod: synod.terminal, baseline });
+      send({ type: "done" });
+      return;
+    }
+
+    // Free-text evaluation: the user types a situation in English; the LIVE council
+    // reads it and deliberates ONE round — Empathy's read, five lens scores, the
+    // verdict. Reuses the proven deliberateRound path; only the move is synthesized
+    // from the user's text. Live Qwen only (mock can't read prose); costs tokens.
+    if (mode === "freetext") {
+      if (!isLive) throw new Error("Free-text evaluation needs live Qwen (set LLM_PROVIDER=qwen).");
+      const text = String(req.query.text ?? "").slice(0, 800).trim() || "(the counterparty said nothing)";
+      const price = Math.max(0, Math.min(20_000, Number(req.query.offer) || 9_000));
+      const move = { round: 1, message: text, offer: { price, features: [] as string[] }, signals: [] as string[], terminal: false as const };
+      send({ type: "round-start", round: 1, move });
+      await sleep(400 / speed);
+      send({ type: "belief", before: UNIFORM_PRIOR, after: UNIFORM_PRIOR });
+      const ctx = computeContext(UNIFORM_PRIOR, OPENING_ASK, ROUND_CAP, move.signals);
+      const input: RoundInput = { round: 1, move, history: [], belief: UNIFORM_PRIOR, ctx, buyerOffer: price, councilAsk: OPENING_ASK };
+      await deliberateRound(agents, input, {
+        scenarioId: "freetext",
+        governor,
+        sink: async (event) => { send(event); await sleep((EVENT_DELAY[event.type] ?? 0) / speed); },
+      });
       send({ type: "done" });
       return;
     }

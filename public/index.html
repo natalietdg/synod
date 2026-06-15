@@ -58,6 +58,18 @@
         <span class="hint" id="truth-hint"></span>
       </div>
 
+      <!-- Free-text: type a situation in English; the LIVE council reads and evaluates it.
+           Only present when the server runs on Qwen; costs tokens per submit. -->
+      <div id="freetext" class="composer hidden">
+        <span class="cmp-lbl">DESCRIBE THE COUNTERPARTY <span class="ft-warn">⚠ live Qwen · ~9 model calls per submit</span></span>
+        <textarea id="ft-text" class="ft-text" rows="2" placeholder="e.g. Buyer claims three competing quotes and a hard budget cap, but keeps asking about onboarding and won't put the other offers in writing…"></textarea>
+        <div class="cmp-dials">
+          <label class="cmp-dial">their offer <output id="ft-off-out">$9,000</output>
+            <input id="ft-off" type="range" min="6000" max="13000" step="250" value="9000" /></label>
+          <button id="ft-run">Evaluate with the council</button>
+        </div>
+      </div>
+
       <!-- Composer: dial a counterparty nobody pre-authored; the deterministic council
            negotiates it live (mock, free). -->
       <div id="composer" class="composer hidden">
