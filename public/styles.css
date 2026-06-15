@@ -733,7 +733,8 @@ a.stat:hover { background: var(--panel-2); }
 }
 .claim-causal b { color: var(--ink); }
 /* Deal-desk workflow: value shown as a loop, not asserted as a noun-list */
-.workflow { margin: 0 0 1rem; }
+/* Standalone band between proceedings and exhibits — align to the page grid. */
+.workflow { max-width: 1280px; margin: 0 auto; padding: 1.5rem; }
 .wf-lbl {
   font-family: var(--mono); font-size: 0.56rem; font-weight: 700;
   letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 0.4rem;
