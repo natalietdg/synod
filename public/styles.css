@@ -718,14 +718,23 @@ a.stat:hover { background: var(--panel-2); }
   margin: 0.35rem 0 0.6rem; font-size: 0.84rem; line-height: 1.55; color: var(--muted);
 }
 .claim-causal b { color: var(--ink); }
-.claim-deploy {
-  margin: 0 0 1rem; font-size: 0.74rem; line-height: 1.5; color: var(--muted);
-}
-.cd-lbl {
+/* Deal-desk workflow: value shown as a loop, not asserted as a noun-list */
+.workflow { margin: 0 0 1rem; }
+.wf-lbl {
   font-family: var(--mono); font-size: 0.56rem; font-weight: 700;
-  letter-spacing: 0.14em; color: var(--accent); margin-right: 0.3rem;
+  letter-spacing: 0.14em; color: var(--accent); display: block; margin-bottom: 0.4rem;
 }
-.claim-deploy code { font-family: var(--mono); font-size: 0.68rem; color: var(--ink); }
+.wf-flow { display: flex; align-items: stretch; gap: 0.4rem; flex-wrap: wrap; }
+.wf-step {
+  font-size: 0.74rem; color: var(--ink); line-height: 1.35;
+  background: var(--panel-2); border: 1px solid var(--line);
+  padding: 0.35rem 0.55rem; display: flex; align-items: center;
+}
+.wf-step em { color: var(--muted); font-style: normal; font-size: 0.66rem; }
+.wf-core { border-color: rgba(201,162,39,0.5); color: var(--accent-bright); font-weight: 600; }
+.wf-core em { color: rgba(227,191,69,0.7); }
+.wf-arr { color: var(--accent); align-self: center; font-weight: 700; }
+.wf-note { display: block; margin-top: 0.45rem; font-size: 0.7rem; color: var(--muted); line-height: 1.5; }
 
 /* Filed rounds: completed rounds collapse to a one-line story strip —
    THEM → READ → COUNCIL → SENT. Click to reopen the full record. */
