@@ -158,6 +158,25 @@ body {
 .tb-out-win b { display: block; font-family: var(--mono); font-size: 1.5rem; color: var(--good); }
 @media (max-width: 620px) { .tb-lens { grid-template-columns: 5rem 1fr; } .tb-q { display: none; } .tb-outcome { grid-template-columns: 1fr; } }
 
+/* Consequence — the probe broke the bluff, so the offer climbed (real numbers) */
+.consequence { margin-top: 1.6rem; }
+.cq-title { text-align: center; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
+.cq-title b { color: var(--accent-bright); }
+.cq-track { display: flex; align-items: stretch; justify-content: center; gap: 0.5rem; flex-wrap: wrap; }
+.cq-step {
+  display: flex; flex-direction: column; gap: 0.1rem; align-items: center;
+  border: 1px solid var(--line); background: var(--bg); padding: 0.6rem 1rem; min-width: 7rem;
+}
+.cq-step.up { border-color: rgba(63,185,80,0.4); }
+.cq-r { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.12em; color: var(--muted); }
+.cq-offer { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--ink); }
+.cq-step.up .cq-offer { color: var(--good); }
+.cq-note { font-size: 0.66rem; color: var(--muted); }
+.cq-arrow { align-self: center; color: var(--good); font-weight: 700; }
+.cq-outcome { display: flex; justify-content: center; gap: 1.4rem; flex-wrap: wrap; margin-top: 1.1rem; font-size: 0.9rem; color: var(--muted); }
+.cq-win b { font-family: var(--mono); color: var(--good); font-size: 1.1rem; }
+.cq-lose b { font-family: var(--mono); color: var(--bad); font-size: 1.1rem; }
+
 /* Stage — the interactive section */
 .stage { padding-top: 3.5rem; border-bottom: 1px solid var(--line-soft); }
 .stage-head { text-align: center; margin-bottom: 1.6rem; }

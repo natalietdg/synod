@@ -1240,6 +1240,14 @@ const CANON_VOTES = {
   // by doctrine id → that lens's top action this round
   votes: { empathy: "counter_soft", battle: "counter_hard", war: "concede_term", probe: "probe", risk: "probe" },
   verdict: "probe",
+  // Real per-round offer trajectory (canonical deterministic run): the probe pulls the
+  // truth out in R2, and the offer on the table climbs because the bluff broke.
+  trajectory: [
+    { r: 1, offer: 8500, note: "council probes the claim" },
+    { r: 2, offer: 10217, note: "+$1,717", up: true },
+    { r: 3, offer: 11000, note: "closes", up: true },
+  ],
+  synod: 3000, baseline: 0,
 };
 function renderCast() {
   const box = $("#council-tableau");
@@ -1260,11 +1268,21 @@ function renderCast() {
     `<div class="tb-arrow">↓ five lenses score the move, in parallel</div>` +
     `<div class="tb-lenses">${voteRows}</div>` +
     `<div class="tb-arrow">↓ the Arbiter weighs the terrain, not the argument</div>` +
-    `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
-    `<div class="tb-arrow">↓ the probe disarms the bluff</div>` +
-    `<div class="tb-outcome">` +
-      `<span class="tb-out-lose"><b>$0</b> a single agent — bluffed, walks</span>` +
-      `<span class="tb-out-win"><b>$3,000</b> Synod — closes</span>` +
+    `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>`;
+
+  // The consequence: the probe broke the bluff, so the offer on the table climbed.
+  const steps = c.trajectory.map((s, i) =>
+    `${i ? `<span class="cq-arrow">→</span>` : ""}` +
+    `<span class="cq-step${s.up ? " up" : ""}"><span class="cq-r">R${s.r}</span>` +
+    `<span class="cq-offer">${money(s.offer)}</span><span class="cq-note">${s.note}</span></span>`,
+  ).join("");
+  const cq = $("#consequence");
+  if (cq) cq.innerHTML =
+    `<div class="cq-title">↓ the probe pulls the truth out — <b>the competitor leverage was air</b> — and the offer climbs</div>` +
+    `<div class="cq-track">${steps}</div>` +
+    `<div class="cq-outcome">` +
+      `<span class="cq-win"><b>$3,000</b> Synod closes</span>` +
+      `<span class="cq-lose"><b>$0</b> a single agent never probes — bluffed, walks</span>` +
     `</div>`;
 }
 
