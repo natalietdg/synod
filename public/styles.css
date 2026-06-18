@@ -505,6 +505,67 @@ main > .column { min-width: 0; }
 .ab-note { color: var(--ink); font-size: 0.9rem; margin-top: 1rem; max-width: 60rem; line-height: 1.7; }
 .oc-lbl { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
 
+/* ====== CHARTS (readable instead of tables) ====== */
+.chart-box { min-height: 2rem; color: var(--muted); font-size: 0.85rem; }
+.chart-total {
+  margin-top: 0.9rem; font-size: 0.82rem; color: var(--muted);
+  border-top: 1px solid var(--line); padding-top: 0.7rem;
+}
+.chart-total b { color: var(--ink); font-family: var(--mono); }
+.chart-total b.win { color: var(--good); }
+
+/* Exhibit A — paired bars */
+.pbars { display: flex; flex-direction: column; gap: 0.9rem; }
+.pbar-group { border-left: 2px solid var(--line); padding-left: 0.8rem; }
+.pbar-group.pbar-hot { border-left-color: var(--bad); }
+.pbar-label { font-size: 0.82rem; color: var(--ink); margin-bottom: 0.35rem; font-weight: 600; }
+.pbar-row { display: grid; grid-template-columns: 4.5rem 1fr auto; align-items: center; gap: 0.6rem; margin: 0.2rem 0; }
+.pbar-who { font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.pbar-who.syn { color: var(--good); }
+.pbar-track { height: 16px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.pbar-fill { display: block; height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.pbar-fill.base { background: var(--muted); opacity: 0.55; }
+.pbar-fill.syn { background: var(--good); }
+.pbar-val { font-family: var(--mono); font-size: 0.78rem; color: var(--ink); white-space: nowrap; }
+.pbar-val .hint { font-family: var(--sans); }
+
+/* Exhibit B — drop bars */
+.dropbars { display: flex; flex-direction: column; gap: 0.4rem; }
+.drop-row { display: grid; grid-template-columns: 16rem 1fr auto; align-items: center; gap: 0.7rem; font-size: 0.8rem; }
+.drop-row.drop-causal { background: rgba(201,162,39,0.06); }
+.drop-label { color: var(--ink); }
+.drop-label .hint { font-size: 0.66rem; }
+.drop-track { height: 14px; background: var(--panel-2); border: 1px solid var(--line); overflow: hidden; }
+.drop-fill { display: block; height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.drop-fill.full { background: var(--good); }
+.drop-fill.causal { background: var(--accent-bright); }
+.drop-fill.drop { background: var(--muted); opacity: 0.7; }
+.drop-fill.crater { background: var(--bad); opacity: 0.8; }
+.drop-val { font-family: var(--mono); font-size: 0.76rem; color: var(--ink); white-space: nowrap; }
+.drop-delta { color: var(--muted); margin-left: 0.3rem; }
+.drop-delta.lose { color: var(--bad); }
+
+/* Exhibit C — heatmap */
+.heatmap { display: grid; gap: 3px; font-family: var(--mono); }
+.hm-corner { }
+.hm-h, .hm-total {
+  font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); text-align: center; padding: 0.3rem 0.2rem; align-self: end;
+}
+.hm-h.hm-council, .hm-total.hm-council { color: var(--accent-bright); }
+.hm-rowlabel {
+  font-family: var(--sans); font-size: 0.72rem; color: var(--ink);
+  display: flex; align-items: center; padding-right: 0.4rem; cursor: help;
+}
+.hm-cell {
+  text-align: center; padding: 0.55rem 0.2rem; font-size: 0.72rem; color: var(--ink);
+  border: 1px solid rgba(0,0,0,0.25);
+}
+.hm-cell.hm-council { outline: 2px solid var(--accent-bright); outline-offset: -2px; }
+.hm-total { font-family: var(--mono); color: var(--ink); border-top: 1px solid var(--line); }
+.hm-total.hm-best { color: var(--good); font-weight: 700; }
+.hm-totlabel { font-family: var(--sans); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+
 /* ====== COLOPHON ====== */
 .colophon {
   display: flex; justify-content: space-between; gap: 1rem;

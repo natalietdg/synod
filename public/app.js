@@ -1178,36 +1178,27 @@ const pctFmt = (r) => `${Math.round(r * 100)}%`;
 const meanStd = (s) => `${money(s.surplusMean)} <span class="hint">±${money(s.surplusStd)}</span>`;
 
 async function loadAblation() {
-  const table = $("#ablation-table");
-  if (!table) return;
+  const box = $("#ablation-table");
+  if (!box) return;
   const report = await (await fetch("/api/ablation")).json();
   const full = report.rows[0];
-  let head = `<tr><th>variant</th><th>what's removed</th><th>total surplus</th><th>Δ vs full</th><th>deal rate</th><th>deceptive</th></tr>`;
-  let body = "";
-  for (const r of report.rows) {
+  const max = Math.max(...report.rows.map((r) => r.totalSurplusMean), 1);
+  const bar = (r) => {
     const delta = r.totalSurplusMean - full.totalSurplusMean;
-    const deltaTxt = r === full ? "—" : delta === 0 ? "±$0" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
-    const deltaCls = delta < -100 ? "lose" : "";
     const isFull = r === full;
-    // The headline causal result: removing the probe trigger is the single largest
-    // component effect — the mechanism a judge can point at.
     const isCausal = r.variant.includes("probe");
-    // The Learning row is the loaded gun ("ties the full council"). Carry the
-    // holster with it: it ties HERE, loses to the council on hold-out worlds.
     const isLearning = r.variant.includes("Learning");
-    const tieNote = isLearning
-      ? ` <span class="hint">— ties here; the council beats it on adversarial worlds → Exhibit C</span>`
-      : "";
-    body += `<tr${isFull ? ` style="font-weight:600"` : ""}${isCausal ? ` class="row-causal"` : ""}>
-      <td>${isCausal ? `<span class="causal-chip">PRIMARY CAUSAL RESULT</span> ` : ""}${r.variant}${tieNote}</td>
-      <td style="text-align:left;color:var(--muted);font-size:0.78rem">${r.description}</td>
-      <td class="${isFull ? "synod-col win" : ""}">${money(r.totalSurplusMean)}</td>
-      <td class="${deltaCls}">${deltaTxt}</td>
-      <td>${pctFmt(r.dealRate)}</td>
-      <td>${money(r.deceptiveSurplusMean)}</td>
-    </tr>`;
-  }
-  table.innerHTML = head + body;
+    const cls = isFull ? "full" : isCausal ? "causal" : delta <= -2000 ? "crater" : "drop";
+    const deltaTxt = isFull ? "reference" : delta === 0 ? "±$0" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
+    return `<div class="drop-row${isCausal ? " drop-causal" : ""}">` +
+      `<span class="drop-label">${isFull ? "<b>Full Synod</b>" : r.variant}` +
+        `${isCausal ? ` <span class="causal-chip">PRIMARY CAUSAL RESULT</span>` : ""}` +
+        `${isLearning ? ` <span class="hint">ties here; loses on Exhibit C</span>` : ""}</span>` +
+      `<span class="drop-track"><span class="drop-fill ${cls}" style="width:${Math.max(2, (r.totalSurplusMean / max) * 100)}%"></span></span>` +
+      `<span class="drop-val">${money(r.totalSurplusMean)} <span class="drop-delta ${delta < -100 ? "lose" : ""}">${deltaTxt}</span></span>` +
+    `</div>`;
+  };
+  box.innerHTML = `<div class="dropbars">${report.rows.map(bar).join("")}</div>`;
 }
 
 /** The cast: introduce the five lenses by the question each one owns. */
@@ -1241,60 +1232,65 @@ function renderProvenance() {
 }
 
 async function loadHoldout() {
-  const table = $("#holdout-table");
-  if (!table) return;
+  const box = $("#holdout-table");
+  if (!box) return;
   const report = await (await fetch("/api/holdout?lenses=1")).json();
   const lensNames = Object.keys(report.rows[0]?.lenses ?? {});
-  const cell = (s) => `${money(s.surplusMean)}${s.dealRate < 1 ? ` <span class="walktag">(${pctFmt(s.dealRate)})</span>` : ""}`;
-  let head = `<tr><th>hold-out world</th><th>baseline</th><th class="synod-col">council</th>${lensNames.map((n) => `<th>${n} only</th>`).join("")}</tr>`;
-  let body = "";
-  const totals = { baseline: 0, council: 0, ...Object.fromEntries(lensNames.map((n) => [n, 0])) };
-  for (const r of report.rows) {
-    totals.baseline += r.baseline.surplusMean;
-    totals.council += r.council.surplusMean;
-    for (const n of lensNames) totals[n] += r.lenses[n].surplusMean;
-    body += `<tr>
-      <td>${r.title} <span class="hint" title="${r.targets.replace(/"/g, "&quot;")}">(targets: ${r.targets.split(" — ")[0]})</span></td>
-      <td>${cell(r.baseline)}</td>
-      <td class="synod-col">${cell(r.council)}</td>
-      ${lensNames.map((n) => `<td>${cell(r.lenses[n])}</td>`).join("")}
-    </tr>`;
-  }
-  const best = Math.max(totals.council, ...lensNames.map((n) => totals[n]));
-  body += `<tr>
-    <td><b>total</b></td>
-    <td>${money(totals.baseline)}</td>
-    <td class="synod-col ${totals.council >= best ? "win" : ""}">${money(totals.council)}</td>
-    ${lensNames.map((n) => `<td class="${totals[n] >= best ? "win" : ""}">${money(totals[n])}</td>`).join("")}
-  </tr>`;
-  table.innerHTML = head + body;
+  const cols = ["council", ...lensNames];
+  // Heatmap: red = a worldview wiped out on this world, green = thrived. The eye finds
+  // the red cells (a lens that craters) instantly — no number-parsing required.
+  const all = report.rows.flatMap((r) => [r.council.surplusMean, ...lensNames.map((n) => r.lenses[n].surplusMean)]);
+  const max = Math.max(...all, 1);
+  const k = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${Math.round(v)}`);
+  const heat = (v) => `hsl(${Math.round((Math.min(v, max) / max) * 130)} 48% ${14 + (v / max) * 12}%)`;
+  const colOf = (r, c) => (c === "council" ? r.council : r.lenses[c]);
+
+  const headCells = cols.map((c) => `<div class="hm-h${c === "council" ? " hm-council" : ""}">${c === "council" ? "COUNCIL" : c}</div>`).join("");
+  const rows = report.rows.map((r) => {
+    const cells = cols.map((c) => {
+      const s = colOf(r, c);
+      return `<div class="hm-cell${c === "council" ? " hm-council" : ""}" style="background:${heat(s.surplusMean)}" ` +
+        `title="${c} · ${r.title}: ${money(s.surplusMean)}, ${pctFmt(s.dealRate)} deals">${k(s.surplusMean)}</div>`;
+    }).join("");
+    return `<div class="hm-rowlabel" title="${r.targets.replace(/"/g, "&quot;")}">${r.title}</div>${cells}`;
+  }).join("");
+
+  const totals = cols.map((c) => report.rows.reduce((sum, r) => sum + colOf(r, c).surplusMean, 0));
+  const best = Math.max(...totals);
+  const totalCells = totals.map((tot, i) =>
+    `<div class="hm-total${cols[i] === "council" ? " hm-council" : ""}${tot >= best ? " hm-best" : ""}">${k(tot)}</div>`).join("");
+
+  box.innerHTML =
+    `<div class="heatmap" style="grid-template-columns: 8.5rem repeat(${cols.length}, 1fr)">` +
+      `<div class="hm-corner"></div>${headCells}` +
+      rows +
+      `<div class="hm-rowlabel hm-totlabel">total</div>${totalCells}` +
+    `</div>` +
+    `<div class="chart-total">redder = that worldview was wiped out on that world · the council column never reddens, and is first on total</div>`;
 }
 
 async function loadAb() {
-  $("#ab-table").innerHTML = "<tbody><tr><td colspan='4' style='color:var(--muted);padding:.6rem'>Computing A/B comparison…</td></tr></tbody>";
   const report = await (await fetch("/api/ab")).json();
   state.abReport = report; // the disposition band's counterfactual reads from this
-  const table = $("#ab-table");
   const n = report.rows[0]?.council.n ?? 1;
-  let head = `<tr><th>hidden type</th><th>baseline (mean ± σ)</th><th class="synod-col">Synod (mean ± σ)</th><th>deal rate <span class="hint">n=${n}</span></th></tr>`;
-  let body = "";
-  for (const r of report.rows) {
-    const win = r.council.surplusMean > r.baseline.surplusMean;
-    body += `<tr${r.id.includes("deceptive") ? ` class="row-deceptive"` : ""}>
-      <td>${r.typeName}</td>
-      <td>${meanStd(r.baseline)}</td>
-      <td class="synod-col ${win ? "win" : ""}">${meanStd(r.council)}</td>
-      <td><span class="oc-lbl">B</span> ${pctFmt(r.baseline.dealRate)} <span class="hint">·</span> <span class="oc-lbl">S</span> ${pctFmt(r.council.dealRate)}</td>
-    </tr>`;
-  }
+  const max = Math.max(...report.rows.map((r) => Math.max(r.baseline.surplusMean, r.council.surplusMean)), 1);
+  const w = (v) => `${Math.max(1.5, (v / max) * 100)}%`;
+  const pair = (r) => {
+    const dec = r.id.includes("deceptive");
+    return `<div class="pbar-group${dec ? " pbar-hot" : ""}">` +
+      `<div class="pbar-label">${r.typeName}</div>` +
+      `<div class="pbar-row"><span class="pbar-who">baseline</span>` +
+        `<span class="pbar-track"><span class="pbar-fill base" style="width:${w(r.baseline.surplusMean)}"></span></span>` +
+        `<span class="pbar-val">${r.baseline.dealRate === 0 ? "<b class='walktag'>WALK · $0</b>" : money(r.baseline.surplusMean)} <span class="hint">${pctFmt(r.baseline.dealRate)} deals</span></span></div>` +
+      `<div class="pbar-row"><span class="pbar-who syn">Synod</span>` +
+        `<span class="pbar-track"><span class="pbar-fill syn" style="width:${w(r.council.surplusMean)}"></span></span>` +
+        `<span class="pbar-val"><b>${money(r.council.surplusMean)}</b> <span class="hint">${pctFmt(r.council.dealRate)} deals</span></span></div>` +
+    `</div>`;
+  };
   const t = report.totals;
-  body += `<tr>
-    <td><b>total surplus</b></td>
-    <td>${money(t.baselineSurplusMean)}</td>
-    <td class="synod-col win">${money(t.councilSurplusMean)}</td>
-    <td><span class="oc-lbl">B</span> ${pctFmt(t.baselineDealRate)} <span class="hint">·</span> <span class="oc-lbl">S</span> ${pctFmt(t.councilDealRate)}</td>
-  </tr>`;
-  table.innerHTML = head + body;
+  $("#ab-table").innerHTML =
+    `<div class="pbars">${report.rows.map(pair).join("")}</div>` +
+    `<div class="chart-total">total surplus captured · baseline <b>${money(t.baselineSurplusMean)}</b> · Synod <b class="win">${money(t.councilSurplusMean)}</b> <span class="hint">(n=${n} per type)</span></div>`;
 }
 
 /* ====== INTERACTIVE TOUR — a moving spotlight that operates the real UI.
