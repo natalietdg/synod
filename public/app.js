@@ -15,7 +15,7 @@ const state = {
 const STAGES = [
   { id: "inbound", label: "INBOUND", tip: "Counterparty move arrives — the only thing that crosses the information boundary" },
   { id: "belief", label: "BELIEF", tip: "Sub-task: update belief over hidden type · assigned to pure code (Bayes' rule, never an LLM)" },
-  { id: "intent", label: "INTENT", tip: "Sub-task: read counterparty intent · assigned to the Intent lens" },
+  { id: "intent", label: "TRUST", tip: "Sub-task: read the counterparty's intent · assigned to the Trust lens" },
   { id: "council", label: "COUNCIL", tip: "Sub-task: score the action space under 5 criteria · assigned to five lens agents, in parallel — fixed roles, dynamic influence" },
   { id: "challenge", label: "CHALLENGE", tip: "Sub-task: stress-test the leading option · assigned dynamically — the most-diverging pair this round; defender may concede (causal, clamped)" },
   { id: "arbiter", label: "ARBITER", tip: "Sub-task: allocate influence · assigned to the doctrine-free Arbiter — weights reassigned every round from terrain, not arguments" },
@@ -118,7 +118,7 @@ async function init() {
   }
   sel.addEventListener("change", updateScenarioCard);
   updateScenarioCard();
-  $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction} <span style="color:var(--muted);font-size:0.65rem">${lens(d).name}</span></span>`).join("");
+  $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction}</span>`).join("");
   renderProvenance();
   renderCast();
   $("#run-btn").addEventListener("click", () => run());
@@ -584,7 +584,7 @@ function renderIntent(read) {
   const card = el("div", "empathy-broadcast");
   card.innerHTML =
     `<div class="eb-header">` +
-      `<span class="eb-label">Intent reads</span>` +
+      `<span class="eb-label">Trust reads</span>` +
       `<span class="eb-type">${typeLabel}</span>` +
       `<span class="eb-trust hint">${pct(read.readTrust)} confidence</span>` +
       `<span class="eb-arrow hint">→ shapes all 5 positions below</span>` +
@@ -761,7 +761,7 @@ function renderEvi(evi) {
   const d = ensureDecision();
   state.round.eviWorthIt = evi.worthIt;
   state.round.eviValue = evi.evi;
-  const tip = "Expected Value of Information: the deterministic referee's estimate of what learning the counterparty type is worth before committing. In offline mode this gates the Learning lens directly; in live mode the LLM lenses weigh it as worldviews — the engine records any divergence below.";
+  const tip = "Expected Value of Information: the deterministic referee's estimate of what learning the counterparty type is worth before committing. In offline mode this gates the Probe lens directly; in live mode the LLM lenses weigh it as worldviews — the engine records any divergence below.";
   d.appendChild(el("div", "row", `Probe EVI${info(tip)}: ${money(evi.evi)} ${evi.worthIt ? "<b>&gt; cost → information pays</b>" : "≤ cost (advisory)"}`));
 }
 
@@ -900,7 +900,7 @@ function renderEngine(engine) {
   // legitimate worldview-vs-arithmetic disagreement, but it must be NAMED on screen
   // or it reads as a bug.
   if (engine.recommendation === "probe" && state.round.eviWorthIt === false) {
-    const tip = "The deterministic EVI referee priced the information below the probe's cost, but the weighted lens worldviews favoured probing anyway — e.g. Survival buying certainty, or Intent needing the read. The engine executes the council and records the divergence, exactly as it does when the Quant disagrees.";
+    const tip = "The deterministic EVI referee priced the information below the probe's cost, but the weighted lens worldviews favoured probing anyway — e.g. Hedge buying certainty, or Trust needing the read. The engine executes the council and records the divergence, exactly as it does when the Quant disagrees.";
     d.appendChild(el("div", "row", `⚖ council overrode the EVI referee${info(tip)}: lenses bought information the arithmetic priced at ${money(state.round.eviValue ?? 0)} — divergence on record`));
   } else if (engine.recommendation !== "probe" && state.round.eviWorthIt === true) {
     const tip = "The EVI referee priced information above the probe's cost, but the weighted council preferred another action. Recorded as divergence — the referee advises, the council decides.";
@@ -1212,8 +1212,8 @@ async function loadAblation() {
   const bar = (r) => {
     const delta = r.totalSurplusMean - full.totalSurplusMean;
     const isFull = r === full;
-    const isCausal = r.variant.includes("probe");
-    const isLearning = r.variant.includes("Learning");
+    const isCausal = r.variant.includes("probe"); // the "− probe trigger" component ablation (lowercase)
+    const isLearning = r.variant.includes("Probe"); // the single-lens row named Probe (ties full Synod here, loses on hold-out)
     const cls = isFull ? "full" : isCausal ? "causal" : delta <= -2000 ? "crater" : "drop";
     const deltaTxt = isFull ? "reference" : delta === 0 ? "±$0" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
     return `<div class="drop-row${isCausal ? " drop-causal" : ""}">` +
@@ -1379,7 +1379,7 @@ const TOUR_STEPS = [
     more: "The belief bar moves on price movement, firmness, and reveals — never on talk. A bluffer and an honest buyer can say the same thing; only one will act it." },
   { sel: () => state.round?.card?.querySelector(".lens"), head: "Five worldviews, in parallel.",
     enter: (t) => t.classList.add("open"),
-    more: "Gain · Position · Intent · Learning · Survival — each scores every action from its own worldview. Click any lens anytime to read its reasoning." },
+    more: "Trust · Pressure · Frame · Probe · Hedge — each scores every action from its own worldview. Click any lens anytime to read its reasoning." },
   { sel: () => state.round?.card?.querySelector(".challenge-record"), head: "Disagreement, on record.",
     more: "The two most-opposed lenses file briefs against each other. It's causal: a genuinely persuaded defender concedes ground — which can flip a close round." },
   { sel: () => state.round?.decision?.querySelector(".rec-line") ?? state.round?.decision, head: "Votes converge. A calculator decides.",

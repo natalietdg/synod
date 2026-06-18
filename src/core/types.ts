@@ -30,7 +30,7 @@ export interface LensMeta {
 export const LENSES: Record<DoctrineId, LensMeta> = {
   battle: {
     name: "Battle",
-    cogFunction: "Gain",
+    cogFunction: "Pressure",
     dimension: "immediate value",
     coreBelief: "Action beats hesitation.",
     question: "What move creates the most advantage right now?",
@@ -41,7 +41,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
   },
   war: {
     name: "War",
-    cogFunction: "Position",
+    cogFunction: "Frame",
     dimension: "campaign value",
     coreBelief: "Position matters more than today's result.",
     question: "What game are we really playing?",
@@ -52,7 +52,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
   },
   empathy: {
     name: "Empathy",
-    cogFunction: "Intent",
+    cogFunction: "Trust",
     dimension: "intent posterior",
     coreBelief: "Behavior only makes sense once incentives are understood.",
     question: "Why are they acting this way?",
@@ -63,7 +63,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
   },
   probe: {
     name: "EVI",
-    cogFunction: "Learning",
+    cogFunction: "Probe",
     dimension: "information gain",
     coreBelief: "Information is usually worth more than conviction.",
     question: "What small action would teach us the most?",
@@ -74,7 +74,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
   },
   risk: {
     name: "Risk",
-    cogFunction: "Survival",
+    cogFunction: "Hedge",
     dimension: "downside exposure",
     coreBelief: "Survival is a prerequisite for victory.",
     question: "What happens if we're wrong?",
