@@ -121,6 +121,7 @@ async function init() {
   $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction}</span>`).join("");
   renderProvenance();
   renderCast();
+  armTableauReveal();
   $("#run-btn").addEventListener("click", () => run());
   $("#speed-btn").addEventListener("click", () => {
     state.speed = state.speed >= 4 ? 1 : state.speed * 2;
@@ -1267,8 +1268,11 @@ function renderCast() {
       `<span class="tb-cp-msg">“${c.message}”</span><span class="tb-cp-note">${c.note}</span></div>` +
     `<div class="tb-arrow">↓ five lenses score the move, in parallel</div>` +
     `<div class="tb-lenses">${voteRows}</div>` +
-    `<div class="tb-arrow">↓ the Arbiter weighs the terrain, not the argument</div>` +
-    `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>`;
+    `<div class="tb-weighing">⟳ the council is split — the Arbiter weighs the terrain…</div>` +
+    `<div class="tb-decision">` +
+      `<div class="tb-arrow">↓ not by who argued best</div>` +
+      `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
+    `</div>`;
 
   // The consequence: the probe broke the bluff, so the offer on the table climbed.
   const steps = c.trajectory.map((s, i) =>
@@ -1284,6 +1288,45 @@ function renderCast() {
       `<span class="cq-win"><b>$3,000</b> Synod closes</span>` +
       `<span class="cq-lose"><b>$0</b> a single agent never probes — bluffed, walks</span>` +
     `</div>`;
+}
+
+/**
+ * The pre-verdict hesitation beat: when the council scene scrolls into view, the
+ * five votes reveal one by one, the Arbiter "weighs the terrain" for a moment, then
+ * the verdict stamps in. Makes the decision feel arrived-at, not computed. Pure
+ * theater — skipped under reduced-motion or without IntersectionObserver (static).
+ */
+function armTableauReveal() {
+  const scene = $("#scene-council");
+  const tableau = $("#council-tableau");
+  if (!scene || !tableau) return;
+  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (reduced || !("IntersectionObserver" in window)) return; // leave fully visible
+  tableau.classList.add("tb-anim");
+  $("#consequence")?.classList.add("tb-anim");
+  const io = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    io.disconnect();
+    playTableau();
+  }, { threshold: 0.3 });
+  io.observe(scene);
+}
+
+function playTableau() {
+  const t = $("#council-tableau");
+  if (!t) return;
+  const lenses = [...t.querySelectorAll(".tb-lens")];
+  const base = 250, step = 170;
+  lenses.forEach((el, i) => setTimeout(() => el.classList.add("show"), base + i * step));
+  const afterVotes = base + lenses.length * step + 250;
+  const weigh = t.querySelector(".tb-weighing");
+  const decision = t.querySelector(".tb-decision");
+  setTimeout(() => weigh?.classList.add("show"), afterVotes);
+  setTimeout(() => {
+    weigh?.classList.remove("show");
+    decision?.classList.add("show");
+    $("#consequence")?.classList.add("show");
+  }, afterVotes + 1000);
 }
 
 function renderProvenance() {

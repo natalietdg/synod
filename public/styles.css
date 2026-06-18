@@ -158,6 +158,22 @@ body {
 .tb-out-win b { display: block; font-family: var(--mono); font-size: 1.5rem; color: var(--good); }
 @media (max-width: 620px) { .tb-lens { grid-template-columns: 5rem 1fr; } .tb-q { display: none; } .tb-outcome { grid-template-columns: 1fr; } }
 
+/* Pre-verdict hesitation beat — votes reveal, Arbiter weighs, verdict stamps in */
+.tb-weighing { display: none; }
+.tableau.tb-anim .tb-lens { opacity: 0; transform: translateY(7px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.tableau.tb-anim .tb-lens.show { opacity: 1; transform: none; }
+.tableau.tb-anim .tb-decision { opacity: 0; transition: opacity 0.45s ease; }
+.tableau.tb-anim .tb-decision.show { opacity: 1; }
+.tableau.tb-anim .tb-decision.show .tb-verdict { animation: verdict-in 0.45s cubic-bezier(0.34,1.56,0.64,1) both; }
+.tb-weighing.show {
+  display: block; text-align: center; padding: 0.7rem;
+  font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.06em; color: var(--accent-bright);
+  animation: weigh-pulse 1s ease-in-out infinite;
+}
+@keyframes weigh-pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+.consequence.tb-anim { opacity: 0; transition: opacity 0.5s ease; }
+.consequence.tb-anim.show { opacity: 1; }
+
 /* Consequence — the probe broke the bluff, so the offer climbed (real numbers) */
 .consequence { margin-top: 1.6rem; }
 .cq-title { text-align: center; font-size: 0.85rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
