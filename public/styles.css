@@ -50,6 +50,22 @@ body {
 .class-strip .cs-mid { color: var(--muted); letter-spacing: 0.14em; }
 .class-strip #provider-badge { color: var(--muted); }
 
+/* Tabs — one focused view at a time; sticky so you can switch anytime */
+.tabs {
+  display: flex; gap: 0.4rem; justify-content: center;
+  padding: 0.55rem 1.5rem; background: var(--bg); border-bottom: 1px solid var(--line);
+  position: sticky; top: 27px; z-index: 25;
+}
+.tab {
+  background: transparent; color: var(--muted);
+  border: none; border-bottom: 2px solid transparent; border-radius: 0;
+  font-family: var(--mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 0.45rem 1.2rem; cursor: pointer;
+}
+.tab:hover { background: transparent; color: var(--ink); }
+.tab.active { color: var(--accent-bright); border-bottom-color: var(--accent-bright); }
+.tab-panel { animation: pop 0.3s ease; }
+
 /* Hero — the landing. Full viewport, centered, one scroll cue. */
 .hero {
   min-height: calc(100vh - 28px);
@@ -161,8 +177,6 @@ body {
   display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
   padding: 0.7rem 1.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   background: var(--panel);
-  position: sticky; top: 28px; z-index: 20;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
   max-width: 1280px; margin: 0 auto;
 }
 .cb-label {
@@ -674,7 +688,6 @@ a.stat:hover { background: var(--panel-2); }
   display: flex; align-items: center; gap: 0.15rem;
   padding: 0.45rem 1.5rem; border-top: 1px solid var(--line-soft);
   background: var(--panel); overflow-x: auto;
-  position: sticky; top: 82px; z-index: 19;
   max-width: 1280px; margin: 0 auto;
 }
 .rail-round {

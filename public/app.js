@@ -129,6 +129,7 @@ async function init() {
   $("#guide-btn").addEventListener("click", startTour);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") endTour(); });
   setupComposer();
+  setupTabs();
   buildSpine();
   // The user taking the wheel pauses auto-follow until the next run.
   for (const evt of ["wheel", "touchstart"]) {
@@ -147,6 +148,31 @@ async function init() {
     updateScenarioCard();
     setTimeout(() => run({ auto: true }), 700);
   }
+}
+
+/** Tabs: one focused view at a time (Experience / Evidence / Architecture). */
+function setupTabs() {
+  const tabs = [...document.querySelectorAll(".tab")];
+  const panels = [...document.querySelectorAll(".tab-panel")];
+  const show = (name) => {
+    tabs.forEach((t) => t.classList.toggle("active", t.dataset.tab === name));
+    panels.forEach((p) => p.classList.toggle("hidden", p.dataset.panel !== name));
+  };
+  tabs.forEach((t) => t.addEventListener("click", () => show(t.dataset.tab)));
+  // Anchors into evidence/architecture (e.g. the hero stat chips) switch tab first.
+  document.querySelectorAll('a[href^="#exhibit"], a[href="#provenance"]').forEach((a) => {
+    a.addEventListener("click", () => {
+      const panel = document.getElementById(a.getAttribute("href").slice(1))?.closest(".tab-panel");
+      if (panel) show(panel.dataset.panel);
+    });
+  });
+  state.showTab = show;
+}
+
+/** Reveal whichever tab contains an element (used by the tour). */
+function ensureTabVisible(elm) {
+  const panel = elm && elm.closest && elm.closest(".tab-panel");
+  if (panel && state.showTab) state.showTab(panel.dataset.panel);
 }
 
 /** The composer: live-label the dials and run the council on a custom counterparty. */
@@ -1405,6 +1431,7 @@ function showTourStep(i, dir) {
   const target = s.sel();
   if (!target) return showTourStep(i + dir, dir); // skip stops whose artifact is absent
   tour.i = i;
+  ensureTabVisible(target); // a step may live in a non-active tab
   s.enter?.(target);
   target.scrollIntoView({ behavior: "smooth", block: "center" });
 

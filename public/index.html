@@ -33,23 +33,20 @@
         </div>
         <p class="stat-caption">n=10 seeded, reproducible runs · deterministic engine · signed receipts</p>
       </div>
-      <a class="scroll-cue" href="#scene-council">↓ watch a real round decide</a>
+      <a class="scroll-cue" href="#tabs">↓ watch a real round decide</a>
     </header>
 
-    <!-- ====== 2 · THE PROBLEM ====== -->
-    <section class="scene" id="scene-problem">
-      <div class="scene-inner">
-        <span class="scene-kicker">The problem</span>
-        <h2 class="scene-h">A bluff beats a single mind.</h2>
-        <p class="scene-p">
-          A deceptive buyer claims three competing offers and a hard budget cap. A single-stance
-          agent takes it at face value, pushes harder, and the deal dies — <b class="bad-num">$0</b>.
-          It never thought to <em>check</em>.
-        </p>
-      </div>
-    </section>
+    <!-- ====== TABS — one focused view at a time ====== -->
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="experience">Experience</button>
+      <button class="tab" data-tab="evidence">Evidence</button>
+      <button class="tab" data-tab="architecture">Architecture</button>
+    </nav>
 
-    <!-- ====== 3 · THE COUNCIL ====== -->
+    <!-- ===== TAB · EXPERIENCE ===== -->
+    <div class="tab-panel" data-panel="experience">
+
+    <!-- THE COUNCIL -->
     <section class="scene scene-alt" id="scene-council">
       <div class="scene-inner">
         <span class="scene-kicker">Watch it decide</span>
@@ -63,7 +60,7 @@
       </div>
     </section>
 
-    <!-- ====== 4 · THE STAGE (interactive) ====== -->
+    <!-- THE STAGE (interactive) -->
     <section class="stage" id="stage">
       <div class="scene-inner stage-head">
         <span class="scene-kicker">Watch it decide — or test it yourself</span>
@@ -85,7 +82,7 @@
            Only present when the server runs on Qwen; costs tokens per submit. -->
       <div id="freetext" class="composer hidden">
         <span class="cmp-lbl">DESCRIBE THE COUNTERPARTY <span class="ft-warn">⚠ live Qwen · ~9 model calls per submit</span></span>
-        <textarea id="ft-text" class="ft-text" rows="2" placeholder="e.g. Buyer claims three competing quotes and a hard budget cap, but keeps asking about onboarding and won't put the other offers in writing…"></textarea>
+        <textarea id="ft-text" class="ft-text" rows="2" placeholder="e.g. We're aligned on most of the proposal — it really comes down to budget timing on our side. We'd like to move this quarter if we can land a little closer to $9k. (the best deceptions are mostly true)"></textarea>
         <div class="cmp-dials">
           <label class="cmp-dial">their offer <output id="ft-off-out">$9,000</output>
             <input id="ft-off" type="range" min="6000" max="13000" step="250" value="9000" /></label>
@@ -137,23 +134,11 @@
         </section>
       </main>
     </section>
+    </div><!-- /experience -->
 
-    <!-- ====== 5 · HOW IT DEPLOYS ====== -->
-    <div class="workflow">
-      <span class="wf-lbl">HOW A DEAL DESK USES IT</span>
-      <div class="wf-flow">
-        <span class="wf-step">counterparty move / RFP</span>
-        <span class="wf-arr">→</span>
-        <span class="wf-step wf-core">Synod council <em>(one MCP call)</em></span>
-        <span class="wf-arr">→</span>
-        <span class="wf-step">recommended action <em>+ dissent on record + signed receipt</em></span>
-        <span class="wf-arr">→</span>
-        <span class="wf-step">human approves &amp; sends</span>
-      </div>
-      <span class="wf-note">the council is the negotiator; the desk keeps the gavel. Vendor renewals · procurement floors · adversarial RFPs · M&amp;A.</span>
-    </div>
+    <!-- ===== TAB · EVIDENCE ===== -->
+    <div class="tab-panel hidden" data-panel="evidence">
 
-    <!-- ====== 6 · THE PROOF ====== -->
     <section class="ab-section" id="exhibit-a">
       <h2 class="sec-head"><span class="sec-no">03</span> Exhibit A — strong single agent vs Synod
         <span class="hint">identical Game Master · n=10 seeds per type · mean ± σ surplus captured</span></h2>
@@ -190,14 +175,33 @@
         evaluation · src/gm/holdout.ts · GET /api/holdout?lenses=1</span>
       </p>
     </section>
+    </div><!-- /evidence -->
+
+    <!-- ===== TAB · ARCHITECTURE ===== -->
+    <div class="tab-panel hidden" data-panel="architecture">
+
+    <div class="workflow">
+      <span class="wf-lbl">HOW A DEAL DESK USES IT</span>
+      <div class="wf-flow">
+        <span class="wf-step">counterparty move / RFP</span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step wf-core">Synod council <em>(one MCP call)</em></span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step">recommended action <em>+ dissent on record + signed receipt</em></span>
+        <span class="wf-arr">→</span>
+        <span class="wf-step">human approves &amp; sends</span>
+      </div>
+      <span class="wf-note">the council is the negotiator; the desk keeps the gavel. Vendor renewals · procurement floors · adversarial RFPs · M&amp;A.</span>
+    </div>
 
     <section class="ab-section" id="provenance">
-      <details class="prov-details">
-        <summary><span class="sec-no">06</span> Provenance
-          <span class="hint">who authored each side · what's deterministic · what commit — click to open</span></summary>
+      <details class="prov-details" open>
+        <summary><span class="sec-no">·</span> Provenance
+          <span class="hint">who authored each side · what's deterministic · what commit</span></summary>
         <div id="provenance-card" class="prov-card"></div>
       </details>
     </section>
+    </div><!-- /architecture -->
 
     <footer class="colophon">
       <span>SYNOD — a society that divides judgment</span>
