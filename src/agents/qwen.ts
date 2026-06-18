@@ -17,6 +17,19 @@ import type { BaselineDecision, BaselinePersona, DeliberationAgents, RoundInput 
 
 const clamp = (x: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, x));
 
+/** Parse JSON that may be wrapped in a thinking-mode preamble: try direct, then
+ *  fall back to the first balanced {...} block. */
+function looseJson(s: string): unknown {
+  try {
+    return JSON.parse(s);
+  } catch {
+    const a = s.indexOf("{");
+    const b = s.lastIndexOf("}");
+    if (a >= 0 && b > a) return JSON.parse(s.slice(a, b + 1));
+    throw new Error("no JSON object in model response");
+  }
+}
+
 const actionScoreSchema = z.object(
   Object.fromEntries(ACTIONS.map((a) => [a, z.number()])) as Record<ActionId, z.ZodNumber>,
 );
@@ -85,8 +98,10 @@ export class QwenAgents implements DeliberationAgents {
   }
 
   /** Structured call via native function calling: the zod schema becomes the tool's
-   *  JSON Schema, `tool_choice` forces the call, and the same zod schema validates
-   *  what comes back. One schema, enforced at both ends. */
+   *  JSON Schema and the same zod schema validates what comes back — one schema, both
+   *  ends. `tool_choice: "auto"` (NOT a forced object): Qwen's thinking mode rejects
+   *  forced/object tool_choice, and with a single submit-tool the model calls it
+   *  anyway. The parser tolerates a thinking preamble around the JSON. */
   private async complete<T>(
     system: string,
     user: string,
@@ -104,15 +119,15 @@ export class QwenAgents implements DeliberationAgents {
           parameters: zodToJsonSchema(schema) as Record<string, unknown>,
         },
       }],
-      tool_choice: { type: "function", function: { name: opts.name } },
+      tool_choice: "auto",
       messages: [
-        { role: "system", content: system },
+        { role: "system", content: `${system} Respond ONLY by calling ${opts.name}.` },
         { role: "user", content: user },
       ],
     });
     const msg = res.choices[0]?.message;
-    const args = msg?.tool_calls?.[0]?.function?.arguments ?? msg?.content ?? "{}";
-    return schema.parse(JSON.parse(args));
+    const raw = msg?.tool_calls?.[0]?.function?.arguments ?? msg?.content ?? "{}";
+    return schema.parse(looseJson(raw));
   }
 
   /** One retry on transient failure (malformed tool call, parse error, blip) —

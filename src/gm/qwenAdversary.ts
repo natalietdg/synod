@@ -214,15 +214,16 @@ export class QwenAdversaryGM implements CounterpartyEngine {
           parameters: zodToJsonSchema(turnSchema) as Record<string, unknown>,
         },
       }],
-      tool_choice: { type: "function", function: { name: "play_turn" } },
+      tool_choice: "auto", // Qwen thinking mode rejects forced/object tool_choice
       messages: [
-        { role: "system", content: this.brief() },
+        { role: "system", content: `${this.brief()} Respond ONLY by calling play_turn.` },
         { role: "user", content: user },
       ],
     });
     const msg = res.choices[0]?.message;
-    const args = msg?.tool_calls?.[0]?.function?.arguments ?? msg?.content ?? "{}";
-    return turnSchema.parse(JSON.parse(args));
+    const raw = msg?.tool_calls?.[0]?.function?.arguments ?? msg?.content ?? "{}";
+    const a = raw.indexOf("{"), b = raw.lastIndexOf("}");
+    return turnSchema.parse(JSON.parse(a >= 0 && b > a ? raw.slice(a, b + 1) : raw));
   }
 
   private concessionSignals(movedUp: number, gap: number): string[] {
