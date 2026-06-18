@@ -460,6 +460,19 @@ main > .column { min-width: 0; }
   border-left: 2px solid var(--accent-bright);
 }
 .cr-revision b { color: var(--accent-bright); font-size: 0.72rem; }
+
+/* The challenge as an explicit reaction thread + turning point */
+.cr-thread { font-size: 0.86rem; color: var(--muted); margin-bottom: 0.5rem; }
+.cr-thread-x, .cr-thread-d { font-weight: 700; }
+.cr-turn {
+  margin-top: 0.5rem; padding: 0.4rem 0.6rem; font-size: 0.8rem; line-height: 1.5;
+  border-left: 2px solid var(--line);
+}
+.cr-turn b { color: var(--ink); }
+.cr-moved { background: rgba(201,162,39,0.1); border-left-color: var(--accent-bright); }
+.cr-moved b { color: var(--accent-bright); }
+.cr-held { background: rgba(255,255,255,0.02); border-left-color: var(--good); }
+.cr-held b { color: var(--good); }
 .cr-verdict {
   margin-top: 0.35rem; text-align: center; padding: 0.3rem 0;
   font-family: var(--mono); font-size: 0.63rem; font-weight: 600;

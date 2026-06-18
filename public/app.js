@@ -657,13 +657,13 @@ function renderVoteSplit() {
   const voteTip = "Lenses score independently — cross-contamination is a known failure mode in expert committees. The Arbiter resolves disagreement at synthesis time, not during scoring.";
   if (isUnanimous) {
     splitEl.innerHTML =
-      `<span class="split-lbl">VOTE${info(voteTip)}</span> ` +
+      `<span class="split-lbl">5 INDEPENDENT READS${info(voteTip)}</span> ` +
       `<span class="split-unanimous">unanimous — all five favour ${label(sorted[0][0])}</span>`;
   } else {
     const parts = sorted
       .map(([action, count]) => `<b>${count}</b>&thinsp;${label(action)}`)
       .join(` <span class="split-dot">·</span> `);
-    splitEl.innerHTML = `<span class="split-lbl">VOTE${info(voteTip)}</span> ${parts}`;
+    splitEl.innerHTML = `<span class="split-lbl">5 INDEPENDENT READS${info(voteTip)}</span> ${parts} <span class="hint">— the sharpest pair clash below</span>`;
   }
 
   // Insert directly after the lenses container
@@ -719,27 +719,42 @@ function renderChallenge(c) {
   // Causal concession: the defense event carries original → revised score on the
   // contested action. Update our stored position so the verdict math matches the
   // post-dialogue council the engine actually scored.
-  let revisionHtml = null;
+  // Apply the causal concession to the stored position so the verdict math matches
+  // the post-exchange council (the cr-turn line below shows it to the reader).
   if (c.revisedScore !== undefined && c.contested) {
     const defStored = state.round.positions[c.from];
     if (defStored) defStored.scores[c.contested] = c.revisedScore;
-    revisionHtml =
-      `<div class="cr-revision">concession under challenge · ` +
-      `${c.originalScore.toFixed(2)} → <b>${c.revisedScore.toFixed(2)}</b> on ${label(c.contested)}</div>`;
   }
 
   const leftBrief  = makeBrief(first.from, challengerM, first.text, "contests", contestedAction, null);
-  const rightBrief = makeBrief(c.from, defenderM, c.text, "defends", contestedAction, revisionHtml);
+  const rightBrief = makeBrief(c.from, defenderM, c.text, "defends", contestedAction, null);
 
   const briefs = el("div", "cr-briefs");
   briefs.appendChild(leftBrief);
   briefs.appendChild(rightBrief);
 
+  // Make the reaction explicit: who challenges whom, and how the defender reacts —
+  // this is the ONE genuine agent-to-agent exchange (the five reads above are
+  // independent by design). The concession/hold is the turning point.
+  const header = el("div", "cr-thread",
+    `<span class="cr-thread-x" style="color:${LENS_COLORS[first.from]}">${challengerM.cogFunction}</span>` +
+    ` challenges ` +
+    `<span class="cr-thread-d" style="color:${LENS_COLORS[c.from]}">${defenderM.cogFunction}</span>` +
+    ` on “${contestedAction}” <span class="hint">— the round's sharpest split</span>`);
+
+  const reacted = c.revisedScore !== undefined && c.contested;
+  const turn = el("div", `cr-turn ${reacted ? "cr-moved" : "cr-held"}`,
+    reacted
+      ? `↳ <b>${defenderM.cogFunction} concedes ground</b> — ${c.originalScore.toFixed(2)} → ${c.revisedScore.toFixed(2)} on ${label(c.contested)}; the engine scores the post-exchange council`
+      : `↳ <b>${defenderM.cogFunction} holds</b> — the terrain backs the call; the challenge is absorbed`);
+
   const verdictEl = el("div", "cr-verdict");
   verdictEl.textContent = "—";
 
   const record = el("div", "challenge-record");
+  record.appendChild(header);
   record.appendChild(briefs);
+  record.appendChild(turn);
   record.appendChild(verdictEl);
 
   const anchor = state.round.splitEl ?? state.round.lenses;
