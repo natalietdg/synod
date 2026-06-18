@@ -41,11 +41,13 @@ worldview as its character.
 
 | Lens | Owns the question | Math |
 |---|---|---|
-| **Battle** | What do we gain *now*? | immediate utility (myopic capture) |
-| **War** | What game are we really playing? | long-horizon utility (capture vs. walk risk) |
-| **Empathy** | Why are they acting this way? | best response to the Bayesian belief |
+| **Pressure** | What move creates advantage *now*? | immediate utility (myopic capture) |
+| **Frame** | What game are we really playing? | long-horizon utility (capture vs. walk risk) |
+| **Trust** | Why are they acting this way? | best response to the Bayesian belief |
 | **Probe** | What should we learn first? | value of information — probe iff EVI > cost |
-| **Risk** | What kills us if we're wrong? | minimax / downside (walk exposure) |
+| **Hedge** | What kills us if we're wrong? | minimax / downside (walk exposure) |
+
+*(Internally the five are typed `battle/war/empathy/probe/risk`; the instinct names above are the display identity.)*
 
 ## How it works (one negotiation)
 
@@ -84,7 +86,7 @@ Mean surplus captured; σ = standard deviation across seeds.
 The gain concentrates on the adversarial types. A single agent collapses competing
 considerations into one stance — the deceptive type's bluff makes it walk; the soft-floor
 type's firmness pushes it past the reservation. Synod keeps the dissenting lens explicit:
-Risk stays visible even when Battle is weighted highest, and Probe fires when EVI justifies it.
+Hedge stays visible even when Pressure is weighted highest, and Probe fires when EVI justifies it.
 
 The Relationship type ties by design: easy, honest counterparties don't reward complexity.
 The ±$0 variance on Deceptive reflects fully deterministic outcomes — the bluff either
@@ -100,11 +102,11 @@ Remove one component at a time. If removal doesn't hurt, the table says so.
 | − causal challenge | $8,968 | ±$0 | 100% | $3,000 |
 | − probe trigger | $7,384 | **−$1,584** | 100% | $1,423 |
 | uniform Arbiter | $8,923 | −$45 | 100% | $3,000 |
-| single lens — Intent | $6,466 | −$2,502 | 100% | $1,423 |
-| single lens — Gain | $2,941 | **−$6,027** | **33%** | $0 |
-| single lens — Position | $8,354 | −$614 | 100% | $2,410 |
-| single lens — Learning | $8,968 | ±$0 | 100% | $3,000 |
-| single lens — Survival | $8,832 | −$136 | 100% | $2,832 |
+| single lens — Trust | $6,466 | −$2,502 | 100% | $1,423 |
+| single lens — Pressure | $2,941 | **−$6,027** | **33%** | $0 |
+| single lens — Frame | $8,354 | −$614 | 100% | $2,410 |
+| single lens — Probe | $8,968 | ±$0 | 100% | $3,000 |
+| single lens — Hedge | $8,832 | −$136 | 100% | $2,832 |
 
 Three findings, two of them nulls we report as found:
 
@@ -112,7 +114,7 @@ Three findings, two of them nulls we report as found:
    deceptive scenario to $1,423.
 2. **The council's value is ex-ante robustness, not hindsight genius.** Collapsing to a
    single worldview spans $2,941–$8,968 depending on which lens you bet on — betting wrong
-   costs up to 67% of achievable surplus and craters the deal rate to 33%. The Learning
+   costs up to 67% of achievable surplus and craters the deal rate to 33%. The Probe
    lens happens to win *on this suite*; you only know that in hindsight. The full council
    matches the best single lens without knowing in advance which worldview the counterparty
    will reward — the same argument as ensembles vs. the best-model-in-hindsight.
@@ -149,12 +151,12 @@ all fifty negotiations. The world built to break the probe rule is the one the c
 won hardest — and the designed tie tied, which is what an honest harness looks like.
 Run it: `GET /api/holdout`.
 
-### "Why isn't Synod just the Learning lens?"
+### "Why isn't Synod just the Probe lens?"
 
-The sharpest reading of Exhibit B: on the original suite, a Learning-only council ties
+The sharpest reading of Exhibit B: on the original suite, a Probe-only council ties
 the full council ($8,968). Fair question. The hold-out suite answers it empirically:
 
-| World | Council | Intent | Gain | Position | Learning | Survival |
+| World | Council | Trust | Pressure | Frame | Probe | Hedge |
 |---|--:|--:|--:|--:|--:|--:|
 | Iron procurement | $1,000 | $933 | $1,000 | $1,000 | $1,000 | $1,000 |
 | Hair-trigger founder | $2,800 | $2,800 | **$0 (0%)** | $2,800 | $2,800 | $2,800 |
@@ -166,11 +168,11 @@ the full council ($8,968). Fair question. The hold-out suite answers it empirica
 Three observations, including the honest one:
 
 1. **The council is first on total and never catastrophic.** Every single-lens arm
-   except Learning has at least one wiped-out world; Gain has three.
-2. **Learning is genuinely strong** ($13,055, no wipeouts) — its information-theoretic
-   scoring is the most robust single worldview. The council still beats it where its
-   own instinct is the trap (Probe-punisher: $3,396 vs $3,305) and never loses to it.
-3. **Single lenses can win individual worlds** — Position takes Stonewall by $229.
+   except Probe has at least one wiped-out world; Pressure has three.
+2. **Probe (the information lens) is genuinely strong** ($13,055, no wipeouts) — its
+   information-theoretic scoring is the most robust single worldview. The council still
+   beats it where its own instinct is the trap (Probe-punisher: $3,396 vs $3,305) and never loses.
+3. **Single lenses can win individual worlds** — Frame takes Stonewall by $229.
    No lens dominates across worlds, and which one wins is only knowable in hindsight.
 
 That's the answer: **zero hindsight regret.** Across both suites the council matches or
@@ -200,7 +202,7 @@ property explains live human play: a player on a "relationship" brief who fabric
 competitor leverage and stonewalls is *behaving* deceptively, and the posterior tracks
 the behaviour — the belief is over conduct, not name tags, and verbal justifications
 are deliberately inadmissible (cheap-talk immunity: words move the council's play via
-the Empathy read; only costly action moves what it believes).
+the Trust read; only costly action moves what it believes).
 
 ## Run it
 
@@ -234,7 +236,7 @@ cp .env.example .env   # set LLM_PROVIDER=qwen and DASHSCOPE_API_KEY=...
 npm run dev
 ```
 
-Live mode puts Qwen behind every reasoning surface — the Empathy read, all five lens
+Live mode puts Qwen behind every reasoning surface — the Trust read, all five lens
 positions, the challenge/defense dialogue (including the concession decision), and the
 Arbiter's terrain reading. The deterministic engine, the Quant, and the belief update
 never call an LLM — reproducibility is the point (spec §5). **For judging, run live**:
