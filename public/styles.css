@@ -38,43 +38,89 @@ body {
 /* Microlabel — the system's smallest voice: mono, uppercase, tracked */
 .hint { font-family: var(--sans); font-size: 0.72rem; color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0; font-style: normal; }
 
-/* ====== MASTHEAD ====== */
-.masthead { border-bottom: 1px solid var(--line); }
-
+/* ====== STORYTELLING SCROLL ====== */
 .class-strip {
   display: flex; justify-content: space-between; align-items: center; gap: 1rem;
   padding: 0.4rem 1.5rem;
   font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase;
   color: var(--accent); background: rgba(201,162,39,0.06);
   border-bottom: 1px solid rgba(201,162,39,0.18);
+  position: sticky; top: 0; z-index: 30;
 }
 .class-strip .cs-mid { color: var(--muted); letter-spacing: 0.14em; }
 .class-strip #provider-badge { color: var(--muted); }
 
-.mast-main {
-  display: grid; grid-template-columns: auto 1fr; gap: 3rem; align-items: start;
-  padding: 2rem 1.5rem 1.6rem;
-  max-width: 1280px; margin: 0 auto;
+/* Hero — the landing. Full viewport, centered, one scroll cue. */
+.hero {
+  min-height: calc(100vh - 28px);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 2rem 1.5rem 4rem; position: relative;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 35%, rgba(201,162,39,0.07), transparent 70%),
+    linear-gradient(var(--bg), var(--bg));
 }
-.mast-brand h1 {
+.hero-inner { max-width: 760px; }
+.hero h1 {
   margin: 0; font-family: var(--serif); font-weight: 700;
-  font-size: 3.4rem; letter-spacing: 0.16em; line-height: 0.95;
-  color: var(--ink);
+  font-size: 5rem; letter-spacing: 0.2em; line-height: 1; color: var(--ink);
 }
-.mast-brand .tagline {
-  margin: 0.6rem 0 0; font-family: var(--serif); font-style: italic; font-weight: 400;
-  color: var(--muted); font-size: 0.98rem; line-height: 1.45;
+.hero .tagline {
+  margin: 1rem 0 1.8rem; font-family: var(--serif); font-style: italic; font-weight: 400;
+  color: var(--muted); font-size: 1.35rem; line-height: 1.45;
 }
-.mast-brand .tagline em { color: var(--accent-bright); font-style: italic; }
-
-.mast-claim { max-width: 640px; justify-self: end; }
+.hero .tagline em { color: var(--accent-bright); font-style: italic; }
 .claim {
-  margin: 0 0 1rem; font-size: 1.02rem; line-height: 1.6; color: var(--ink);
+  margin: 0 auto 1.6rem; max-width: 620px; font-size: 1.05rem; line-height: 1.65; color: var(--ink);
   font-weight: 400;
 }
 .claim strong { color: var(--accent-bright); font-weight: 600; }
 
-.stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--line); }
+.scroll-cue {
+  position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; animation: cue-bob 2s ease-in-out infinite;
+}
+.scroll-cue:hover { color: var(--accent-bright); }
+@keyframes cue-bob { 0%,100% { transform: translateX(-50%) translateY(0);} 50% { transform: translateX(-50%) translateY(5px);} }
+
+/* Scenes — the narrative beats between hero and stage. */
+.scene { padding: 5rem 1.5rem; border-bottom: 1px solid var(--line-soft); }
+.scene-alt { background: var(--panel); }
+.scene-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+.scene-kicker {
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+}
+.scene-h {
+  font-family: var(--serif); font-weight: 700; font-size: 2.2rem; line-height: 1.15;
+  margin: 0.8rem 0 1rem; color: var(--ink);
+}
+.scene-p { font-size: 1.05rem; line-height: 1.7; color: var(--muted); margin: 0 auto; max-width: 620px; }
+.scene-p b { color: var(--ink); }
+.scene-p .bad-num { color: var(--bad); font-family: var(--mono); }
+.scene-p em { color: var(--accent-bright); font-style: italic; }
+
+/* Cast — the five lenses introduced */
+.cast-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.7rem;
+  margin-top: 2rem; text-align: left;
+}
+.cast-card { border: 1px solid var(--line); border-top: 2px solid var(--muted); background: var(--bg); padding: 0.7rem 0.8rem; }
+.cast-card[data-d="empathy"] { border-top-color: var(--empathy); }
+.cast-card[data-d="battle"] { border-top-color: var(--battle); }
+.cast-card[data-d="war"] { border-top-color: var(--war); }
+.cast-card[data-d="probe"] { border-top-color: var(--probe); }
+.cast-card[data-d="risk"] { border-top-color: var(--risk); }
+.cast-name { font-weight: 700; font-size: 0.92rem; color: var(--ink); }
+.cast-q { font-family: var(--serif); font-style: italic; font-size: 0.84rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.4; }
+
+/* Stage — the interactive section */
+.stage { padding-top: 3.5rem; border-bottom: 1px solid var(--line-soft); }
+.stage-head { text-align: center; margin-bottom: 1.6rem; }
+.stage-head .scene-h { font-size: 1.8rem; margin-bottom: 0.6rem; }
+
+.stat-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--line); text-align: left; }
 .stat { padding: 0.65rem 0.85rem; border-right: 1px solid var(--line); background: var(--panel); }
 .stat:last-child { border-right: none; }
 .stat b {
@@ -85,11 +131,12 @@ body {
 .stat-caption { margin: 0.5rem 0 0; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.02em; }
 
 .convene-bar {
-  display: flex; align-items: center; gap: 0.7rem;
-  padding: 0.7rem 1.5rem; border-top: 1px solid var(--line-soft);
+  display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+  padding: 0.7rem 1.5rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
   background: var(--panel);
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: 28px; z-index: 20;
   box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  max-width: 1280px; margin: 0 auto;
 }
 .cb-label {
   font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase;
@@ -539,7 +586,8 @@ a.stat:hover { background: var(--panel-2); }
   display: flex; align-items: center; gap: 0.15rem;
   padding: 0.45rem 1.5rem; border-top: 1px solid var(--line-soft);
   background: var(--panel); overflow-x: auto;
-  position: sticky; top: 2.95rem; z-index: 19;
+  position: sticky; top: 82px; z-index: 19;
+  max-width: 1280px; margin: 0 auto;
 }
 .rail-round {
   font-family: var(--mono); font-size: 0.66rem; font-weight: 700; color: var(--accent);
@@ -738,8 +786,9 @@ a.stat:hover { background: var(--panel-2); }
 
 /* Composer — dial a counterparty nobody pre-authored */
 .composer {
-  padding: 0.8rem 1.5rem; border-top: 1px solid var(--line-soft); background: var(--panel);
+  padding: 0.8rem 1.5rem; border-bottom: 1px solid var(--line-soft); background: var(--panel-2);
   animation: pop 0.25s ease;
+  max-width: 1280px; margin: 0 auto;
 }
 .cmp-lbl {
   display: block; font-family: var(--mono); font-size: 0.6rem; font-weight: 700;

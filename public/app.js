@@ -120,6 +120,7 @@ async function init() {
   updateScenarioCard();
   $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction} <span style="color:var(--muted);font-size:0.65rem">${lens(d).name}</span></span>`).join("");
   renderProvenance();
+  renderCast();
   $("#run-btn").addEventListener("click", () => run());
   $("#speed-btn").addEventListener("click", () => {
     state.speed = state.speed >= 4 ? 1 : state.speed * 2;
@@ -1207,6 +1208,19 @@ async function loadAblation() {
     </tr>`;
   }
   table.innerHTML = head + body;
+}
+
+/** The cast: introduce the five lenses by the question each one owns. */
+function renderCast() {
+  const grid = $("#cast-grid");
+  if (!grid) return;
+  grid.innerHTML = ORDER.map((d) => {
+    const m = lens(d);
+    return `<div class="cast-card" data-d="${d}">` +
+      `<div class="cast-name" style="color:${LENS_COLORS[d]}">${m.cogFunction}</div>` +
+      `<div class="cast-q">${m.question}</div>` +
+    `</div>`;
+  }).join("");
 }
 
 function renderProvenance() {

@@ -10,42 +10,65 @@
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <!-- ====== MASTHEAD — the claim, the proof, the controls ====== -->
-    <header class="masthead">
-      <div class="class-strip">
-        <span>SYNOD · COUNCIL PROCEEDINGS</span>
-        <span class="cs-mid">EVERY DECISION IS A FILED PROCEEDING</span>
-        <span id="provider-badge">…</span>
+    <div class="class-strip">
+      <span>SYNOD · COUNCIL PROCEEDINGS</span>
+      <span class="cs-mid">EVERY DECISION IS A FILED PROCEEDING</span>
+      <span id="provider-badge">…</span>
+    </div>
+
+    <!-- ====== 1 · HERO ====== -->
+    <header class="hero">
+      <div class="hero-inner">
+        <h1>SYNOD</h1>
+        <p class="tagline">Most agent societies divide labor.<br/>This one divides <em>judgment</em>.</p>
+        <p class="claim">
+          Counterparties hide what they really want — and a single-stance negotiator gets
+          bluffed into walking away from a deal worth closing. <strong>Synod is a council of
+          five AI negotiators that decides when to trust, probe, concede, or walk.</strong>
+        </p>
+        <div class="stat-strip">
+          <a class="stat" href="#exhibit-a"><b>$0</b><span>a single agent vs a deceptive counterparty — bluffed, walks away</span></a>
+          <a class="stat" href="#exhibit-a"><b>$3,000</b><span>Synod, same counterparty — probes, disarms the bluff, closes</span></a>
+          <a class="stat" href="#exhibit-b"><b>−$1,584</b><span>what Synod loses without the probe gate — the one decision that wins</span></a>
+        </div>
+        <p class="stat-caption">n=10 seeded, reproducible runs · deterministic engine · signed receipts</p>
       </div>
+      <a class="scroll-cue" href="#scene-problem">↓ see why a single mind loses</a>
+    </header>
 
-      <div class="mast-main">
-        <div class="mast-brand">
-          <h1>SYNOD</h1>
-          <p class="tagline">Most agent societies divide labor.<br/>This one divides <em>judgment</em>.</p>
-        </div>
+    <!-- ====== 2 · THE PROBLEM ====== -->
+    <section class="scene" id="scene-problem">
+      <div class="scene-inner">
+        <span class="scene-kicker">The problem</span>
+        <h2 class="scene-h">A bluff beats a single mind.</h2>
+        <p class="scene-p">
+          A deceptive buyer claims three competing offers and a hard budget cap. A single-stance
+          agent takes it at face value, pushes harder, and the deal dies — <b class="bad-num">$0</b>.
+          It never thought to <em>check</em>.
+        </p>
+      </div>
+    </section>
 
-        <div class="mast-claim">
-          <p class="claim">
-            Counterparties hide what they really want — and a single-stance negotiator gets
-            bluffed into walking away from a deal worth closing. <strong>Synod is a council of
-            five AI negotiators that decides when to trust, probe, concede, or walk.</strong>
-          </p>
-          <div class="stat-strip">
-            <a class="stat" href="#exhibit-a">
-              <b>$0</b>
-              <span>a single agent vs a deceptive counterparty — bluffed, walks away</span>
-            </a>
-            <a class="stat" href="#exhibit-a">
-              <b>$3,000</b>
-              <span>Synod, same counterparty — probes, disarms the bluff, closes</span>
-            </a>
-            <a class="stat" href="#exhibit-b">
-              <b>−$1,584</b>
-              <span>what Synod loses without the probe gate — the one decision that wins</span>
-            </a>
-          </div>
-          <p class="stat-caption">n=10 seeded, reproducible runs · deterministic engine · signed receipts · the rest is evidence below</p>
-        </div>
+    <!-- ====== 3 · THE COUNCIL ====== -->
+    <section class="scene scene-alt" id="scene-council">
+      <div class="scene-inner">
+        <span class="scene-kicker">The idea</span>
+        <h2 class="scene-h">Five worldviews. One judgment.</h2>
+        <p class="scene-p">
+          Synod fields five negotiators, each owning one question the others ignore. A
+          doctrine-free <b>Arbiter</b> weighs them by the terrain — never by who argued best —
+          then a deterministic engine decides when to trust, probe, concede, or walk.
+        </p>
+        <div id="cast-grid" class="cast-grid"></div>
+      </div>
+    </section>
+
+    <!-- ====== 4 · THE STAGE (interactive) ====== -->
+    <section class="stage" id="stage">
+      <div class="scene-inner stage-head">
+        <span class="scene-kicker">Watch it decide — or test it yourself</span>
+        <h2 class="scene-h">The proceedings.</h2>
+        <p class="scene-p">Pick a counterparty and convene the council — or <b>⚙ compose</b> your own and watch the five lenses respond to terrain nobody pre-authored.</p>
       </div>
 
       <div class="convene-bar">
@@ -88,33 +111,34 @@
 
       <!-- Pipeline spine: the data flow, made visible. Lights up as events stream. -->
       <div id="pipeline-rail" class="pipeline-rail hidden" aria-hidden="true"></div>
-    </header>
 
-    <main>
-      <section class="column negotiation">
-        <h2 class="sec-head"><span class="sec-no">01</span> Proceedings</h2>
-        <div id="scenario-card" class="scenario-card"></div>
-        <div id="rounds" class="rounds"></div>
-      </section>
+      <main>
+        <section class="column negotiation">
+          <h2 class="sec-head"><span class="sec-no">01</span> Proceedings</h2>
+          <div id="scenario-card" class="scenario-card"></div>
+          <div id="rounds" class="rounds"></div>
+        </section>
 
-      <section class="column trajectory">
-        <h2 class="sec-head"><span class="sec-no">02</span> Trajectory</h2>
-        <div class="panel">
-          <h3>Lens weights by round <span class="hint">shadow of the Bayesian update</span> <span class="iicon" data-tip="How much influence each lens had that round. The shift between rounds IS the Bayesian update made visible: as belief resolves, the context vector changes, and the Arbiter re-weights accordingly. ↑pp badges mark the lens that gained the most weight versus the prior round.">i</span></h3>
-          <div id="weight-trajectory" class="traj"></div>
-          <div id="legend" class="legend"></div>
-        </div>
-        <div class="panel">
-          <h3>Belief over hidden type <span class="iicon" data-tip="The Council&apos;s running probability estimate of which counterparty type it faces: Relationship-oriented (walks if bullied), Soft-floor (firm real reservation), or Deceptive (hides competitor leverage + real need). Updates each round from the GM&apos;s visible signals.">i</span></h3>
-          <div id="belief-trajectory" class="traj"></div>
-        </div>
-        <div id="terminal-panel" class="panel terminal hidden">
-          <h3>Disposition <span class="hint">hidden type revealed</span></h3>
-          <div id="terminal-body"></div>
-        </div>
-      </section>
-    </main>
+        <section class="column trajectory">
+          <h2 class="sec-head"><span class="sec-no">02</span> Trajectory</h2>
+          <div class="panel">
+            <h3>Lens weights by round <span class="hint">shadow of the Bayesian update</span> <span class="iicon" data-tip="How much influence each lens had that round. The shift between rounds IS the Bayesian update made visible: as belief resolves, the context vector changes, and the Arbiter re-weights accordingly. ↑pp badges mark the lens that gained the most weight versus the prior round.">i</span></h3>
+            <div id="weight-trajectory" class="traj"></div>
+            <div id="legend" class="legend"></div>
+          </div>
+          <div class="panel">
+            <h3>Belief over hidden type <span class="iicon" data-tip="The Council&apos;s running probability estimate of which counterparty type it faces: Relationship-oriented (walks if bullied), Soft-floor (firm real reservation), or Deceptive (hides competitor leverage + real need). Updates each round from the GM&apos;s visible signals.">i</span></h3>
+            <div id="belief-trajectory" class="traj"></div>
+          </div>
+          <div id="terminal-panel" class="panel terminal hidden">
+            <h3>Disposition <span class="hint">hidden type revealed</span></h3>
+            <div id="terminal-body"></div>
+          </div>
+        </section>
+      </main>
+    </section>
 
+    <!-- ====== 5 · HOW IT DEPLOYS ====== -->
     <div class="workflow">
       <span class="wf-lbl">HOW A DEAL DESK USES IT</span>
       <div class="wf-flow">
@@ -129,6 +153,7 @@
       <span class="wf-note">the council is the negotiator; the desk keeps the gavel. Vendor renewals · procurement floors · adversarial RFPs · M&amp;A.</span>
     </div>
 
+    <!-- ====== 6 · THE PROOF ====== -->
     <section class="ab-section" id="exhibit-a">
       <h2 class="sec-head"><span class="sec-no">03</span> Exhibit A — strong single agent vs Synod
         <span class="hint">identical Game Master · n=10 seeds per type · mean ± σ surplus captured</span></h2>
