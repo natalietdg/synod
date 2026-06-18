@@ -505,15 +505,14 @@ function startRound(ev) {
     ? ` <span class="offer-delta ${delta > 0 ? "up" : "dn"}">${delta > 0 ? "↑" : "↓"} ${money(Math.abs(delta))}</span>`
     : "";
 
-  const cp = el("div", "cp-move");
-  const msgEl = el("div", "cp-msg");
+  const cp = el("div", "turn turn-cp");
   cp.innerHTML =
-    `<div class="cp-meta"><span class="who">⇣ inbound · counterparty</span>` +
-    `<span class="offer">${money(price)}${deltaHtml}</span></div>`;
-  cp.appendChild(msgEl);
-  cp.insertAdjacentHTML("beforeend", `<div class="sig">${ev.move.signals.map((s) => `<span class="tagx">${s}</span>`).join("")}</div>`);
-  typewriter(msgEl, ev.move.message);
+    `<div class="turn-head"><span class="turn-who">COUNTERPARTY</span>` +
+    `<span class="turn-meta">offers ${money(price)}${deltaHtml}</span></div>` +
+    `<div class="turn-msg"></div>` +
+    `<div class="sig">${ev.move.signals.map((s) => `<span class="tagx">${s}</span>`).join("")}</div>`;
   card.appendChild(cp);
+  typewriter(cp.querySelector(".turn-msg"), ev.move.message);
   const lenses = el("div", "lenses");
   // Thinking indicator: visible until the first lens card arrives (no council in duel mode)
   let thinking = null;
@@ -1057,12 +1056,35 @@ function renderReceipt(receipt) {
   state.round.decision.appendChild(pre);
 }
 
+/** The council's move, phrased as a negotiator would say it — so the round reads as
+ *  a reply, not an emitted action label. (Cosmetic, like the GM's speaker; the AI is
+ *  in the deliberation above, not in this phrasing.) */
+function councilLine(action, p, feat) {
+  const m = money(p);
+  switch (action) {
+    case "accept": return `Agreed — we have a deal at ${m}.`;
+    case "counter_hard": return `That doesn't work for us. We're holding at ${m}.`;
+    case "counter_soft": return `Let's meet partway — I can come to ${m}.`;
+    case "hold": return `Our position stands at ${m}.`;
+    case "probe": return `Before we talk price — help me understand what's really driving your number.`;
+    case "concede_term": return feat ? `I'll include ${feat} to make this work — at ${m}.` : `I can move on terms, not price — ${m}.`;
+    case "walk": return `I don't think we can bridge this. We'll step away.`;
+    default: return `${label(action)} at ${m}.`;
+  }
+}
+
 function renderCouncilMove(move) {
   if (!state.round) return;
-  const feats = move.ask.features.length ? ` · terms: ${move.ask.features.join(", ")}` : "";
-  const who = state.mode === "duel" ? "YOU send" : "Synod sends";
-  const node = el("div", "council-move", `<span class="lbl">⇡ outbound · ${who}</span> <b>${label(move.action)}</b> @ ${money(move.ask.price)}${feats}`);
+  const p = move.ask.price;
+  const feats = move.ask.features.length ? ` · ${move.ask.features.join(", ")}` : "";
+  const who = state.mode === "duel" ? "YOU" : "SYNOD";
+  const node = el("div", "turn turn-council");
+  node.innerHTML =
+    `<div class="turn-head"><span class="turn-who">${who}</span>` +
+    `<span class="turn-meta"><span class="turn-act">${label(move.action)}</span> @ ${money(p)}${feats}</span></div>` +
+    `<div class="turn-msg"></div>`;
   state.round.card.appendChild(node);
+  typewriter(node.querySelector(".turn-msg"), councilLine(move.action, p, move.ask.features[0]));
   state.round.sentMove = move;
   state.round.stageEls.outbound = node;
   follow(node);
@@ -1416,7 +1438,7 @@ const TOUR_STEPS = [
     more: "A strong single agent gets bluffed and walks; the council probes and closes. Every number on this page is seeded and reproducible." },
   { sel: () => $("#gm-select"), head: "Four ways to run it.",
     more: "Watch the council work · play the counterparty and try to bluff it · duel it on the same seed · or face a live, unscripted AI adversary." },
-  { sel: () => state.round?.card?.querySelector(".cp-move"), head: "They move. The tags are behaviour.",
+  { sel: () => state.round?.card?.querySelector(".turn-cp"), head: "They move. The tags are behaviour.",
     more: "Signal tags — held firm, small concession, revealed — are the only evidence the belief system accepts." },
   { sel: () => state.round?.card?.querySelector(".empathy-broadcast"), head: "It reads conduct, not words.",
     more: "The belief bar moves on price movement, firmness, and reveals — never on talk. A bluffer and an honest buyer can say the same thing; only one will act it." },

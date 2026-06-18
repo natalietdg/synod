@@ -285,20 +285,23 @@ main > .column { min-width: 0; }
 .rh-rule { flex: 1; height: 1px; background: var(--line); align-self: center; }
 .rh-time { font-weight: 400; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
 
-/* Counterparty move — inbound dispatch */
-.cp-move {
-  background: var(--panel-2); border: 1px solid var(--line-soft);
-  border-left: 2px solid var(--muted);
-  padding: 0.55rem 0.8rem 0.6rem; margin-bottom: 0.7rem;
+/* Negotiation turns — the round reads as a dialogue: their line (left) ↔ our line (right) */
+.turn { max-width: 82%; padding: 0.55rem 0.8rem 0.6rem; margin-bottom: 0.7rem; border: 1px solid var(--line-soft); }
+.turn-cp { background: var(--panel-2); border-left: 2px solid var(--muted); margin-right: auto; }
+.turn-council { background: rgba(63,185,80,0.05); border-right: 2px solid var(--good); margin-left: auto; }
+.turn-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.3rem; }
+.turn-council .turn-head { flex-direction: row-reverse; }
+.turn-who {
+  font-family: var(--mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.14em;
 }
-.cp-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.3rem; }
-.cp-move .who {
-  font-family: var(--mono); font-size: 0.62rem; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 0.14em;
-}
-.cp-move .offer { font-family: var(--mono); color: var(--accent-bright); font-weight: 600; font-size: 0.9rem; }
-.cp-msg { font-size: 0.88rem; line-height: 1.55; min-height: 1.4em; }
-.cp-move .sig { margin-top: 0.4rem; }
+.turn-cp .turn-who { color: var(--muted); }
+.turn-council .turn-who { color: var(--good); }
+.turn-meta { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+.turn-council .turn-meta { color: var(--accent-bright); }
+.turn-act { color: var(--muted); border: 1px solid var(--line); padding: 0.02rem 0.3rem; font-size: 0.64rem; }
+.turn-msg { font-size: 0.92rem; line-height: 1.55; min-height: 1.4em; color: var(--ink); }
+.turn-council .turn-msg { font-style: italic; }
+.turn .sig { margin-top: 0.4rem; }
 .tagx {
   display: inline-block; font-family: var(--mono); font-size: 0.62rem;
   background: var(--panel); border: 1px solid var(--line); padding: 0.05rem 0.4rem;
