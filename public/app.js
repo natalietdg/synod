@@ -1201,17 +1201,45 @@ async function loadAblation() {
   box.innerHTML = `<div class="dropbars">${report.rows.map(bar).join("")}</div>`;
 }
 
-/** The cast: introduce the five lenses by the question each one owns. */
+/**
+ * The council vote tableau — the page's hero visual: one real round, deciding.
+ * Counterparty statement → five lens votes (they disagree) → Arbiter → verdict →
+ * outcome. Maps 1:1 to the track brief (decomposition · roles · conflict resolution).
+ * Votes are the canonical deterministic round 1 of the deceptive scenario, verified
+ * against a real run; the engine is frozen, so they hold.
+ */
+const CANON_VOTES = {
+  message: "Where we're landing is about $8,500 — can we make that work?",
+  note: "deceptive counterparty · round 1 · hides competitor leverage",
+  // by doctrine id → that lens's top action this round
+  votes: { empathy: "counter_soft", battle: "counter_hard", war: "concede_term", probe: "probe", risk: "probe" },
+  verdict: "probe",
+};
 function renderCast() {
-  const grid = $("#cast-grid");
-  if (!grid) return;
-  grid.innerHTML = ORDER.map((d) => {
+  const box = $("#council-tableau");
+  if (!box) return;
+  const c = CANON_VOTES;
+  const voteRows = ORDER.map((d) => {
     const m = lens(d);
-    return `<div class="cast-card" data-d="${d}">` +
-      `<div class="cast-name" style="color:${LENS_COLORS[d]}">${m.cogFunction}</div>` +
-      `<div class="cast-q">${m.question}</div>` +
+    const carried = c.votes[d] === c.verdict;
+    return `<div class="tb-lens${carried ? " tb-carried" : ""}" data-d="${d}">` +
+      `<span class="tb-name" style="color:${LENS_COLORS[d]}">${m.cogFunction}</span>` +
+      `<span class="tb-q">${m.question}</span>` +
+      `<span class="tb-vote">${label(c.votes[d])}${carried ? " ◄" : ""}</span>` +
     `</div>`;
   }).join("");
+  box.innerHTML =
+    `<div class="tb-cp"><span class="tb-cp-lbl">COUNTERPARTY</span>` +
+      `<span class="tb-cp-msg">“${c.message}”</span><span class="tb-cp-note">${c.note}</span></div>` +
+    `<div class="tb-arrow">↓ five lenses score the move, in parallel</div>` +
+    `<div class="tb-lenses">${voteRows}</div>` +
+    `<div class="tb-arrow">↓ the Arbiter weighs the terrain, not the argument</div>` +
+    `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
+    `<div class="tb-arrow">↓ the probe disarms the bluff</div>` +
+    `<div class="tb-outcome">` +
+      `<span class="tb-out-lose"><b>$0</b> a single agent — bluffed, walks</span>` +
+      `<span class="tb-out-win"><b>$3,000</b> Synod — closes</span>` +
+    `</div>`;
 }
 
 function renderProvenance() {

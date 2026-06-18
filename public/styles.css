@@ -101,19 +101,43 @@ body {
 .scene-p .bad-num { color: var(--bad); font-family: var(--mono); }
 .scene-p em { color: var(--accent-bright); font-style: italic; }
 
-/* Cast — the five lenses introduced */
-.cast-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.7rem;
-  margin-top: 2rem; text-align: left;
+/* Council vote tableau — the hero visual: one real round deciding */
+.tableau { margin-top: 2rem; text-align: left; }
+.tb-cp {
+  background: var(--panel-2); border: 1px solid var(--line); border-left: 2px solid var(--muted);
+  padding: 0.7rem 0.9rem; display: flex; flex-direction: column; gap: 0.2rem;
 }
-.cast-card { border: 1px solid var(--line); border-top: 2px solid var(--muted); background: var(--bg); padding: 0.7rem 0.8rem; }
-.cast-card[data-d="empathy"] { border-top-color: var(--empathy); }
-.cast-card[data-d="battle"] { border-top-color: var(--battle); }
-.cast-card[data-d="war"] { border-top-color: var(--war); }
-.cast-card[data-d="probe"] { border-top-color: var(--probe); }
-.cast-card[data-d="risk"] { border-top-color: var(--risk); }
-.cast-name { font-weight: 700; font-size: 0.92rem; color: var(--ink); }
-.cast-q { font-family: var(--serif); font-style: italic; font-size: 0.84rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.4; }
+.tb-cp-lbl { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.14em; color: var(--muted); }
+.tb-cp-msg { font-family: var(--serif); font-style: italic; font-size: 1.02rem; color: var(--ink); }
+.tb-cp-note { font-family: var(--mono); font-size: 0.62rem; color: var(--bad); letter-spacing: 0.03em; }
+.tb-arrow { text-align: center; font-family: var(--mono); font-size: 0.64rem; color: var(--muted); letter-spacing: 0.04em; padding: 0.5rem 0; }
+.tb-lenses { display: flex; flex-direction: column; gap: 0.3rem; }
+.tb-lens {
+  display: grid; grid-template-columns: 6rem 1fr auto; align-items: center; gap: 0.7rem;
+  padding: 0.45rem 0.7rem; background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--muted);
+}
+.tb-lens[data-d="empathy"] { border-left-color: var(--empathy); }
+.tb-lens[data-d="battle"] { border-left-color: var(--battle); }
+.tb-lens[data-d="war"] { border-left-color: var(--war); }
+.tb-lens[data-d="probe"] { border-left-color: var(--probe); }
+.tb-lens[data-d="risk"] { border-left-color: var(--risk); }
+.tb-lens.tb-carried { background: rgba(201,162,39,0.07); }
+.tb-name { font-weight: 700; font-size: 0.9rem; }
+.tb-q { font-family: var(--serif); font-style: italic; font-size: 0.8rem; color: var(--muted); }
+.tb-vote { font-family: var(--mono); font-size: 0.76rem; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tb-carried .tb-vote { color: var(--accent-bright); }
+.tb-verdict {
+  text-align: center; font-family: var(--mono); font-size: 0.95rem; letter-spacing: 0.08em;
+  color: var(--muted); padding: 0.5rem; border: 1px solid rgba(201,162,39,0.45); background: rgba(201,162,39,0.06);
+}
+.tb-verdict b { color: var(--accent-bright); font-size: 1.1rem; }
+.tb-outcome { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.tb-out-lose, .tb-out-win { padding: 0.7rem 0.9rem; border: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); }
+.tb-out-lose { border-left: 3px solid var(--bad); }
+.tb-out-win { border-left: 3px solid var(--good); }
+.tb-out-lose b { display: block; font-family: var(--mono); font-size: 1.5rem; color: var(--bad); }
+.tb-out-win b { display: block; font-family: var(--mono); font-size: 1.5rem; color: var(--good); }
+@media (max-width: 620px) { .tb-lens { grid-template-columns: 5rem 1fr; } .tb-q { display: none; } .tb-outcome { grid-template-columns: 1fr; } }
 
 /* Stage — the interactive section */
 .stage { padding-top: 3.5rem; border-bottom: 1px solid var(--line-soft); }
