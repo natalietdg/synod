@@ -61,15 +61,18 @@ body {
     linear-gradient(var(--bg), var(--bg));
 }
 .hero-inner { max-width: 760px; }
+.hero-kicker {
+  font-family: var(--mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 1.1rem;
+}
 .hero h1 {
   margin: 0; font-family: var(--serif); font-weight: 700;
-  font-size: 5rem; letter-spacing: 0.2em; line-height: 1; color: var(--ink);
+  font-size: 4.2rem; letter-spacing: 0.2em; line-height: 1; color: var(--ink);
 }
-.hero .tagline {
-  margin: 1rem 0 1.8rem; font-family: var(--serif); font-style: italic; font-weight: 400;
-  color: var(--muted); font-size: 1.35rem; line-height: 1.45;
+.hero-promise {
+  margin: 0.7rem 0 1.6rem; font-family: var(--serif); font-style: italic; font-weight: 600;
+  color: var(--accent-bright); font-size: 1.9rem; line-height: 1.2;
 }
-.hero .tagline em { color: var(--accent-bright); font-style: italic; }
 .claim {
   margin: 0 auto 1.6rem; max-width: 620px; font-size: 1.05rem; line-height: 1.65; color: var(--ink);
   font-weight: 400;
