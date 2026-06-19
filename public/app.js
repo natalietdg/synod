@@ -1281,7 +1281,7 @@ const CANON_VOTES = {
   // Real per-round offer trajectory (canonical deterministic run): the probe pulls the
   // truth out in R2, and the offer on the table climbs because the bluff broke.
   trajectory: [
-    { r: 1, offer: 8500, note: "council probes the claim" },
+    { r: 1, offer: 8500, note: "probes" },
     { r: 2, offer: 10217, note: "+$1,717", up: true },
     { r: 3, offer: 11000, note: "closes", up: true },
   ],
@@ -1311,20 +1311,27 @@ function renderCast() {
       `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
     `</div>`;
 
-  // The consequence: the probe broke the bluff, so the offer on the table climbed.
-  const steps = c.trajectory.map((s, i) =>
-    `${i ? `<span class="cq-arrow">→</span>` : ""}` +
-    `<span class="cq-step${s.up ? " up" : ""}"><span class="cq-r">R${s.r}</span>` +
-    `<span class="cq-offer">${money(s.offer)}</span><span class="cq-note">${s.note}</span></span>`,
+  // The range of outcomes + the needle: a deceptive deal can end at WALK ($0) or a
+  // close ($3,000). Each round the needle sits at the real surplus on the table
+  // (offer − floor, as a fraction of the achievable close). The probe is what tilts it.
+  const FLOOR = 8000, BEST = c.synod; // $3,000 achievable surplus
+  const pos = (offer) => Math.round(Math.max(0, Math.min(1, (offer - FLOOR) / BEST)) * 100);
+  const marks = c.trajectory.map((s) =>
+    `<span class="range-mark" style="left:${pos(s.offer)}%"><b>R${s.r}</b><span class="rm-note">${s.note}</span></span>`,
   ).join("");
   const cq = $("#consequence");
   if (cq) cq.innerHTML =
-    `<div class="cq-title">↓ the probe pulls the truth out — <b>the competitor leverage was air</b> — and the offer climbs</div>` +
-    `<div class="cq-track">${steps}</div>` +
-    `<div class="cq-outcome">` +
-      `<span class="cq-win"><b>$3,000</b> Synod closes</span>` +
-      `<span class="cq-lose"><b>$0</b> a single agent never probes — bluffed, walks</span>` +
-    `</div>`;
+    `<div class="cq-title">a deceptive deal ends one of two ways. <b>The probe tilts the needle</b> — here's where it sits each round.</div>` +
+    `<div class="range">` +
+      `<div class="range-cap worst"><span class="range-tag">WORST</span>WALK · $0</div>` +
+      `<div class="range-track">` +
+        `<div class="range-fill" style="width:${pos(c.trajectory.at(-1).offer)}%"></div>` +
+        `<span class="range-base" title="a single agent — bluffed, walks">✕ single agent</span>` +
+        marks +
+      `</div>` +
+      `<div class="range-cap best"><span class="range-tag">BEST</span>CLOSE · ${money(BEST)}</div>` +
+    `</div>` +
+    `<div class="cq-foot">the needle starts near <b class="col-amber">WALK</b> — contested, 39% confident, so the council probes rather than commit. The probe exposes the bluff (<b>the competitor leverage was air</b>) and the needle slides to <b class="col-green">CLOSE</b>. A single agent never probes; its needle stays pinned at $0.</div>`;
 }
 
 /**
