@@ -93,6 +93,17 @@ export async function gate(
   quant: QuantReport,
   governor?: AIGovernor,
 ): Promise<GateDecision> {
+  // A BATNA walk is a deterministic, justified disengagement (no achievable deal
+  // clears the floor) — it executes rather than falling back to a pointless hold,
+  // which is what every other irreversible commit does under uncertainty.
+  if (recommendation === "walk" && engine.batnaWalk) {
+    return {
+      gate: "execute",
+      finalAction: "walk",
+      reason: "BATNA floor: no achievable deal clears the seller's walk-away — disengaged.",
+    };
+  }
+
   const record: GateRecord = {
     recommendation,
     confidence: engine.confidence,

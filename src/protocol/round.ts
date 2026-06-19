@@ -6,6 +6,7 @@ import { gate, type GateDecision } from "../dotto/gate.js";
 import { signReceipt } from "../dotto/receipt.js";
 import { receiptStore } from "../dotto/store.js";
 import { expectedValueOfInformation, type EviResult } from "../belief/evi.js";
+import { SELLER_FLOOR } from "../gm/profiles.js";
 import type { AIGovernor } from "@natalietdg/dotto";
 import type { DeliberationAgents, RoundInput } from "../agents/index.js";
 import type { ArbiterVerdict, EmpathyRead, EngineResult, QuantReport } from "../core/types.js";
@@ -96,6 +97,30 @@ async function buildChallenges(
 }
 
 /**
+ * BATNA floor (deterministic). The seller's walk-away is SELLER_FLOOR; a deal only
+ * helps if the counterparty can be brought above it. Project the best reachable
+ * price optimistically — current offer plus the strongest concession observed so far
+ * (or a generous benefit-of-the-doubt before any movement is seen), repeated over the
+ * remaining rounds. If even that optimistic projection can't clear the floor, no deal
+ * beats walking: return true so the engine makes `walk` the argmax.
+ *
+ * Uses only observed offers (legitimately visible to the council), never the hidden
+ * reservation — and never fires on a viable deal, since all in-zone counterparties
+ * open and stay above the floor.
+ */
+function batnaDominates(input: RoundInput): boolean {
+  if (input.buyerOffer >= SELLER_FLOOR) return false; // already in deal-able territory
+  const offers = [...input.history.map((m) => m.offer.price), input.buyerOffer];
+  let bestRise = 0;
+  for (let i = 1; i < offers.length; i++) bestRise = Math.max(bestRise, offers[i]! - offers[i - 1]!);
+  // Before we've seen them move, grant a generous plausible concession so we don't
+  // walk prematurely on a low opening offer.
+  const assumedRise = offers.length < 2 ? 700 : bestRise;
+  const projectedBest = input.buyerOffer + assumedRise * Math.max(0, input.ctx.roundsLeft - 1);
+  return projectedBest < SELLER_FLOOR;
+}
+
+/**
  * Run one round of deliberation (spec §3 steps 2-4): doctrines score under the
  * updated belief, Battle/War challenge, the Arbiter weights the terrain, the
  * deterministic engine synthesizes, the Quant flags EV-divergence, and Dotto
@@ -126,7 +151,7 @@ export async function deliberateRound(
   const arbiter = await agents.arbiterWeights(input.ctx, read);
   await emit({ type: "arbiter", verdict: arbiter });
 
-  const engine = score(positions, arbiter.weights, config);
+  const engine = score(positions, arbiter.weights, config, { batnaWalk: batnaDominates(input) });
   await emit({ type: "engine", engine });
 
   const quant = quantCheck(input.belief, input.buyerOffer, engine.recommendation);

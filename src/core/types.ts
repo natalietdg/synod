@@ -172,6 +172,11 @@ export interface EngineResult {
   confidence: number; // logistic(alpha*margin - beta*dispersion)
   deadlock: boolean;
   deadlockReason: "thin-margin" | "high-dispersion" | null;
+  /** Set when a BATNA floor made `walk` the argmax: even an optimistic projection of
+   *  the counterparty's reachable price can't clear the seller's floor, so no deal
+   *  beats walking away. A deterministic backstop — the lens type-space has no
+   *  representation of a doomed negotiation. */
+  batnaWalk?: boolean;
 }
 
 /** The Quant flags money-EV divergence; it has no veto (spec §5). */

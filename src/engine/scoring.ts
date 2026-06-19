@@ -44,6 +44,7 @@ export function score(
   positions: DoctrinePosition[],
   weights: Record<DoctrineId, number>,
   config: EngineConfig = DEFAULT_CONFIG,
+  opts: { batnaWalk?: boolean } = {},
 ): EngineResult {
   const byDoctrine = new Map(positions.map((p) => [p.doctrine, p]));
 
@@ -58,6 +59,25 @@ export function score(
     }
     return { action, utility, perDoctrine };
   });
+
+  // BATNA floor: when no achievable deal clears the seller's floor, walking away
+  // dominates every counter — a deterministic backstop, since the lens type-space
+  // has no representation of a doomed negotiation (it would otherwise grind to the
+  // cap). Walk becomes the argmax; confidence is high because the futility is
+  // structural, not a close call.
+  if (opts.batnaWalk) {
+    return {
+      matrix,
+      recommendation: "walk",
+      runnerUp: ([...matrix].sort((a, b) => b.utility - a.utility)[0]!).action as ActionId,
+      margin: 0,
+      dispersion: 0,
+      confidence: 0.85,
+      deadlock: false,
+      deadlockReason: null,
+      batnaWalk: true,
+    };
+  }
 
   const ranked = [...matrix].sort((a, b) => b.utility - a.utility);
   const best = ranked[0]!;

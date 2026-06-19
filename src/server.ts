@@ -126,7 +126,7 @@ function buildCustomProfile(q: Record<string, unknown>): TypeProfile | null {
     const n = Number(v);
     return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : dflt;
   };
-  const reservation = num(q.reservation, 7_500, 14_000, base.reservation);
+  const reservation = num(q.reservation, 6_500, 14_000, base.reservation);
   base.reservation = reservation;
   base.deception = num(q.deception, 0, 90, base.deception);
   base.initialPatience = num(q.patience, 2, 6, base.initialPatience);

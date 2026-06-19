@@ -295,18 +295,23 @@ The on-screen weight trajectory is the visible shadow of this: as the Bayesian b
 converges on a counterparty type, the context vector shifts, and the Arbiter re-weights
 the lenses accordingly. The weight distribution is itself an updating, evidence-driven decision.
 
-## Boundaries — what Synod cannot do yet
+## Boundaries — found by adversarial testing
 
-Found by adversarial testing (much of it by judges and rival models), published because
-the failure modes are as informative as the wins:
+Surfaced by judges and rival models, published because the failure modes are as
+informative as the wins (the first one is now closed):
 
-1. **It never walks away on its own.** In a "no-zone" test (counterparty's true ceiling
-   $7,500, below our $8,000 floor — no mutually beneficial deal exists), the council
-   chose the `walk` action in **0/10 runs**: it ground through three futile rounds every
-   time until the simulator ended things. Within its payoff model this is coherent —
-   every closable deal clears the floor by construction — but the model's type-space has
-   no concept of a doomed negotiation, so futility recognition doesn't exist. A real
-   deployment needs a BATNA-aware stopping rule.
+1. **Walking away — closed (was a boundary).** The lens type-space has no representation
+   of a doomed negotiation, so the council used to grind every futile deal to the round
+   cap (**0/10 self-walks** on a "no-zone" test). Fixed with a deterministic **BATNA
+   floor** in the scoring spine (`round.ts:batnaDominates` → `score(..., {batnaWalk})`):
+   it projects the counterparty's best reachable price from *observed* offer movement
+   (never the hidden reservation), and when even that optimistic projection can't clear
+   the seller's $8,000 floor, `walk` becomes the argmax and the gate executes it. Now:
+   a clearly-doomed deal (ceiling $6,500) self-walks **10/10 in ~2 rounds**; a borderline
+   one ($7,500, $500 short) self-walks 5/10 — it gives a still-moving counterparty a
+   chance and disengages once movement stalls. Viable deals are untouched (they never
+   dip below the floor): the A/B total holds at $8,968, 100% deal rate. Code decides,
+   reproducibility intact — no LLM judgment added.
 2. **Cheap-talk immunity cuts both ways.** The belief layer ignores verbal claims by
    design (a bluffer and an honest buyer can say identical things), which makes it
    bluff-resistant — and blind to genuinely informative honest speech. An honest buyer
