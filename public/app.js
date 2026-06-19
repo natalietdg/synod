@@ -46,6 +46,60 @@ const lens = (d) => state.meta.lenses[d];
 const label = (a) => state.meta.actionLabels[a];
 const topAction = (scores) => ACTIONS.reduce((a, b) => (scores[b] > scores[a] ? b : a));
 
+/* Live stakes HUD — a win-probability-style needle. Position = the real surplus on
+   the table (offer − $8,000 floor) as a fraction of the best close (+$4,000 at the
+   $12,000 ask). It slides each round; the probe is what sends it toward CLOSE. */
+const HUD_FLOOR = 8000, HUD_BEST = 4000, HUD_CAP = 4;
+const hudPos = (offer) => Math.max(0, Math.min(100, ((offer - HUD_FLOOR) / HUD_BEST) * 100));
+
+function showHud() {
+  const hud = $("#nego-hud");
+  if (!hud) return;
+  hud.classList.remove("hidden", "hud-locked");
+  $("#hud-fill").style.width = "0%";
+  $("#hud-event").textContent = "";
+  $("#hud-event").className = "hud-event";
+}
+function hideHud() { $("#nego-hud")?.classList.add("hidden"); }
+
+function updateHud(round, offer, signals) {
+  const hud = $("#nego-hud");
+  if (!hud || hud.classList.contains("hidden")) return;
+  $("#hud-round").textContent = `ROUND ${round} / ${HUD_CAP}`;
+  const surplus = Math.max(0, offer - HUD_FLOOR);
+  const prev = state.hudSurplus ?? 0;
+  $("#hud-surplus").textContent = money(surplus);
+  const d = surplus - prev;
+  $("#hud-delta").textContent = round > 1 && d !== 0 ? ` ${d > 0 ? "▲" : "▼"} ${money(Math.abs(d))}` : "";
+  $("#hud-delta").className = `hud-delta ${d > 0 ? "up" : d < 0 ? "dn" : ""}`;
+  state.hudSurplus = surplus;
+  $("#hud-fill").style.width = `${hudPos(offer)}%`;
+  const reveal = (signals ?? []).some((s) => s.startsWith("revealed"));
+  const ev = $("#hud-event");
+  if (reveal) {
+    ev.textContent = "⚑ BLUFF EXPOSED — the needle swings toward CLOSE";
+    ev.className = "hud-event fire";
+  } else if (round > 1) {
+    ev.textContent = ""; ev.className = "hud-event";
+  }
+}
+
+function lockHud(t) {
+  const hud = $("#nego-hud");
+  if (!hud || hud.classList.contains("hidden")) return;
+  hud.classList.add("hud-locked");
+  const ev = $("#hud-event");
+  if (t.dealSurvived) {
+    $("#hud-fill").style.width = `${hudPos(HUD_FLOOR + t.surplusCaptured)}%`;
+    ev.textContent = `✓ CLOSED — ${money(t.surplusCaptured)} captured`;
+    ev.className = "hud-event win";
+  } else {
+    $("#hud-fill").style.width = "0%";
+    ev.textContent = "✕ WALK — $0";
+    ev.className = "hud-event lose";
+  }
+}
+
 /** Auto-scroll follow: the demo watches itself until the user takes the wheel. */
 function follow(node) {
   if (!state.autoFollow || !node) return;
@@ -230,7 +284,8 @@ function reset() {
   // The brief stays visible during the run — compacted to one line, not removed.
   $("#scenario-card").classList.add("compact");
   state.round = null; state.roundNum = 0; state.prevWeights = null;
-  state.prevOffer = null; state.beliefByRound = {};
+  state.prevOffer = null; state.beliefByRound = {}; state.hudSurplus = 0;
+  hideHud();
 }
 
 function run(opts = {}) {
@@ -255,6 +310,7 @@ function run(opts = {}) {
   // The spine tracks council deliberation — in duel mode YOU are the council.
   $("#pipeline-rail").classList.toggle("hidden", auto || gmMode === "duel");
   $("#pipeline-rail").classList.remove("complete");
+  if (gmMode !== "freetext") showHud(); // the live stakes needle (single-round eval has no range)
   state.autoFollow = !auto;
   const speed = auto ? 4 : state.speed;
   // The causal lever: a rerun with the EVI probe gate removed — same seed, same world.
@@ -472,6 +528,7 @@ function startRound(ev) {
   fileRound(state.round); // the previous round goes into the record
   state.roundNum = ev.round;
   spineRound(ev.round);
+  updateHud(ev.round, ev.move.offer.price, ev.move.signals);
   const card = el("div", "round");
   const ts = new Date().toLocaleTimeString("en-GB");
   card.appendChild(el("div", "round-head",
@@ -1122,6 +1179,7 @@ function renderStreamError(message) {
 }
 
 function renderTerminal(t) {
+  lockHud(t);
   const panel = $("#terminal-panel");
   panel.classList.remove("hidden");
   const trustColor = t.trustFinal >= 60 ? "var(--good)" : t.trustFinal >= 40 ? "var(--accent)" : "var(--bad)";

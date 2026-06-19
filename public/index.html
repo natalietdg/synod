@@ -105,6 +105,20 @@
       <!-- Pipeline spine: the data flow, made visible. Lights up as events stream. -->
       <div id="pipeline-rail" class="pipeline-rail hidden" aria-hidden="true"></div>
 
+      <!-- Live stakes HUD: a win-probability-style needle that slides each round. -->
+      <div id="nego-hud" class="nego-hud hidden">
+        <div class="hud-top">
+          <span class="hud-round" id="hud-round">ROUND 1 / 4</span>
+          <span class="hud-stake">on the table <b id="hud-surplus">$0</b><span id="hud-delta" class="hud-delta"></span></span>
+        </div>
+        <div class="hud-range">
+          <span class="hud-cap worst">WALK<br/>$0</span>
+          <div class="hud-track"><div class="hud-fill" id="hud-fill"></div></div>
+          <span class="hud-cap best">CLOSE<br/>$4,000</span>
+        </div>
+        <div class="hud-event" id="hud-event"></div>
+      </div>
+
       <main>
         <section class="column negotiation">
           <h2 class="sec-head"><span class="sec-no">01</span> Proceedings</h2>
