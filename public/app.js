@@ -1344,6 +1344,8 @@ const CANON_VOTES = {
     { r: 3, offer: 11000, note: "closes", up: true },
   ],
   synod: 3000, baseline: 0,
+  // Why arbitration mattered — names the dissenter and what tipped it (real terrain).
+  why: `<b>Pressure</b> pushed to counter hard. But belief is unresolved (0%) and exposure is high (67%), so the Arbiter sided with <b>Probe</b> — buy information before committing. The decision changed <em>because</em> they disagreed.`,
 };
 function renderCast() {
   const box = $("#council-tableau");
@@ -1367,6 +1369,7 @@ function renderCast() {
     `<div class="tb-decision">` +
       `<div class="tb-arrow">↓ not by who argued best</div>` +
       `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
+      `<div class="tb-why">${c.why}</div>` +
     `</div>`;
 
   // The range of outcomes + the needle: a deceptive deal can end at WALK ($0) or a

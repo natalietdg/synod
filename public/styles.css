@@ -150,6 +150,12 @@ body {
   color: var(--muted); padding: 0.5rem; border: 1px solid rgba(201,162,39,0.45); background: rgba(201,162,39,0.06);
 }
 .tb-verdict b { color: var(--accent-bright); font-size: 1.1rem; }
+.tb-why {
+  max-width: 600px; margin: 0.7rem auto 0; text-align: center;
+  font-size: 0.82rem; line-height: 1.6; color: var(--muted);
+}
+.tb-why b { color: var(--ink); }
+.tb-why em { color: var(--accent-bright); font-style: italic; }
 .tb-outcome { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 .tb-out-lose, .tb-out-win { padding: 0.7rem 0.9rem; border: 1px solid var(--line); font-size: 0.82rem; color: var(--muted); }
 .tb-out-lose { border-left: 3px solid var(--bad); }
