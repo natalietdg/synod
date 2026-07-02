@@ -54,6 +54,57 @@ const weightsSchema = z.object({
 const baselineSchema = z.object({ action: z.enum(ACTIONS), reasoning: z.string() });
 const challengeSchema = z.object({ text: z.string(), revisedScore: z.number().optional() });
 
+/** One general's OWN five-lens read of a move (war room, live). The general is told their
+ *  temperament — how heavily THEY weigh each lens — so the weighting shapes their actual
+ *  reasoning (not a hidden code multiplier). They return each lens's read, the action they
+ *  ultimately call given their weighting, and one in-character line. The general decides
+ *  their own call as a genuine agent; the chair (code) still decides the room's verdict by
+ *  terrain. Each general is a separate Qwen agent — an independent read, not a shared one. */
+// LLMs answer with whatever NAME the prompt showed them — "Frame" for the lens, or an
+// action label — not our internal ids. So parse leniently (string) and normalize back to
+// the canonical id; a display-name answer must not fail validation and kill the live run.
+const norm = (s: unknown) => String(s).toLowerCase().trim();
+const toDoctrineId = (s: unknown): DoctrineId =>
+  DOCTRINES.find((d) => d === norm(s) || LENSES[d].cogFunction.toLowerCase() === norm(s)) ?? "war";
+const toActionId = (s: unknown): ActionId =>
+  ACTIONS.find((a) => a === norm(s)) ?? ACTIONS.find((a) => ACTION_LABELS[a].toLowerCase() === norm(s)) ?? "hold";
+
+// Each general OWNS one lens and judges the move through THAT lens alone: which action it
+// favors and how strongly. (action parsed leniently → normalized to a canonical id.)
+const generalReadSchema = z.object({
+  action: z.string(),
+  intensity: z.number(),
+  voice: z.string(),
+});
+export interface GeneralRead {
+  lens: DoctrineId;       // the faculty this general owns (their distinct capability)
+  action: ActionId;       // the action their lens favors = their call
+  intensity: number;      // how strongly, [0,1]
+  voice: string;
+}
+
+/** The deliberation, live: a general sees the whole room and responds from THEIR lens —
+ *  argues their faculty's view AND may REVISE their own call after hearing the others.
+ *  Every general does this (a real Qwen call each), so the room genuinely argues as five
+ *  distinct faculties and can change its mind, rather than two speaking while three watch. */
+const generalReactSchema = z.object({
+  argument: z.string(),
+  call: z.string(),
+});
+export interface GeneralReact { argument: string; call: ActionId }
+
+/** One general drafts THEIR section of the operational order — the section that matches
+ *  their doctrine — consistent with the chair's directive. The task is decomposed across
+ *  the generals; this is one general's assigned part. */
+// A real division of an operational order: how the officer REASONS about it (their lens),
+// the objective, and the concrete TASKS they allocate — not one loose sentence.
+const sectionSchema = z.object({
+  reasoning: z.string(),
+  objective: z.string().optional(),
+  tasks: z.array(z.string()).optional(),
+});
+export type GeneralSection = z.infer<typeof sectionSchema>;
+
 const visible = (input: RoundInput) =>
   JSON.stringify({
     round: input.round,
@@ -239,5 +290,85 @@ export class QwenAgents implements DeliberationAgents {
     return role === "defender" && parsed.revisedScore !== undefined
       ? { text: parsed.text, revisedScore: clamp(parsed.revisedScore, -1, 1) }
       : { text: parsed.text };
+  }
+
+  /** The war room, live: each general OWNS one lens and is the council's sole voice for it.
+   *  They judge the move through THAT lens alone — Sun Tzu through Probe (what to learn),
+   *  Patton through Pressure (what wins now), etc. — and return the action it favors, how
+   *  strongly, and a one-line voice. Their distinct capability is the lens itself: remove
+   *  the general and the council loses that faculty entirely. */
+  async generalRead(
+    persona: { name: string; title: string; doctrine: string; lens: DoctrineId },
+    moveText: string,
+  ): Promise<GeneralRead> {
+    const L = LENSES[persona.lens];
+    const parsed = await this.completeWithRetry(
+      `You are General ${persona.name}, ${persona.title}, on a war council deciding how to answer an ` +
+        `adversary across an armistice table. You are the council's SOLE voice for the ${L.cogFunction} ` +
+        `lens — your one question is "${L.question}". Your doctrine: "${persona.doctrine}". ` +
+        `Judge the move THROUGH THAT LENS ALONE: name the single action it favors ` +
+        `(${ACTIONS.join(", ")}) and how strongly [0,1]. Do not weigh the other lenses — that is ` +
+        `not your seat. Finish with ONE sentence in your own voice, in character.`,
+      `The adversary's move: "${moveText}"`,
+      generalReadSchema,
+      { name: "submit_read", description: `Submit ${persona.name}'s ${L.cogFunction}-lens read: the action it favors, the intensity, and a one-line voice.`, fast: true },
+    );
+    return { lens: persona.lens, action: toActionId(parsed.action), intensity: clamp(parsed.intensity ?? 0, 0, 1), voice: parsed.voice };
+  }
+
+  /** One general drafts their assigned DIVISION of the operational order (security, intel,
+   *  medical/rescue, food/logistics, reconstruction…) — the task is decomposed across the
+   *  generals by doctrine, and this writes one general's part, consistent with the chair's
+   *  directive. A genuine multi-step skill: N of these run after the decision is made. */
+  async generalSection(
+    persona: { name: string; doctrine: string },
+    division: { title: string; brief: string },
+    directiveLabel: string,
+    moveText: string,
+  ): Promise<GeneralSection> {
+    return this.completeWithRetry(
+      `You are General ${persona.name} (doctrine: "${persona.doctrine}"), commanding the ` +
+        `"${division.title}" division of the operational order. The council's standing directive is ` +
+        `"${directiveLabel}". ${division.brief}\n` +
+        `Write your part of the order, in character and consistent with the directive:\n` +
+        `1) reasoning — one or two sentences on why YOUR doctrine OWNS this contribution and how it ` +
+        `shapes your approach (this is your "why I own this" note — the task is an expression of your lens);\n` +
+        `2) objective — a single clear line stating what your division must achieve;\n` +
+        `3) tasks — 3 to 5 concrete action items you allocate, each a short imperative order ` +
+        `(e.g. "Screen the eastern approach with two platoons").`,
+      `The situation: "${moveText}"`,
+      sectionSchema,
+      { name: "submit_section", description: "Submit this division's reasoning, objective, and allocated tasks.", fast: true },
+    );
+  }
+
+  /** One general's turn in the live deliberation: they see the whole room's current calls
+   *  and the latest things said, then argue their view in character AND state the action
+   *  they now call for — which they may CHANGE if another general's point landed. Called for
+   *  every general each round, so all five genuinely argue and the room can move. */
+  async generalReact(
+    persona: { name: string; title: string; doctrine: string; lens: DoctrineId },
+    ownCall: ActionId,
+    room: Array<{ name: string; call: ActionId; line: string }>,
+    moveText: string,
+    roundNum: number,
+  ): Promise<GeneralReact> {
+    const L = LENSES[persona.lens];
+    const roomText = room
+      .map((r) => `${r.name} calls for "${ACTION_LABELS[r.call]}" — "${r.line}"`)
+      .join("\n");
+    const parsed = await this.completeWithRetry(
+      `You are General ${persona.name}, ${persona.title}, in round ${roundNum} of a war council's ` +
+        `deliberation. You are the council's voice for the ${L.cogFunction} lens ("${L.question}"). ` +
+        `Your doctrine: "${persona.doctrine}". You currently call for "${ACTION_LABELS[ownCall]}". ` +
+        `Here is the room right now:\n${roomText}\n` +
+        `Respond to the others in ONE sentence, in character and from your lens — push back, build on a ` +
+        `point, or call out a bluff. Then state the action you NOW call for (keep it, or change it only if a ` +
+        `colleague genuinely moved you). Change only on merit, never to be agreeable.`,
+      `The adversary's move: "${moveText}"`,
+      generalReactSchema,
+      { name: "submit_reaction", description: "Submit this general's one-line argument and the action they now call for.", fast: true },
+    );
+    return { argument: parsed.argument, call: toActionId(parsed.call) };
   }
 }

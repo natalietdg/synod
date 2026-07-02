@@ -2,13 +2,14 @@ import type { CounterpartyType } from "../core/types.js";
 import type { TypeProfile } from "./profiles.js";
 
 /**
- * HOLD-OUT EVALUATION SUITE — adversarially authored.
+ * HOLD-OUT EVALUATION SUITE.
  *
- * Provenance: these five worlds were written by Claude (Anthropic) — a model from
- * a different vendor than the system under test — with the explicit instruction to
- * choose parameter combinations that STRESS the council's instincts, not flatter
- * them. They were frozen before any Synod code was tuned against them, and the
- * results are published as they come out. The council's internal payoff and
+ * Provenance (stated honestly): these five worlds were written by Claude (Anthropic) —
+ * a different model and lab than Qwen, which the system runs on — chosen to STRESS the
+ * council's instincts, not flatter them. So the system under test did not author its own
+ * exam. This is NOT full third-party independence: the same assistant helped build the
+ * council, so treat it as a partial guard against tuning-to-your-own-tests, not a clean-room
+ * adversary. Results are published as they come out. The council's internal payoff and
  * walk-risk models were calibrated against the ORIGINAL three profiles; on these
  * worlds its model of the counterparty is deliberately mis-calibrated — that is
  * the test. (`SELLER_FLOOR` $8,000, `OPENING_ASK` $12,000, `ROUND_CAP` 4 are
@@ -35,9 +36,9 @@ export interface HoldoutWorld {
 export const HOLDOUT_WORLDS: HoldoutWorld[] = [
   {
     id: "holdout-iron-procurement",
-    title: "Iron procurement",
+    title: "Thin ground",
     type: "soft_floor",
-    targets: "overreach under thin margins — barely $1,000 of surplus exists at all",
+    targets: "overreach when there's barely any room to gain — about $1,000 exists at all",
     profile: {
       reservation: 9_000,
       initialTrust: 48,
@@ -56,7 +57,7 @@ export const HOLDOUT_WORLDS: HoldoutWorld[] = [
   },
   {
     id: "holdout-hair-trigger",
-    title: "Hair-trigger founder",
+    title: "Hair-trigger ally",
     type: "relationship",
     targets: "any aggressive weighting — one hard counter is usually fatal",
     profile: {
@@ -97,9 +98,9 @@ export const HOLDOUT_WORLDS: HoldoutWorld[] = [
   },
   {
     id: "holdout-generous-whale",
-    title: "Generous whale",
+    title: "Generous opening",
     type: "relationship",
-    targets: "over-caution — the money is on the table; complexity should at most tie here",
+    targets: "over-caution — the gains are there for the taking; complexity should at most tie here",
     profile: {
       reservation: 13_500,
       initialTrust: 62,

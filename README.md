@@ -1,37 +1,146 @@
 # Synod
 
-**A multi-agent negotiation council that detects deceptive counterparties and closes deals single-stance agents walk away from.**
+**Most multi-agent systems divide the *work*. Synod divides the *decision*: five
+independent decision procedures evaluate a high-stakes, adversarial move, a neutral chair
+commits to one call, and *only then* is that call decomposed into an executable,
+role-assigned plan. Task decomposition still happens — it happens *after* the hard
+strategic decision, not instead of it.**
 
-A single-stance negotiating agent always fails against a deceptive counterparty: it reads
-"competitor leverage" at face value, pushes harder, and the counterparty walks. Synod
-doesn't. Five cognitive lenses deliberate in parallel; the Probe lens fires when the
-**Expected Value of Information** exceeds its cost; deception is disarmed; the deal closes.
+> Everyone else uses multiple agents to divide work.
+> Synod uses them to make a better strategic decision *before* the work is divided.
 
-Across n=10 independent runs: **baseline $0 (100% walk rate), Synod $3,000 (100% deal rate).**
+**The value, in one number: the expected value of decisions made with structured dissent
+minus decisions made without it.** A single-perspective agent systematically overpays in
+adversarial deals — it takes the other side's story at face value and is biased toward
+closing over walking. The council's dissent cuts both ways: it walks away from bad deals
+*and* captures good ones a purely suspicious agent would flee. Who bleeds this daily:
+procurement teams renegotiating supplier contracts, deal desks approving discount asks,
+recruiters in fee and counter-offer negotiations, founders on term sheets — repeated
+high-stakes deals against counterparties with reason to misrepresent. On the benchmark
+deal: **$3,000 captured vs $0 walked**, per decision.
 
-That's the concrete claim. The architecture is what makes it reproducible.
+```
+Most agent societies              Synod
+  problem                           problem
+   → split the work                  → five decision procedures evaluate it
+   → workers run in parallel         → they negotiate; a neutral chair commits to one call
+   → merge the outputs               → the committed call is split into role-assigned execution
+```
 
----
+The job is deciding when the other side hides what they hold — an armistice opponent
+bluffing reserves, a counterparty faking leverage. A lone agent caves to the bluff or
+walks from a win. Synod's five procedures probe, break the bluff, and commit — then the
+committed strategy becomes a coordinated, multi-division operational order.
 
-> Most agent societies divide labor. This one divides judgment.
+## Why not just prompt one model with five personas?
 
-The labor is divided too — each round decomposes into seven specialized sub-tasks
-(intent reading, parallel scoring, adversarial stress-test, information purchase,
-influence allocation, synthesis, audit-and-gate), with the challenger/defender seats
-and the lens weights **reassigned dynamically every round**. What Synod refuses to
-divide is accountability for the answer: every sub-task flows into one deterministic,
-receipted synthesis. See the task-decomposition table in
-[`ARCHITECTURE.md`](./ARCHITECTURE.md).
+The reflex objection — and the answer is that these aren't five personas, they're five
+**decision procedures**. In the reproducible engine (the one every evidence figure comes
+from), three of them aren't an LLM at all:
 
-Five agents represent competing **decision lenses** (not task silos). A doctrineless **Arbiter**
-weights them by situational context — not by which lens argued most convincingly, but by
-what the terrain demands. A deterministic engine scores the result. A numerate **Quant**
-checks it against cold money-EV. A **Game Master** simulates the counterparty and owns all
-hidden state. Every round is gated and cryptographically receipted (**Dotto**).
+- **Probe** owns the information decision — Bayesian belief update + Expected Value of
+  Information. Probe *iff* EVI > cost. Deterministic code.
+- **Hedge** owns the downside — minimax over the walk-exposed payoffs. Deterministic code.
+- **Trust** owns opponent modelling — best response to the posterior over the hidden type.
+- **Pressure** owns immediate initiative; **Frame** owns long-horizon utility.
 
-See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the system map, the determinism
-boundary, and related work (ANAC/BOA, LLM debate — and Synod's delta).
-[`synod-v2.md`](./synod-v2.md) is the build spec; [`synod-prd.md`](./synod-prd.md) the PRD.
+In **live mode** the five members reason on Qwen (each the sole voice for its lens), and
+the mathematics stays *outside* the agents, in code: the belief update, the EVI pricing,
+the chair's situation-weighting, and the final argmax never call a model. Both modes keep
+the same division: **models reason; code decides.**
+
+One model asked to "consider five perspectives" returns five *correlated opinions sampled
+from one distribution* — no independent belief state, no guarantee the risk view actually
+computed a minimax, and a different answer every run. Synod's chair aggregates five
+independent evaluations by argmax under a situation-weighting, so the same inputs give the
+same decision every time. That is what a five-persona prompt can't reproduce:
+**independence, determinism, and an auditable receipt** — not richer prose.
+
+## Two tables, one society
+
+Synod runs the **same engine** behind two framings — switch between them in the UI:
+
+- **⚔ War Room** — a council of real generals (Patton, Zhukov, Eisenhower, Sun Tzu,
+  Kutuzov) deciding an armistice under a bluff. **Each general owns one lens** — one
+  judgment faculty, their distinct **decision capability** (Patton→Pressure, Sun Tzu→Probe/recon,
+  Kutuzov→Hedge, Eisenhower→Trust, Zhukov→Frame). Remove a general and the council loses
+  that faculty; a neutral chair integrates the five. In live mode you can **remove any
+  general before convening** and watch the five reason on Qwen and the chair decide
+  *without that faculty* — the switch-off made causal, not hypothetical.
+- **🤝 Negotiation table** — the same five lenses, bare, closing a business deal (where
+  money is real).
+
+**Distinct how?** Not by tools or professions — by *decision procedure* (the five above).
+Every agent shares the same base abilities (read, reason, argue on Qwen); what differs is
+the one computation each owns. So the brief's "distinct capabilities" is satisfied by
+**cognitive specialization** — the society divides the *criteria of judgment*, not the
+labor — which is why "task division" here means dividing the decision, then the execution.
+
+Same five procedures, same chair, same deterministic engine; only the scenario changes.
+
+## What it actually does, end to end
+
+1. **Reads the move** and updates a Bayesian belief over who the other side really is —
+   from what they *do*, not what they *claim*.
+2. **Five members deliberate** (live, multi-round): each reads the move through the *one
+   lens they own* and scores the options; the most-opposed argue and can change their call.
+3. **A neutral chair decides** by weighting the lenses to the situation (uncertainty,
+   stakes), then a deterministic engine picks the action by argmax. *Models reason; code
+   decides.*
+4. **Then — and only then — splits execution.** The committed call is decomposed into
+   divisions where **each task is an expression of its owner's procedure** — Probe drafts
+   reconnaissance & verification, Trust the back-channel, Pressure leverage & escalation,
+   Hedge the contingency, Frame the end-state. The deliverable is one shared **operational
+   order** (each contribution attributed, with the author's "why I own this") — the task
+   decomposition the brief asks for, placed *after* the strategic decision, not instead of it.
+
+So each member is distinct on **two axes**: the *decision procedure* it owns (recon, the
+downside, the long game) and the *division* it executes once the call is committed. Remove
+one and the society loses a computation no other member has — which is exactly what the
+live switch-off lets you watch happen.
+
+## Trust & reproducibility
+
+The engine, belief update, scoring, gate, and receipts are **pure code — no LLM, no
+randomness**. Run **`npm run reproduce`** to regenerate every evidence figure from fixed
+seeds and prove the scoring is computed, not narrated (it runs the A/B twice and asserts
+byte-identical output). Hold-out worlds were authored by a *different model than the one
+under test* (Claude, vs the Qwen the system runs on) — a partial guard against grading its
+own homework.
+
+A bounded **adaptive policy** layer lets each lens expose tunable parameters (Hedge's risk
+aversion, Probe's information threshold, Pressure's discount); the situation fills them
+*within validated bounds* and the engine clamps and logs the choice — adaptive, yet still
+replayable.
+
+See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the system map and the determinism
+boundary. [`synod-v2.md`](./synod-v2.md) is the build spec; [`synod-prd.md`](./synod-prd.md) the PRD.
+
+## Prior art — and the exact delta
+
+Synod's parts have lineage; the honest contribution is a specific recombination, not new
+math. Named plainly so the delta is auditable, not implied:
+
+- **vs ANAC / BOA negotiation agents** (Bidding–Opponent-model–Acceptance): BOA optimizes
+  *one* agent's bidding around an opponent model. Synod runs **five independent decision
+  procedures** — not one bidding strategy — and a neutral chair aggregates them, with the
+  information decision (probe iff EVI > cost) made explicit and deterministic. *Delta:
+  many procedures + auditable aggregation, not a single tuned negotiator.*
+- **vs multi-agent debate** (Du et al., 2023 — LLM instances debate to a consensus):
+  debate-to-consensus rewards persuasion and courts groupthink. Synod deliberately does
+  **not** let persuasion drive the aggregate — the chair decides on the *situation*; the
+  debate is recorded dissent + a stress-test of the leading option. *Delta: this is why
+  the "remove the debate step = −0" ablation is a **designed** independence property, not
+  a failure — an anti-groupthink guarantee, measured.*
+- **vs mixture-of-experts / best-model-in-hindsight ensembles**: ensembles weight experts
+  by *past* accuracy. Synod's chair re-weights each round by the **current situation**
+  (uncertainty, stakes) via the Bayesian belief — and three of its "experts" are
+  deterministic procedures, not learned models. *Delta: situation-driven weighting +
+  zero hindsight regret across both suites (Exhibits B–C), not accuracy-in-hindsight.*
+
+Where the novelty actually concentrates (and what the ablations isolate): the **EVI probe
+gate**, the **per-round chair re-weighting**, and the **strategy→execution order** —
+decompose the task *after* the collective decision commits, not instead of it.
 
 ## The five lenses (cognitive archetypes, not doctrines)
 
@@ -126,13 +235,15 @@ Three findings, two of them nulls we report as found:
 
 Run it yourself: `GET /api/ablation`, or `npm run demo`.
 
-## Hold-out: adversarially-authored worlds (n=10 each)
+## Hold-out: worlds authored by a different model (n=10 each)
 
-The fair objection to any self-built benchmark is "you authored the world." So a model
-from a **different vendor** (Claude, Anthropic) authored five new counterparty
-parameterizations with explicit instructions to *stress the council's instincts* —
-thin margins, hair-trigger walk sensitivity, scarce patience that punishes probing, a
-bluff that only partially disarms. The worlds were frozen before evaluation
+The fair objection to any self-built benchmark is "you authored the world." So the five
+hold-out worlds were authored by **Claude (Anthropic) — a different model and lab than
+Qwen**, which the system runs on, chosen to *stress the council's instincts* — thin
+margins, hair-trigger walk sensitivity, scarce patience that punishes probing, a bluff
+that only partially disarms. This isn't full third-party independence (the same project
+built both the council and these worlds), but the test scenarios did not come from the
+system under test — a partial guard against tuning to your own exam. The worlds were frozen before evaluation
 ([`src/gm/holdout.ts`](./src/gm/holdout.ts) carries the provenance note); the council's
 payoff model was calibrated on the original three profiles only; results are published
 as measured.
@@ -224,10 +335,12 @@ Any MCP-capable agent can convene the council as a tool:
 { "synod": { "command": "npx", "args": ["tsx", "src/mcp.ts"], "cwd": "<repo>" } }
 ```
 
-Tools: `negotiate` (full council run → outcome + per-round decision trail + signed
+Seven tools: `negotiate` (full council run → outcome + per-round decision trail + signed
 receipts), `run_ab_comparison`, `run_ablation`, `list_scenarios`, `get_receipts`,
-`describe_council`. The deliberation that powers the UI is the same one returned to
-the calling agent — Synod is a *society another agent can consult*.
+`describe_council`, and `draft_operational_order` (decompose the decision into divisions
+and assign each to the general whose capability fits). The deliberation that powers the UI
+is the same one returned to the calling agent — Synod is a *society another agent can
+consult*.
 
 ### Live Qwen (the demo mode)
 

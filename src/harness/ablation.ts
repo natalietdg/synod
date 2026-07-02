@@ -1,9 +1,10 @@
 import { GameMaster } from "../gm/gameMaster.js";
 import { runNegotiation } from "../protocol/loop.js";
-import { SUITE } from "../suite.js";
+import { EVAL_SUITE } from "../suite.js";
 import { DOCTRINES, LENSES, type DoctrineId } from "../core/types.js";
 import type { ArbiterVerdict, ContextVector, EmpathyRead } from "../core/types.js";
 import type { DeliberationAgents } from "../agents/index.js";
+import { GENERALS } from "../society/generals.js";
 
 /**
  * Ablation study (spec S5-2): remove one architectural component at a time and
@@ -57,6 +58,20 @@ export const withoutProbeLens = (base: DeliberationAgents): DeliberationAgents =
     },
   });
 
+/** Switch off ONE general: zero their owned lens's weight (and renormalize), so that
+ *  faculty has no say in the decision — the rest of the council decides without it. Used by
+ *  the interactive "switch off a general" artifact: pick any general, watch the effect. */
+export const withLensOff = (base: DeliberationAgents, off: DoctrineId): DeliberationAgents =>
+  wrap(base, {
+    arbiterWeights: async (ctx: ContextVector, read: EmpathyRead): Promise<ArbiterVerdict> => {
+      const v = await base.arbiterWeights(ctx, read);
+      const w = { ...v.weights, [off]: 0 };
+      const sum = DOCTRINES.reduce((s, d) => s + w[d], 0) || 1;
+      for (const d of DOCTRINES) w[d] = w[d] / sum;
+      return { ...v, weights: w, rationale: `Switched off: ${LENSES[off].cogFunction}.` };
+    },
+  });
+
 /** Uniform Arbiter: terrain-weighting replaced by 1/5 each — the council without a chair. */
 const withUniformArbiter = (base: DeliberationAgents): DeliberationAgents =>
   wrap(base, {
@@ -89,7 +104,7 @@ async function runVariant(
   let dealRateSum = 0;
   let deceptiveSurplusMean = 0;
 
-  for (const entry of SUITE) {
+  for (const entry of EVAL_SUITE) {
     let surplusSum = 0;
     let deals = 0;
     for (let i = 0; i < nSeeds; i++) {
@@ -109,7 +124,7 @@ async function runVariant(
     variant,
     description,
     totalSurplusMean,
-    dealRate: dealRateSum / SUITE.length,
+    dealRate: dealRateSum / EVAL_SUITE.length,
     deceptiveSurplusMean,
     n: nSeeds,
   };
@@ -121,23 +136,23 @@ export async function runAblation(
 ): Promise<AblationReport> {
   const rows: AblationRow[] = [];
 
-  rows.push(await runVariant(agents, "Full Synod", "all components active", nSeeds));
+  rows.push(await runVariant(agents, "Full council (everything on)", "all components active", nSeeds));
   rows.push(await runVariant(
     withoutCausalChallenge(agents),
-    "− causal challenge",
-    "exchange happens but the defender never concedes",
+    "without the debate step",
+    "the generals still argue, but no one ever concedes",
     nSeeds,
   ));
   rows.push(await runVariant(
     withoutProbeLens(agents),
-    "− probe trigger",
-    "Learning lens never recommends probing (EVI rule removed)",
+    "without the probe check",
+    "the council can never choose to check a claim first",
     nSeeds,
   ));
   rows.push(await runVariant(
     withUniformArbiter(agents),
-    "uniform Arbiter",
-    "terrain weighting replaced by 1/5 each",
+    "no chair (equal weights)",
+    "every lens counts the same, no matter the situation",
     nSeeds,
   ));
 
@@ -147,11 +162,34 @@ export async function runAblation(
   for (const d of DOCTRINES) {
     rows.push(await runVariant(
       withSingleLens(agents, d),
-      `single lens — ${LENSES[d].cogFunction}`,
+      `only the ${LENSES[d].cogFunction} lens`,
       `all weight on the ${LENSES[d].name} lens`,
       nSeeds,
     ));
   }
 
+  return { rows, nSeeds };
+}
+
+/**
+ * The society vs any single general (item 11 for the war room): does the adaptive chair
+ * beat each general deciding alone? Each general OWNS one lens, so "only <general>" is that
+ * lens deciding alone (single-lens collapse). Run the full society and every single-general
+ * council over the same seeds — at the level the demo shows: generals, each their faculty.
+ */
+export async function runGeneralBench(
+  agents: DeliberationAgents,
+  nSeeds = 10,
+): Promise<AblationReport> {
+  const rows: AblationRow[] = [];
+  rows.push(await runVariant(agents, "Full society (chair adapts)", "the chair weights the lenses to the situation each round", nSeeds));
+  for (const g of GENERALS) {
+    rows.push(await runVariant(
+      withSingleLens(agents, g.lens),
+      `only ${g.name}`,
+      `${g.name} deciding alone — their ${LENSES[g.lens].cogFunction} lens only`,
+      nSeeds,
+    ));
+  }
   return { rows, nSeeds };
 }

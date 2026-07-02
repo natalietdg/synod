@@ -1,6 +1,6 @@
 import { GameMaster } from "../gm/gameMaster.js";
 import { runNegotiation } from "../protocol/loop.js";
-import { SUITE } from "../suite.js";
+import { EVAL_SUITE } from "../suite.js";
 import { COUNTERPARTY_TYPES, type CounterpartyType } from "../core/types.js";
 import type { DeliberationAgents } from "../agents/index.js";
 
@@ -36,7 +36,7 @@ export async function runCalibration(
   let correct = 0;
   let runs = 0;
 
-  for (const entry of SUITE) {
+  for (const entry of EVAL_SUITE) {
     for (let i = 0; i < nSeeds; i++) {
       const gm = new GameMaster(entry.type, entry.seed + i * 997);
       const res = await runNegotiation(agents, gm, entry.id, entry.type);

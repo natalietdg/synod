@@ -36,7 +36,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
     question: "What move creates the most advantage right now?",
     thinkingStyle: "Opportunistic, decisive, momentum-sensitive.",
     failureMode: "Short-termism; burns relationships for a quick win.",
-    math: "immediate utility — myopic captured surplus",
+    math: "immediate utility — value captured right now",
     keywords: ["momentum", "leverage", "capture", "initiative", "pressure", "closing"],
   },
   war: {
@@ -47,7 +47,7 @@ export const LENSES: Record<DoctrineId, LensMeta> = {
     question: "What game are we really playing?",
     thinkingStyle: "Strategic, long-horizon, patient.",
     failureMode: "Paralysis; too patient; misses real openings.",
-    math: "long-horizon utility — surplus weighted against walk risk",
+    math: "long-horizon utility — value weighted against walk risk",
     keywords: ["position", "precedent", "trust", "optionality", "trajectory", "campaign"],
   },
   empathy: {

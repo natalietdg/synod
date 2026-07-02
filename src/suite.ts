@@ -16,15 +16,17 @@ export interface SuiteEntry {
   whenToUse: string;
 }
 
-export const SUITE: SuiteEntry[] = [
+/** The 3 canonical hidden types — the evaluation set the A/B, ablation, and calibration
+ *  runs report on. Frozen, so the headline numbers stay stable. */
+export const EVAL_SUITE: SuiteEntry[] = [
   {
     id: "type-a-relationship",
     type: "relationship",
     seed: 101,
     title: TYPE_META.relationship.name,
     punishes: "over-aggression (walks if bullied)",
-    dropdownLabel: "Relationship-oriented — vendor renewal, partner upsell (walks if bullied)",
-    whenToUse: "Enterprise account renewal, preferred supplier negotiation, existing partner upsell. The counterparty values the relationship above marginal price gains — punishes aggressive tactics but responds to collaborative framing. In M&A: a founder-led acquisition target where cultural continuity matters more than the last dollar — push hard and they walk to a lower bid.",
+    dropdownLabel: "Relationship-driven — values the long-term tie over the last point (walks if bullied)",
+    whenToUse: "A counterparty that values the ongoing relationship above marginal gains — it punishes aggressive tactics but responds to collaborative framing. An ally you will face again across many tables: push too hard for the last point and they walk, even at a cost to themselves.",
   },
   {
     id: "type-b-soft-floor",
@@ -32,8 +34,8 @@ export const SUITE: SuiteEntry[] = [
     seed: 202,
     title: TYPE_META.soft_floor.name,
     punishes: "greed / misread (soft surface, firm floor)",
-    dropdownLabel: "Soft surface, firm floor — procurement buyer, budget-constrained (moves slowly, holds floor)",
-    whenToUse: "Procurement-led deals, budget-cycle negotiations, vendor shortlist decisions. The buyer signals flexibility early but holds a firm real reservation — pushing past it stalls; probing the floor and trading terms unlocks movement. In M&A: a sell-side with a firm minimum valuation but real flexibility on structure — finding the earnout floor and offering the right mix of cash vs. equity is what closes it.",
+    dropdownLabel: "Soft surface, firm floor — signals flexibility, holds a real red line (moves slowly)",
+    whenToUse: "The other side signals give early but holds a firm true reservation — pushing past it stalls, while probing the floor and trading non-core terms unlocks movement. A negotiator with a hard limit they will not admit to until you find where it actually sits.",
   },
   {
     id: "type-c-deceptive",
@@ -41,9 +43,27 @@ export const SUITE: SuiteEntry[] = [
     seed: 303,
     title: TYPE_META.deceptive.name,
     punishes: "failure to probe (hidden leverage + real need)",
-    dropdownLabel: "Deceptive — adversarial RFP, BATNA bluffer (fakes constraints, tests your resolve)",
-    whenToUse: "Adversarial RFPs, competitive bids, buyers who open with a BATNA threat. The counterparty fabricates constraints and competitor leverage to test resolve — caving confirms the bluff; probing surfaces the real need and disarms it. In M&A: a seller claiming multiple competing bids and a lower EBITDA floor than reality — probing the alternative timeline disarms the bluff and surfaces the real exit motivation.",
+    dropdownLabel: "Deceptive — bluffs strength and leverage to test your resolve (the bluff breaks under a probe)",
+    whenToUse: "The adversary opens with a threat and fabricated leverage — claimed alternatives, reserves it may not have — to test your resolve. Caving confirms the bluff and forfeits ground; a well-placed probe surfaces the real position and disarms it. The canonical hidden-information adversary: an armistice opponent inflating their reinforcements, a bloc claiming votes it has not whipped.",
   },
 ];
+
+/** Demo scenarios beyond the evaluation set — selectable in the UI, not scored in the
+ *  evidence tables. They show the same council generalizing to other adversarial
+ *  allocations under hidden leverage. */
+export const DEMO_SUITE: SuiteEntry[] = [
+  {
+    id: "type-d-parliament",
+    type: "deceptive",
+    seed: 404,
+    title: "Parliament budget bloc",
+    punishes: "failure to probe a claimed coalition",
+    dropdownLabel: "Parliament budget — a rival bloc dividing the allocation (claims votes it may not have)",
+    whenToUse: "Coalition budget bargaining and cross-ministry allocation: a rival bloc claims it has the votes and a hard floor on its own programs to push your share down. Caving to the claimed coalition confirms the bluff; probing whether the votes are actually whipped surfaces the real room to trade. Same council, same engine: it generalizes to any adversarial allocation under hidden leverage. (Figures read as budget units.)",
+  },
+];
+
+/** Everything selectable in the UI: the evaluation set plus the demo scenarios. */
+export const SUITE: SuiteEntry[] = [...EVAL_SUITE, ...DEMO_SUITE];
 
 export const getEntry = (id: string): SuiteEntry | undefined => SUITE.find((s) => s.id === id);

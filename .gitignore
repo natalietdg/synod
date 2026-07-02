@@ -5,3 +5,12 @@ dist/
 *.log
 .DS_Store
 receipts/*.json
+
+# private working notes / internal assessment prompts — not part of the submission
+kevin.md
+assessment.md
+assessment-result.md
+DEVLOG.md
+synod-sprint*.md
+shot.mjs
+public/design/

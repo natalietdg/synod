@@ -9,7 +9,10 @@ import { MockAgents } from "./agents/mock.js";
 import { runNegotiation } from "./protocol/loop.js";
 import { runBaseline } from "./harness/baseline.js";
 import { runAbComparison } from "./harness/ab.js";
-import { runAblation, withoutProbeLens } from "./harness/ablation.js";
+import { runAblation, withoutProbeLens, withSingleLens, withLensOff, runGeneralBench } from "./harness/ablation.js";
+import { runReproduce } from "./reproduce.js";
+import { MCP_TOOLS, invokeMcpTool } from "./mcp-catalog.js";
+import { setPolicyOverride, FIXED_POLICY } from "./engine/policy.js";
 import { runHoldout } from "./harness/holdout.js";
 import { runCalibration } from "./harness/calibration.js";
 import { GameMaster } from "./gm/gameMaster.js";
@@ -24,8 +27,20 @@ import { UNIFORM_PRIOR } from "./belief/update.js";
 import type { RoundInput } from "./agents/index.js";
 import { QwenGovernor } from "./dotto/governor.js";
 import { receiptStore } from "./dotto/store.js";
-import { SUITE, getEntry } from "./suite.js";
-import { LENSES, TYPE_META } from "./core/types.js";
+import { SUITE, EVAL_SUITE, getEntry } from "./suite.js";
+import { deliberateCouncil } from "./society/council.js";
+import { runWargame } from "./society/wargame.js";
+import { GENERALS, WAR_ACTIONS, generalForLens } from "./society/generals.js";
+import { runLiveCouncil } from "./society/liveCouncil.js";
+import { runWarPlan } from "./society/warplan.js";
+import { QwenAgents } from "./agents/qwen.js";
+
+// The war room's adversary opening (armistice skin over the deceptive opening). Shared by
+// the mock /api/warroom and the live /api/warroom-live so both rooms face the same move.
+const WAR_MOVE =
+  "We hold the eastern bank — and there are reserves we haven't shown you. " +
+  "Pull your line back to the river, or the ceasefire ends Thursday.";
+import { LENSES, TYPE_META, DOCTRINES } from "./core/types.js";
 import { ACTION_LABELS, ACTIONS, type ActionId } from "./core/actions.js";
 import { encodeMove } from "./protocol/encode.js";
 import type { DeliberationEvent } from "./protocol/types.js";
@@ -95,7 +110,7 @@ app.get("/api/meta", (_req, res) => {
     // Provenance: who authored each side of the evaluation, frozen on which commit.
     provenance: {
       commit: BUILD_COMMIT,
-      holdoutAuthor: "Claude (Anthropic) — a different vendor than the system under test",
+      holdoutAuthor: "Claude (Anthropic) — a different model and lab than Qwen, which the system runs on",
       holdoutFrozen: "authored and committed before evaluation; see src/gm/holdout.ts",
       baseline: "strong single-agent persona — same action set, move encoding, GM, and seed as the council; only the council structure is removed",
       seeds: "fixed schedule (entry.seed + i·997), n=10 per type",
@@ -270,9 +285,328 @@ app.get("/api/ab", async (_req, res) => {
   res.json(await runAbComparison(new MockAgents()));
 });
 
+// The canonical round behind the hero tableau. Run for real through the DETERMINISTIC
+// mock engine — not a hand-written snapshot — so the votes, verdict, offers, arbiter
+// reasoning, and the probe's EVI figure are all genuine engine output. Pinned to mock
+// (not the active agents) on purpose: the hero card must be reproducible across refreshes
+// and consistent with the A/B / ablation numbers (all mock-based), and token-free. Live
+// Qwen voices are shown in the actual watch/duel runs, not this static card.
+let canonicalCache: unknown = null;
+app.get("/api/canonical", async (_req, res) => {
+  if (canonicalCache) { res.json(canonicalCache); return; }
+  const canonAgents = new MockAgents();
+  const entry = getEntry("type-c-deceptive")!;
+  const top = (scores: Record<string, number>): ActionId =>
+    (ACTIONS as readonly ActionId[]).reduce((a, b) => (scores[b]! > scores[a]! ? b : a));
+  const result = await runNegotiation(canonAgents, new GameMaster(entry.type, entry.seed), entry.id, entry.type);
+  const baseline = await runBaseline(canonAgents, new GameMaster(entry.type, entry.seed), "strong");
+  const r1 = result.rounds[0]!;
+  const votes: Record<string, ActionId> = {};
+  const voices: Record<string, string> = {};
+  for (const p of r1.positions) { votes[p.doctrine] = top(p.scores); voices[p.doctrine] = p.rationale; }
+  const rec = r1.engine.recommendation;
+  const w = r1.arbiter.weights;
+  const dissenter = Object.keys(votes)
+    .filter((d) => votes[d] !== rec)
+    .sort((a, b) => (w[b as keyof typeof w] ?? 0) - (w[a as keyof typeof w] ?? 0))[0];
+  const ctx = r1.ctx;
+  const why = dissenter
+    ? `<b>${LENSES[dissenter as keyof typeof LENSES].cogFunction}</b> pushed for ${ACTION_LABELS[votes[dissenter]!]}. ` +
+      `But belief is unresolved (${Math.round(ctx.infoConfidence * 100)}%) and exposure is high ` +
+      `(${Math.round(ctx.exposure * 100)}%), so the Arbiter sided with <b>${ACTION_LABELS[rec]}</b>. ` +
+      `The decision changed <em>because</em> they disagreed.`
+    : "";
+  canonicalCache = {
+    message: r1.counterpartyMove.message,
+    votes, voices, verdict: rec, why,
+    trajectory: result.rounds.map((r) => ({ r: r.round, offer: r.counterpartyMove.offer.price })),
+    synod: result.terminal.surplusCaptured,
+    baseline: baseline.surplusCaptured,
+    infoConfidence: ctx.infoConfidence,
+    exposure: ctx.exposure,
+    live: false,
+  };
+  res.json(canonicalCache);
+});
+
+// The war council as an agent society. The deceptive scenario = an adversary bluffing
+// strength across the armistice table. We run one real round on the deterministic mock,
+// then: (a) project the shared five-lens assessment through each general's temperament
+// to get their individual call, and (b) war-game the table forward across who the
+// adversary might really be. Pinned to mock so the room is reproducible and token-free.
+let warroomCache: unknown = null;
+app.get("/api/warroom", async (_req, res) => {
+  if (warroomCache) { res.json(warroomCache); return; }
+  const mock = new MockAgents();
+  const entry = getEntry("type-c-deceptive")!;
+  const result = await runNegotiation(mock, new GameMaster(entry.type, entry.seed), entry.id, entry.type);
+  const r1 = result.rounds[0]!;
+  const deliberation = deliberateCouncil(r1.positions, r1.engine.recommendation, r1.ctx);
+  const wargame = await runWargame(mock, r1.beliefAfter, entry.seed + 1);
+  const d = deliberation.dissenters[0];
+  const why = d
+    ? `<b>${d.name}</b> (${d.title}) would ${WAR_ACTIONS[d.action]!.toLowerCase()} — leaning ${LENSES[d.leadLens].cogFunction}. ` +
+      `The chair, reading the terrain (intel ${Math.round(r1.ctx.infoConfidence * 100)}%, exposure ` +
+      `${Math.round(r1.ctx.exposure * 100)}%), holds the council to <b>${WAR_ACTIONS[deliberation.council]}</b>. ` +
+      `The room advises; the chair decides on the ground truth.`
+    : `The room is unanimous: <b>${WAR_ACTIONS[deliberation.council]}</b>.`;
+  warroomCache = {
+    // The war room is a SKIN over the same negotiation engine — only the LANGUAGE layer
+    // changes (spec: the renderer phrases moves; it never drives a transition). So the
+    // adversary's opening speaks in armistice terms, not deal terms, and shows no price.
+    // The structural move is identical to the deceptive opening: a lowball anchored on
+    // bluffed strength (hidden "reserves" = hidden leverage).
+    move: WAR_MOVE,
+    council: deliberation.council,
+    councilLabel: WAR_ACTIONS[deliberation.council],
+    why,
+    // The room argues: the engine's real lens-level challenge this round, attributed to
+    // the generals who embody those lenses. One side may CONCEDE (causal, score-changing)
+    // — agents resolving a disagreement, not just registering it.
+    challenge: r1.challenges.map((c) => {
+      const fromG = generalForLens(c.from);
+      const againstG = generalForLens(c.against);
+      return {
+        role: c.originalScore !== undefined ? "defense" : "challenge",
+        fromId: fromG.id, fromName: fromG.name, fromLens: LENSES[c.from].cogFunction,
+        againstId: againstG.id, againstName: againstG.name, againstLens: LENSES[c.against].cogFunction,
+        text: c.text,
+        contested: c.contested ? WAR_ACTIONS[c.contested] : "",
+        conceded: c.revisedScore !== undefined,
+        originalScore: c.originalScore,
+        revisedScore: c.revisedScore,
+      };
+    }),
+    generals: deliberation.calls.map((c) => ({
+      ...c,
+      label: WAR_ACTIONS[c.action],
+      lead: LENSES[c.leadLens].cogFunction,
+      leadMath: LENSES[c.leadLens].math,
+      toolUse: c.toolUse.map((t) => ({ ...t, cogFunction: LENSES[t.lens].cogFunction, math: LENSES[t.lens].math })),
+    })),
+    dissenters: deliberation.dissenters.map((c) => c.id),
+    belief: r1.beliefAfter,
+    // Structured terrain the chair reads — drives the arbitration checklist (not prose).
+    terrain: {
+      infoConfidence: r1.ctx.infoConfidence,
+      exposure: r1.ctx.exposure,
+      adversarialSignal: r1.ctx.adversarialSignal,
+      eviWorthIt: r1.evi.worthIt,
+    },
+    wargame,
+    actions: WAR_ACTIONS,
+    // The shared five-lens assessment of the adversary's move — the raw scores the
+    // sliders re-weight live. The client recomputes argmax U(a)=Σ w·s as the user drags,
+    // so "tune the judgment" needs no round-trip.
+    assessment: r1.positions.map((p) => ({
+      lens: p.doctrine,
+      cogFunction: LENSES[p.doctrine].cogFunction,
+      math: LENSES[p.doctrine].math,
+      question: LENSES[p.doctrine].question,
+      scores: p.scores,
+    })),
+    // The chair's terrain weighting — a slider preset alongside the generals.
+    chairWeights: r1.arbiter.weights,
+    roster: GENERALS.map((g) => ({ id: g.id, name: g.name, title: g.title, doctrine: g.doctrine, mandate: g.mandate, lens: g.lens })),
+  };
+  res.json(warroomCache);
+});
+
+// The war room, LIVE — each general is an independent Qwen agent running their OWN five
+// lenses on the move (5 Qwen calls, in parallel). On-demand only (a button), so the
+// default war room stays deterministic/free; this proves the personas genuinely reason on
+// Qwen. 503s cleanly if no key is configured. Cached after the first successful run.
+// Keyed by the removal-set (e.g. "" for the full council, "probe" with Sun Tzu removed) so
+// each distinct configuration is computed once and then free to replay.
+const liveCouncilCache = new Map<string, unknown>();
+app.get("/api/warroom-live", async (req, res) => {
+  // ?off=probe,risk — remove those generals and convene the rest live (a causal switch-off).
+  const off = String(req.query.off ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  const exclude = DOCTRINES.filter((d) => off.includes(d)); // validate against real lens ids
+  const cacheKey = [...exclude].sort().join(",");
+  if (liveCouncilCache.has(cacheKey)) { res.json(liveCouncilCache.get(cacheKey)); return; }
+  if (!process.env.DASHSCOPE_API_KEY) {
+    res.status(503).json({ error: "no-key", message: "Live Qwen not configured — set DASHSCOPE_API_KEY." });
+    return;
+  }
+  try {
+    // Terrain is a property of THIS situation, so take it from the deterministic read of
+    // the same deceptive move — the chair then weighs the live pooled reads by it.
+    const entry = getEntry("type-c-deceptive")!;
+    const canon = await runNegotiation(new MockAgents(), new GameMaster(entry.type, entry.seed), entry.id, entry.type);
+    const r1 = canon.rounds[0]!;
+    const qwen = new QwenAgents();
+    const live = await runLiveCouncil(qwen, WAR_MOVE, { arbiterWeights: r1.arbiter.weights, ctx: r1.ctx }, exclude);
+    // Once the council has decided, it accomplishes the complex task: a multi-division
+    // operational order — but ONLY the convened generals contribute (a removed general is
+    // absent from the plan too, not just the debate).
+    const convenedLenses = live.generals.map((g) => g.leadLens);
+    const plan = await runWarPlan(qwen, { directive: live.councilLabel }, WAR_MOVE, convenedLenses);
+    const payload = {
+      ...live,
+      plan,
+      move: WAR_MOVE,
+      actions: WAR_ACTIONS,
+      // Terrain checklist + war-game come from the deterministic read of the same move,
+      // so the live proceedings are internally consistent end to end.
+      terrain: { infoConfidence: r1.ctx.infoConfidence, exposure: r1.ctx.exposure, adversarialSignal: r1.ctx.adversarialSignal, eviWorthIt: r1.evi.worthIt },
+      wargame: await runWargame(new MockAgents(), r1.beliefAfter, entry.seed + 1),
+    };
+    liveCouncilCache.set(cacheKey, payload);
+    res.json(payload);
+  } catch (err) {
+    res.status(502).json({ error: "qwen-failed", message: (err as Error).message });
+  }
+});
+
+// Fit explorer (negotiation table): each single-lens framing against each counterparty
+// PERSONALITY. Shows which framing fits which situation — and which backfires — from real
+// runs. The point the council makes interactive: no single framing wins everywhere.
+let fitCache: unknown = null;
+app.get("/api/fit", async (_req, res) => {
+  if (fitCache) { res.json(fitCache); return; }
+  const mock = new MockAgents();
+  const N = 6;
+  const run = async (agents: typeof mock, type: (typeof EVAL_SUITE)[number]["type"], seed: number) => {
+    let surplus = 0, deals = 0;
+    for (let i = 0; i < N; i++) {
+      const r = await runNegotiation(agents, new GameMaster(type, seed + i * 131), `fit-${type}`, type);
+      surplus += r.terminal.surplusCaptured;
+      if (r.terminal.dealSurvived) deals += 1;
+    }
+    return { surplus: surplus / N, dealRate: deals / N };
+  };
+  const matrix = [];
+  for (const entry of EVAL_SUITE) {
+    const cells = [];
+    for (const lens of DOCTRINES) {
+      const r = await run(withSingleLens(mock, lens) as typeof mock, entry.type, entry.seed);
+      cells.push({ lens, cog: LENSES[lens].cogFunction, ...r });
+    }
+    const council = await run(mock, entry.type, entry.seed);
+    // Best fit = highest surplus among framings that actually close; backfire = walks (or worst).
+    const closing = cells.filter((c) => c.dealRate > 0.5);
+    const best = (closing.length ? closing : cells).reduce((a, b) => (b.surplus > a.surplus ? b : a));
+    const worst = cells.reduce((a, b) => (b.surplus < a.surplus ? b : a));
+    matrix.push({
+      type: entry.type,
+      name: TYPE_META[entry.type].name,
+      tell: TYPE_META[entry.type].tell,
+      council,
+      cells,
+      bestLens: best.lens,
+      worstLens: worst.lens,
+    });
+  }
+  fitCache = { matrix, lenses: DOCTRINES.map((d) => ({ id: d, cog: LENSES[d].cogFunction })) };
+  res.json(fitCache);
+});
+
 // Ablation study: remove one architectural component at a time, same seeds (S5-2).
 app.get("/api/ablation", async (_req, res) => {
   res.json(await runAblation(new MockAgents()));
+});
+
+// Exhibit D: the society (adaptive chair) vs each single general deciding alone.
+let generalBenchCache: unknown = null;
+app.get("/api/general-bench", async (_req, res) => {
+  if (!generalBenchCache) generalBenchCache = await runGeneralBench(new MockAgents());
+  res.json(generalBenchCache);
+});
+
+// MCP surface, made visible: Synod runs as an MCP server over stdio (`npm run mcp`); these
+// endpoints expose its tool catalog and invoke the data-only tools live, so the integration
+// is demonstrable in a browser (the exact response an MCP host receives), not just asserted.
+app.get("/api/mcp/catalog", (_req, res) => {
+  res.json({ server: "synod (MCP, stdio) · npm run mcp", tools: MCP_TOOLS });
+});
+app.get("/api/mcp/invoke", (req, res) => {
+  const tool = String(req.query.tool ?? "describe_council");
+  try {
+    res.json({
+      request: { jsonrpc: "2.0", method: "tools/call", params: { name: tool, arguments: {} } },
+      response: { content: [{ type: "text", text: JSON.stringify(invokeMcpTool(tool), null, 2) }] },
+    });
+  } catch (e) {
+    res.status(400).json({ error: e instanceof Error ? e.message : String(e) });
+  }
+});
+
+// The recon capability, proven by lens-ablation: remove the Probe lens from the council's
+// repertoire and it can no longer buy information — belief stalls instead of resolving, and
+// the outcome halves. Returns the belief trace + actions + outcome, with and without the
+// lens, on the deceptive scenario. Deterministic; cached.
+let capabilityCache: unknown = null;
+app.get("/api/capability", async (_req, res) => {
+  if (capabilityCache) { res.json(capabilityCache); return; }
+  const entry = getEntry("type-c-deceptive")!;
+  const trace = async (agents: import("./agents/index.js").DeliberationAgents) => {
+    const r = await runNegotiation(agents, new GameMaster(entry.type, entry.seed), entry.id, entry.type);
+    return {
+      belief: r.beliefTrajectory.map((b, i) => ({ round: i + 1, deceptive: b.belief.deceptive })),
+      probed: r.rounds.some((x) => x.councilMove.action === "probe"),
+      peak: Math.max(...r.beliefTrajectory.map((b) => b.belief.deceptive)),
+      surplus: r.terminal.surplusCaptured,
+      settled: r.terminal.dealSurvived,
+    };
+  };
+  const full = await trace(new MockAgents());
+  // Switch off each general (zero their lens) and re-run the same deceptive seed.
+  const generals = [];
+  for (const g of GENERALS) {
+    const off = await trace(withLensOff(new MockAgents(), g.lens));
+    generals.push({ id: g.id, name: g.name, lens: g.lens, lensName: LENSES[g.lens].cogFunction, off, delta: off.surplus - full.surplus });
+  }
+  capabilityCache = { full, generals };
+  res.json(capabilityCache);
+});
+
+// Multi-scenario switch-off: removing each general across ALL THREE counterparty types,
+// to show no general is globally inert — different faculties carry different worlds. Fixes
+// the "4/5 do nothing" read of the deceptive-only view.
+let switchMatrixCache: unknown = null;
+app.get("/api/switch-matrix", async (_req, res) => {
+  if (switchMatrixCache) { res.json(switchMatrixCache); return; }
+  const scenarios = ["type-a-relationship", "type-b-soft-floor", "type-c-deceptive"]
+    .map((id) => getEntry(id)!).filter(Boolean);
+  const surplus = async (agents: import("./agents/index.js").DeliberationAgents, e: typeof scenarios[number]) =>
+    (await runNegotiation(agents, new GameMaster(e.type, e.seed), e.id, e.type)).terminal.surplusCaptured;
+  const rows = [];
+  for (const e of scenarios) {
+    const fullS = await surplus(new MockAgents(), e);
+    const offs: Record<string, number> = {};
+    for (const g of GENERALS) offs[g.id] = (await surplus(withLensOff(new MockAgents(), g.lens), e)) - fullS;
+    rows.push({ scenario: e.title, type: e.type, full: fullS, offs });
+  }
+  switchMatrixCache = { generals: GENERALS.map((g) => ({ id: g.id, name: g.name, lens: g.lens, lensName: LENSES[g.lens].cogFunction })), rows };
+  res.json(switchMatrixCache);
+});
+
+// Exhibit E: the adaptive policy layer vs a fixed clamp — the measured algorithmic delta.
+let adaptiveCache: unknown = null;
+app.get("/api/adaptive-bench", async (_req, res) => {
+  if (adaptiveCache) { res.json(adaptiveCache); return; }
+  setPolicyOverride(null);
+  const adaptive = (await runAbComparison(new MockAgents(), { nSeeds: 10 })).totals.councilSurplusMean;
+  setPolicyOverride(FIXED_POLICY);
+  const fixed = (await runAbComparison(new MockAgents(), { nSeeds: 10 })).totals.councilSurplusMean;
+  setPolicyOverride(null);
+  adaptiveCache = { adaptive, fixed, delta: adaptive - fixed };
+  res.json(adaptiveCache);
+});
+
+// The EXACT `npm run reproduce` output, served verbatim so the page can show the real
+// terminal result (provenance + exhibits + the byte-identical determinism proof) — not a
+// description of it. Cached; deterministic, so it's the same every load.
+let reproduceCache: { output: string; ok: boolean } | null = null;
+app.get("/api/reproduce", async (req, res) => {
+  // ?fresh=1 re-runs the check live (the "Re-run" button), so a judge can trigger the
+  // verification from the browser; otherwise serve the cached run for instant page load.
+  if (req.query.fresh || !reproduceCache) {
+    const { text, ok } = await runReproduce();
+    reproduceCache = { output: text, ok };
+  }
+  res.json(reproduceCache);
 });
 
 // Hold-out suite: adversarially-authored worlds the council was never tuned on (S7-1).

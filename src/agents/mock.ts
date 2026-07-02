@@ -16,6 +16,7 @@ import { COUNTERPARTY_TYPES } from "../core/types.js";
 import { mostLikelyType } from "../belief/update.js";
 import { COST_OF_PROBE, expectedValueOfInformation } from "../belief/evi.js";
 import { capturedSurplus, payoff, walkRisk } from "../payoffs.js";
+import { selectPolicy, type CouncilPolicy } from "../engine/policy.js";
 import type { BaselineDecision, BaselinePersona, DeliberationAgents, RoundInput } from "./types.js";
 
 const clamp = (x: number, lo: number, hi: number): number => Math.max(lo, Math.min(hi, x));
@@ -56,6 +57,7 @@ function doctrineScores(
   belief: Belief,
   buyerOffer: number,
   eviValue: number,
+  policy: CouncilPolicy,
 ): { scores: ActionScores; rationale: string; confidence: number } {
   // Per-action statistics under the current belief.
   const capture = {} as Record<ActionId, number>; // upside if the deal survives
@@ -75,39 +77,51 @@ function doctrineScores(
 
   switch (doctrine) {
     case "battle":
-      // Win this round: maximize captured surplus now, blind to walk risk.
-      for (const a of ACTIONS) raw[a] = capture[a];
-      return { scores: normalizeToUnit(raw), rationale: "Press for the most surplus this round.", confidence: 0.6 };
+      // Win this round: immediate gain, discounted view of the future (Pressure owns γ).
+      // γ=1 → pure capture-now; lower γ lets the longer-horizon payoff back in.
+      for (const a of ACTIONS) raw[a] = policy.pressure.futureDiscount * capture[a] + (1 - policy.pressure.futureDiscount) * ev[a];
+      return { scores: normalizeToUnit(raw), rationale: "There's ground to take right now — press for it. Hesitation leaves it on the table.", confidence: 0.6 };
 
     case "war":
       // Win the relationship: protect against the walk, accept modest capture.
       for (const a of ACTIONS) raw[a] = 0.3 * capture[a] - 900 * walk[a];
-      return { scores: normalizeToUnit(raw), rationale: "Protect the relationship; don't risk the deal for one round's margin.", confidence: 0.55 };
+      return { scores: normalizeToUnit(raw), rationale: "Don't torch the deal for one round's margin — hold the position, play the long game.", confidence: 0.55 };
 
-    case "risk":
-      // Survive the worst case: dominated by downside (walk) and irreversibility.
-      for (const a of ACTIONS) raw[a] = -1200 * walk[a];
-      raw.accept -= 600 * ctx.exposure; // committing under exposure is itself a risk
-      raw.walk -= 400; // walking is irreversible too
-      return { scores: normalizeToUnit(raw), rationale: "Avoid the irreversible downside; keep the deal alive and options open.", confidence: 0.5 + 0.3 * ctx.infoConfidence };
+    case "risk": {
+      // Hedge's algorithm: score = λ·worst_case + (1−λ)·expected_value (Hedge owns λ).
+      // Worst case is the walk-dominated downside; expected value is the belief-weighted
+      // payoff. Higher λ = more worst-case averse → pushes harder off irreversible commits.
+      const lambda = policy.hedge.lambda;
+      const evMax = Math.max(...ACTIONS.map((a) => ev[a])) || 1;
+      for (const a of ACTIONS) {
+        const worstCase = -1200 * walk[a];
+        const expected = ev[a] / Math.max(1, Math.abs(evMax)) * 1200 - 1200; // scaled into the worst-case range
+        raw[a] = lambda * worstCase + (1 - lambda) * expected;
+      }
+      raw.accept -= (300 + 600 * lambda) * ctx.exposure; // committing under exposure scales with aversion
+      raw.walk -= 400 * lambda; // walking is irreversible too
+      return { scores: normalizeToUnit(raw), rationale: "If we're wrong here it's irreversible — keep the deal alive and our options open.", confidence: 0.5 + 0.3 * ctx.infoConfidence };
+    }
 
     case "empathy":
       // Model the counterparty: favour what is actually best for the believed type.
       for (const a of ACTIONS) raw[a] = payoff(a, mlt, buyerOffer);
-      return { scores: normalizeToUnit(raw), rationale: `Reads them as ${mlt.replace("_", " ")}; play what fits that type.`, confidence: 0.5 + 0.4 * ctx.infoConfidence };
+      return { scores: normalizeToUnit(raw), rationale: `I read them as ${mlt.replace("_", " ")} — play what actually fits that, not what flatters us.`, confidence: 0.5 + 0.4 * ctx.infoConfidence };
 
     case "probe": {
       // Probe's score IS the decision rule "probe iff EVI > cost" (spec §5): a
       // decisive switch, not a gentle nudge, so the information actually gets bought
       // when it is worth more than the probe's price (and there's a round to use it).
-      const worth = eviValue > COST_OF_PROBE && ctx.roundsLeft > 1;
+      // Probe's rule: probe iff EVI clears Probe's own threshold (Probe owns it). The
+      // threshold adapts to the situation; lower = more willing to spend a move to learn.
+      const worth = eviValue > policy.probe.eviThreshold && ctx.roundsLeft > 1;
       for (const a of ACTIONS) raw[a] = ev[a];
       raw.probe = worth ? Math.max(...ACTIONS.map((a) => ev[a])) + 1e6 : Math.min(...ACTIONS.map((a) => ev[a])) - 1e6;
       return {
         scores: normalizeToUnit(raw),
         rationale: worth
-          ? `Information is worth ~$${Math.round(eviValue)} > the probe's cost — buy it before committing.`
-          : `Information is worth only ~$${Math.round(eviValue)}; not worth a probe now.`,
+          ? `We're deciding blind — information is worth ~${Math.round(eviValue)}, more than the probe costs. Buy it before we commit.`
+          : `Information's only worth ~${Math.round(eviValue)} here — not worth spending a probe.`,
         confidence: 0.5 + 0.4 * ctx.infoConfidence,
       };
     }
@@ -160,6 +174,7 @@ export class MockAgents implements DeliberationAgents {
       input.belief,
       input.buyerOffer,
       eviValue,
+      selectPolicy(input.ctx),
     );
     const top = ACTIONS.reduce((a, b) => (s[b] > s[a] ? b : a));
     const meta = LENSES[doctrine];
@@ -247,10 +262,10 @@ export class MockAgents implements DeliberationAgents {
     const concession = gap * edge;
     const revisedScore = stakes.myScore + concession;
     if (Math.abs(concession) < 0.01) {
-      return { text: `The terrain is exactly why "${actionLabel}" is correct — ${m.coreBelief.toLowerCase()}.` };
+      return { text: `The situation is exactly why "${actionLabel}" is correct — ${m.coreBelief.toLowerCase()}.` };
     }
     return {
-      text: `The terrain still favours "${actionLabel}" — ${m.coreBelief.toLowerCase()} — though the objection has weight.`,
+      text: `The situation still favours "${actionLabel}" — ${m.coreBelief.toLowerCase()} — though the objection has weight.`,
       revisedScore,
     };
   }

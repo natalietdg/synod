@@ -2,7 +2,7 @@ import { GameMaster } from "../gm/gameMaster.js";
 import type { TerminalReveal } from "../gm/types.js";
 import type { DeliberationAgents } from "../agents/index.js";
 import { runNegotiation } from "../protocol/loop.js";
-import { SUITE, type SuiteEntry } from "../suite.js";
+import { EVAL_SUITE, type SuiteEntry } from "../suite.js";
 import { runBaseline } from "./baseline.js";
 
 export interface TypeStats {
@@ -69,7 +69,7 @@ export async function runAbComparison(
     baselineAgents?: DeliberationAgents;
   } = {},
 ): Promise<AbReport> {
-  const suite = options.suite ?? SUITE;
+  const suite = options.suite ?? EVAL_SUITE;
   const nSeeds = options.nSeeds ?? 10;
   const baseAgents = options.baselineAgents ?? agents;
   const rows: AbRow[] = [];

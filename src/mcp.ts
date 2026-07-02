@@ -10,6 +10,9 @@ import { runAblation } from "./harness/ablation.js";
 import { receiptStore } from "./dotto/store.js";
 import { SUITE, getEntry } from "./suite.js";
 import { LENSES, DOCTRINES } from "./core/types.js";
+import { ACTION_LABELS } from "./core/actions.js";
+import { runWarPlan, DIVISIONS } from "./society/warplan.js";
+import { QwenAgents } from "./agents/qwen.js";
 
 /**
  * Synod as an MCP server (spec S5-4): any MCP-capable agent can convene the council
@@ -32,9 +35,9 @@ server.registerTool(
   {
     title: "List negotiation scenarios",
     description:
-      "The three hidden counterparty types Synod is evaluated against, with the " +
-      "business situations each one models (vendor renewals, procurement floors, " +
-      "adversarial RFPs / BATNA bluffers).",
+      "The three hidden counterparty types Synod is evaluated against — the recurring " +
+      "shapes of an adversary who hides what they hold (a relationship that walks if " +
+      "bullied, a soft surface over a firm red line, a bluffer who fakes leverage).",
     inputSchema: {},
   },
   async () =>
@@ -173,6 +176,43 @@ server.registerTool(
         "exposure) — never the council's arguments — and weights the lenses by what the " +
         "situation demands, not by who argued best.",
     }),
+);
+
+server.registerTool(
+  "draft_operational_order",
+  {
+    title: "Draft the operational order (multi-division)",
+    description:
+      "The complex task the society accomplishes after it decides: a multi-division " +
+      "operational order. The council first decides the directive against the chosen " +
+      "scenario; then the task is DECOMPOSED into divisions (security, intelligence, " +
+      "food & logistics, medical & rescue, reconstruction) and each is ASSIGNED to the " +
+      "general whose doctrine fits, who drafts it live. Requires LLM_PROVIDER=qwen.",
+    inputSchema: {
+      scenario: z.string().describe(`Scenario id — one of: ${SUITE.map((s) => s.id).join(", ")}`),
+      seed: z.number().int().optional().describe("Optional seed (default: the scenario's fixed seed)"),
+    },
+  },
+  async ({ scenario, seed }) => {
+    const entry = getEntry(scenario);
+    if (!entry) return text({ error: `Unknown scenario "${scenario}".` });
+    if (!process.env.DASHSCOPE_API_KEY) {
+      return text({ error: "draft_operational_order needs live Qwen — set LLM_PROVIDER=qwen and DASHSCOPE_API_KEY." });
+    }
+    // Decide first (the directive every division serves), then draft the divisions.
+    const gm = new GameMaster(entry.type, seed ?? entry.seed);
+    const result = await runNegotiation(agents, gm, entry.id, entry.type);
+    const directive = ACTION_LABELS[result.rounds[0]!.engine.recommendation];
+    const move = result.rounds[0]!.counterpartyMove.message;
+    const plan = await runWarPlan(new QwenAgents(), { directive }, move);
+    return text({
+      scenario: entry.id,
+      directive,
+      divisions: DIVISIONS.map((d) => d.title),
+      order: plan.sections,
+      authored: `${plan.authored}/${plan.sections.length} divisions filed`,
+    });
+  },
 );
 
 await server.connect(new StdioServerTransport());

@@ -1,154 +1,13 @@
-"use strict";
-
-const ORDER = ["empathy", "battle", "war", "probe", "risk"]; // stable colour order
-const ACTIONS = ["accept", "counter_hard", "counter_soft", "hold", "probe", "concede_term", "walk"];
-const TYPES = ["relationship", "soft_floor", "deceptive"];
-const TYPE_SHORT = { relationship: "Relationship", soft_floor: "Soft-floor", deceptive: "Deceptive" };
-const state = {
-  meta: null, source: null, round: null, roundNum: 0, prevWeights: null,
-  scenarioId: null, prevOffer: null, speed: 1, autoFollow: false,
-  abReport: null, beliefByRound: {},
-};
-
-/* Pipeline spine: the task decomposition made visible — each node is a sub-task
-   and the agent it's assigned to, lighting up as the stream reaches it. */
-const STAGES = [
-  { id: "inbound", label: "INBOUND", tip: "Counterparty move arrives — the only thing that crosses the information boundary" },
-  { id: "belief", label: "BELIEF", tip: "Sub-task: update belief over hidden type · assigned to pure code (Bayes' rule, never an LLM)" },
-  { id: "intent", label: "TRUST", tip: "Sub-task: read the counterparty's intent · assigned to the Trust lens" },
-  { id: "council", label: "COUNCIL", tip: "Sub-task: score the action space under 5 criteria · assigned to five lens agents, in parallel — fixed roles, dynamic influence" },
-  { id: "challenge", label: "CHALLENGE", tip: "Sub-task: stress-test the leading option · assigned dynamically — the most-diverging pair this round; defender may concede (causal, clamped)" },
-  { id: "arbiter", label: "ARBITER", tip: "Sub-task: allocate influence · assigned to the doctrine-free Arbiter — weights reassigned every round from terrain, not arguments" },
-  { id: "engine", label: "ENGINE", tip: "Sub-task: synthesize the decision · assigned to the deterministic engine (auditable argmax — no LLM)" },
-  { id: "gate", label: "GATE", tip: "Sub-task: audit & gate execution · assigned to Quant (EV check) + Dotto (signed receipt)" },
-  { id: "outbound", label: "OUTBOUND", tip: "The gated action is encoded and sent — the debate never crosses the boundary" },
-];
-const EVENT_STAGE = {
-  "round-start": "inbound", belief: "belief", intent: "intent", position: "council",
-  challenge: "challenge", arbiter: "arbiter", engine: "engine", gate: "gate",
-  "council-move": "outbound", "your-move": "inbound",
-};
-
-const $ = (s) => document.querySelector(s);
-const pct = (x) => `${Math.round(x * 100)}%`;
-const money = (x) => `$${Math.round(x).toLocaleString()}`;
-const sci = (x) => (x >= 0 ? `+${x.toFixed(2)}` : x.toFixed(2));
-const el = (tag, cls, html) => { const n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; };
-
-function typewriter(node, text, msPerChar = 14) {
-  node.textContent = "";
-  let i = 0;
-  const tick = () => { if (i < text.length) { node.textContent += text[i++]; setTimeout(tick, msPerChar); } };
-  tick();
-}
-const info = (tip) => `<span class="iicon" data-tip="${tip.replace(/"/g, "&quot;")}">i</span>`;
-const lens = (d) => state.meta.lenses[d];
-const label = (a) => state.meta.actionLabels[a];
-const topAction = (scores) => ACTIONS.reduce((a, b) => (scores[b] > scores[a] ? b : a));
-
-/* Live stakes HUD — a win-probability-style needle. Position = the real surplus on
-   the table (offer − $8,000 floor) as a fraction of the best close (+$4,000 at the
-   $12,000 ask). It slides each round; the probe is what sends it toward CLOSE. */
-const HUD_FLOOR = 8000, HUD_BEST = 4000, HUD_CAP = 4;
-const hudPos = (offer) => Math.max(0, Math.min(100, ((offer - HUD_FLOOR) / HUD_BEST) * 100));
-
-function showHud() {
-  const hud = $("#nego-hud");
-  if (!hud) return;
-  hud.classList.remove("hidden", "hud-locked");
-  $("#hud-fill").style.width = "0%";
-  $("#hud-event").textContent = "";
-  $("#hud-event").className = "hud-event";
-}
-function hideHud() { $("#nego-hud")?.classList.add("hidden"); }
-
-function updateHud(round, offer, signals) {
-  const hud = $("#nego-hud");
-  if (!hud || hud.classList.contains("hidden")) return;
-  $("#hud-round").textContent = `ROUND ${round} / ${HUD_CAP}`;
-  const surplus = Math.max(0, offer - HUD_FLOOR);
-  const prev = state.hudSurplus ?? 0;
-  $("#hud-surplus").textContent = money(surplus);
-  const d = surplus - prev;
-  $("#hud-delta").textContent = round > 1 && d !== 0 ? ` ${d > 0 ? "▲" : "▼"} ${money(Math.abs(d))}` : "";
-  $("#hud-delta").className = `hud-delta ${d > 0 ? "up" : d < 0 ? "dn" : ""}`;
-  state.hudSurplus = surplus;
-  $("#hud-fill").style.width = `${hudPos(offer)}%`;
-  const reveal = (signals ?? []).some((s) => s.startsWith("revealed"));
-  const ev = $("#hud-event");
-  if (reveal) {
-    ev.textContent = "⚑ BLUFF EXPOSED — the needle swings toward CLOSE";
-    ev.className = "hud-event fire";
-  } else if (round > 1) {
-    ev.textContent = ""; ev.className = "hud-event";
-  }
-}
-
-function lockHud(t) {
-  const hud = $("#nego-hud");
-  if (!hud || hud.classList.contains("hidden")) return;
-  hud.classList.add("hud-locked");
-  const ev = $("#hud-event");
-  if (t.dealSurvived) {
-    $("#hud-fill").style.width = `${hudPos(HUD_FLOOR + t.surplusCaptured)}%`;
-    ev.textContent = `✓ CLOSED — ${money(t.surplusCaptured)} captured`;
-    ev.className = "hud-event win";
-  } else {
-    $("#hud-fill").style.width = "0%";
-    ev.textContent = "✕ WALK — $0";
-    ev.className = "hud-event lose";
-  }
-}
-
-/** Auto-scroll follow: the demo watches itself until the user takes the wheel. */
-function follow(node) {
-  if (!state.autoFollow || !node) return;
-  node.scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
-function buildSpine() {
-  const rail = $("#pipeline-rail");
-  rail.innerHTML =
-    `<span class="rail-round" id="rail-round"></span>` +
-    STAGES.map((s) =>
-      `<span class="rail-node" data-stage="${s.id}" title="${s.tip.replace(/"/g, "&quot;")}"><i></i>${s.label}</span>`,
-    ).join(`<span class="rail-edge"></span>`);
-  rail.addEventListener("click", (e) => {
-    const node = e.target.closest(".rail-node");
-    if (!node || !state.round) return;
-    const target = state.round.stageEls?.[node.dataset.stage];
-    if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
-  });
-}
-
-function spine(stage) {
-  if (!stage) return;
-  const idx = STAGES.findIndex((s) => s.id === stage);
-  document.querySelectorAll("#pipeline-rail .rail-node").forEach((n, i) => {
-    n.classList.toggle("done", i < idx);
-    n.classList.toggle("live", i === idx);
-  });
-}
-
-function spineRound(n) {
-  const lbl = $("#rail-round");
-  if (lbl) lbl.textContent = `R${String(n).padStart(2, "0")}`;
-}
-
-function spineComplete() {
-  $("#pipeline-rail").classList.add("complete"); // the current stops flowing
-  document.querySelectorAll("#pipeline-rail .rail-node").forEach((n) => {
-    n.classList.remove("live");
-    n.classList.add("done");
-  });
-}
-
+/* Synod UI — live negotiation: init, tabs, composer, the SSE round-by-round render. */
 async function init() {
   state.meta = await (await fetch("/api/meta")).json();
+  // The badge reflects CAPABILITY at load (Qwen configured, convene to run live) — not a
+  // standing "it's live right now" claim. A convene updates it to the real outcome
+  // (ran live / fell back), so the badge can never contradict what actually executed.
   $("#provider-badge").textContent =
     state.meta.provider === "qwen"
-      ? "COUNCIL LIVE ON QWEN"
-      : "OFFLINE MODE · DETERMINISTIC & REPRODUCIBLE";
+      ? "LIVE QWEN READY · CONVENE TO RUN"
+      : "RUNS LOCALLY · SAME ANSWER EVERY TIME";
   // Mode select: watch the council, deceive it yourself, or duel it on the same seed
   const GM_LABELS = {
     deterministic: "Watch Synod negotiate",
@@ -174,7 +33,7 @@ async function init() {
   updateScenarioCard();
   $("#legend").innerHTML = ORDER.map((d) => `<span><i class="seg-${d}"></i>${lens(d).cogFunction}</span>`).join("");
   renderProvenance();
-  renderCast();
+  await renderCast();
   armTableauReveal();
   $("#run-btn").addEventListener("click", () => run());
   $("#speed-btn").addEventListener("click", () => {
@@ -193,6 +52,15 @@ async function init() {
   loadAb();
   loadAblation();
   loadHoldout();
+  loadGeneralBench();
+  loadReproduce();
+  loadMcp();
+  loadAdaptive();
+  loadCapability();
+  loadSwitchMatrix();
+  loadWarRoom();
+  loadFit();
+  setupTracks();
 
   // Make the agent society the hero: auto-run the canonical negotiation on load so
   // Proceedings is already populated (outcome-first verdict cards) when a judge
@@ -470,7 +338,7 @@ function renderDuelResult(ev) {
       `<div class="duel-col ${c.t.surplusCaptured === best ? "duel-best" : ""}">` +
         `<span class="dc-who">${c.who}</span>` +
         `<span class="dc-val ${c.t.dealSurvived ? "" : "walk"}">${c.t.dealSurvived ? money(c.t.surplusCaptured) : "WALK"}</span>` +
-        `<span class="dc-sub">${c.t.dealSurvived ? "deal closed" : "no deal · $0"}</span>` +
+        `<span class="dc-sub">${c.t.dealSurvived ? "deal closed" : "no deal · 0"}</span>` +
       `</div>`,
     ).join("") +
     `</div>` +
@@ -540,12 +408,12 @@ function startRound(ev) {
   const reveals = ev.move.signals.filter((s) => s === "revealed_competitor" || s.startsWith("revealed_need:"));
   if (reveals.length) {
     const parts = [];
-    if (reveals.includes("revealed_competitor")) parts.push("the competitor leverage was a bluff");
+    if (reveals.includes("revealed_competitor")) parts.push("the claimed leverage was a bluff");
     const need = reveals.find((s) => s.startsWith("revealed_need:"));
     if (need) parts.push(`real need surfaced: ${need.split(":")[1]}`);
     card.appendChild(el("div", "disarm-banner",
       `<span class="db-stamp">⚑ DECEPTION DISARMED</span><span class="db-text">${parts.join(" · ")}` +
-      ` — <b>a single-stance agent never asks; it walks with $0</b></span>`));
+      ` — <b>a single-stance agent never asks; it walks with 0</b></span>`));
     // A split-second gold wash over the whole room — the case just turned.
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const flash = el("div", "flash-overlay");
@@ -711,7 +579,7 @@ function renderVoteSplit() {
   const splitEl = el("div", "vote-split");
   state.round.splitEl = splitEl;
 
-  const voteTip = "Lenses score independently — cross-contamination is a known failure mode in expert committees. The Arbiter resolves disagreement at synthesis time, not during scoring.";
+  const voteTip = "Each lens scores on its own — if they talked first, they'd influence each other (a known problem in expert panels). The chair resolves the disagreement at the end, not during scoring.";
   if (isUnanimous) {
     splitEl.innerHTML =
       `<span class="split-lbl">5 INDEPENDENT READS${info(voteTip)}</span> ` +
@@ -803,7 +671,7 @@ function renderChallenge(c) {
   const turn = el("div", `cr-turn ${reacted ? "cr-moved" : "cr-held"}`,
     reacted
       ? `↳ <b>${defenderM.cogFunction} concedes ground</b> — ${c.originalScore.toFixed(2)} → ${c.revisedScore.toFixed(2)} on ${label(c.contested)}; the engine scores the post-exchange council`
-      : `↳ <b>${defenderM.cogFunction} holds</b> — the terrain backs the call; the challenge is absorbed`);
+      : `↳ <b>${defenderM.cogFunction} holds</b> — the situation backs the call; the challenge is absorbed`);
 
   const verdictEl = el("div", "cr-verdict");
   verdictEl.textContent = "—";
@@ -858,22 +726,30 @@ function renderArbiter(v) {
   const ctx = v.context;
   const d = ensureDecision();
   const topLens = ORDER.reduce((a, b) => v.weights[b] > v.weights[a] ? b : a);
-  const arbTip = "The Arbiter reads terrain, not the council's arguments. It sees the context vector and Empathy's read — not what Battle or War said. An Arbiter that read the rationale snippets would reward the most persuasive lens, not the most contextually appropriate one. The rationale snippets are for you, not for the machine.";
+  const arbTip = "The chair looks at the situation, not the council's arguments. It sees the facts of the round and the Trust read — not what Pressure or Frame said. A chair that read the arguments would reward the most persuasive lens, not the one the situation actually calls for. The written reasons are for you, not for the machine.";
 
+  // Each terrain reading lifts a lens — high reading lifts `hi`, low lifts `lo`.
+  // Showing which lens each factor currently empowers is the "how it decides" story.
   const TERRAIN_FACTORS = [
-    { key: "trustEst",          name: "trust",        tip: "↑ activates Battle; ↓ activates War" },
-    { key: "infoConfidence",    name: "info conf",    tip: "↓ unresolved belief activates Probe + Empathy" },
-    { key: "adversarialSignal", name: "adversarial",  tip: "↑ activates Risk + War; ↓ activates Battle" },
-    { key: "exposure",          name: "exposure",     tip: "↑ activates Risk" },
+    { key: "trustEst",          name: "trust",       hi: "battle", lo: "war",   tip: "high trust lifts Pressure (close now); low trust lifts Frame (protect the position)" },
+    { key: "infoConfidence",    name: "belief resolved", hi: null, lo: "probe", tip: "unresolved belief lifts Probe (buy information) and Trust (read them)" },
+    { key: "adversarialSignal", name: "adversarial", hi: "risk",   lo: "battle", tip: "hostility lifts Hedge + Frame; calm lifts Pressure" },
+    { key: "exposure",          name: "exposure",    hi: "risk",   lo: null,    tip: "high stakes lift Hedge (guard the downside)" },
   ];
 
-  const factorRows = TERRAIN_FACTORS.map((f) =>
-    `<div class="arb-factor">` +
-      `<span class="arb-flabel" title="${f.tip}">${f.name}</span>` +
-      `<div class="arb-bar"><div class="arb-fill" style="width:${Math.round(ctx[f.key] * 100)}%"></div></div>` +
-      `<span class="arb-fval">${pct(ctx[f.key])}</span>` +
-    `</div>`
-  ).join("");
+  const factorRows = TERRAIN_FACTORS.map((f) => {
+    const val = ctx[f.key];
+    const active = val >= 0.5 ? f.hi : f.lo; // the lens this reading currently empowers
+    const chip = active
+      ? `<span class="arb-lifts" style="color:${LENS_COLORS[active]}">→ ${lens(active).cogFunction}</span>`
+      : `<span class="arb-lifts arb-lifts-none"></span>`;
+    return `<div class="arb-factor">` +
+      `<span class="arb-flabel" title="${f.tip.replace(/"/g, "&quot;")}">${f.name}</span>` +
+      `<div class="arb-bar"><div class="arb-fill" style="width:${Math.round(val * 100)}%"></div></div>` +
+      `<span class="arb-fval">${pct(val)}</span>` +
+      chip +
+    `</div>`;
+  }).join("");
 
   let narrative = v.rationale;
   if (state.round && state.round.lastBelief) {
@@ -935,9 +811,9 @@ function renderEngine(engine) {
 
   const dlTip = engine.deadlockReason === "thin-margin"
     ? "The winning action barely beat the runner-up — a close call, not a confident one. The system knows it is uncertain."
-    : "The doctrines sharply disagree on the winning action — the recommendation sits on unresolved internal conflict.";
+    : "The lenses sharply disagree on the winning action — the recommendation sits on unresolved conflict.";
   const dl = engine.deadlock ? ` <span class="hint">⚠ ${engine.deadlockReason}${info(dlTip)}</span>` : "";
-  const confTip = "Confidence drops for two reasons: thin margin (the winner barely beat the runner-up) or high dispersion (the doctrines sharply disagree on the winning action). Both are tracked separately.";
+  const confTip = "Confidence drops for two reasons: a thin margin (the winner barely beat the runner-up) or high spread (the lenses sharply disagree on the winning action). Both are tracked separately.";
 
   // Dispersion gauge: how much doctrines disagreed on the winning action
   const dispNorm = Math.min(engine.dispersion / 1.5, 1); // rough ceiling at 1.5
@@ -1091,8 +967,8 @@ function renderGavel(engine) {
     const yours = ACTIONS.reduce((a, b) => (score(b) > score(a) ? b : a));
     const same = yours === engine.recommendation;
     verdict.innerHTML = same
-      ? `your council sends <b class="gv-same">${label(yours)}</b> — same as the Arbiter's weighting`
-      : `your council sends <b class="gv-diff">${label(yours)}</b> · the Arbiter's sent <b>${label(engine.recommendation)}</b>`;
+      ? `your council sends <b class="gv-same">${label(yours)}</b> — same as the chair's call`
+      : `your council sends <b class="gv-diff">${label(yours)}</b> · the chair sent <b>${label(engine.recommendation)}</b>`;
     verdict.classList.toggle("diverged", !same);
   };
   for (const dctr of ORDER) sliders[dctr].addEventListener("input", recompute);
@@ -1189,7 +1065,7 @@ function renderTerminal(t) {
     ? `<div class="case-stamp closed">Case closed</div>`
     : `<div class="case-stamp walked">No deal</div>`;
   const big = t.dealSurvived
-    ? `<div class="big">${money(t.surplusCaptured)}</div><div class="sub">surplus captured · ${t.outcome}</div>`
+    ? `<div class="big">${money(t.surplusCaptured)}</div><div class="sub">outcome captured · ${t.outcome}</div>`
     : `<div class="big walk">WALK</div><div class="sub">no deal · counterparty walked</div>`;
   const trustRow = `<div class="trust-row"><span class="trust-score" style="color:${trustColor}">${Math.round(t.trustFinal)}</span><span class="trust-label">${trustWord} trust${info(trustTip)}</span></div>`;
   $("#terminal-body").innerHTML = `${stamp}${big}${trustRow}`;
@@ -1199,7 +1075,7 @@ function renderTerminal(t) {
   const ab = state.abReport?.rows.find((r) => r.id === state.scenarioId);
   const cf = ab
     ? `<div class="disp-cf">the single-agent baseline on this counterparty: ` +
-      `<b>${money(ab.baseline.surplusMean)}</b> mean · <b>${pctFmt(ab.baseline.dealRate)}</b> deals (n=${ab.baseline.n}) — ` +
+      `<b>${money(ab.baseline.surplusMean)}</b> mean · <b>${pctFmt(ab.baseline.dealRate)}</b> settled (n=${ab.baseline.n}) —` +
       `<a href="#exhibit-a">Exhibit A</a></div>`
     : "";
   fileRound(state.round); // the final round joins the record; the band is the ending
@@ -1214,7 +1090,7 @@ function renderTerminal(t) {
     const lb = state.round?.lastBelief;
     const dom = lb ? TYPES.reduce((a, b) => (lb[b] > lb[a] ? b : a)) : null;
     const read = dom
-      ? ` — the council read this terrain as closest to <span class="bseg-${dom}-txt">${TYPE_SHORT[dom]} ${Math.round(lb[dom] * 100)}%</span>`
+      ? ` — the council read this situation as closest to <span class="bseg-${dom}-txt">${TYPE_SHORT[dom]} ${Math.round(lb[dom] * 100)}%</span>`
       : "";
     declass =
       `<div class="declass"><span class="dcl-lbl">CUSTOM COUNTERPARTY</span> a counterparty you composed${read}</div>`;
@@ -1238,7 +1114,7 @@ function renderTerminal(t) {
     `<div class="disp-stamp">${t.dealSurvived ? "CASE CLOSED" : "NO DEAL"}</div>` +
     `<div class="disp-main">` +
       `<span class="disp-big">${t.dealSurvived ? money(t.surplusCaptured) : "WALK"}</span>` +
-      `<span class="disp-sub">${t.dealSurvived ? `surplus captured · ${t.outcome}` : "counterparty walked"} · trust ${Math.round(t.trustFinal)} (${trustWord})</span>` +
+      `<span class="disp-sub">${t.dealSurvived ? `outcome captured · ${t.outcome}` : "counterparty walked"} · trust ${Math.round(t.trustFinal)} (${trustWord})</span>` +
     `</div>` + declass + cf;
 
   // The lever a judge can flip: rerun this exact negotiation without the probe gate.
@@ -1296,350 +1172,3 @@ function addTrajRow(sel, round, segs, dominantLabel, stackTooltip) {
   $(sel).appendChild(row);
 }
 
-const pctFmt = (r) => `${Math.round(r * 100)}%`;
-const meanStd = (s) => `${money(s.surplusMean)} <span class="hint">±${money(s.surplusStd)}</span>`;
-
-async function loadAblation() {
-  const box = $("#ablation-table");
-  if (!box) return;
-  const report = await (await fetch("/api/ablation")).json();
-  const full = report.rows[0];
-  const max = Math.max(...report.rows.map((r) => r.totalSurplusMean), 1);
-  const bar = (r) => {
-    const delta = r.totalSurplusMean - full.totalSurplusMean;
-    const isFull = r === full;
-    const isCausal = r.variant.includes("probe"); // the "− probe trigger" component ablation (lowercase)
-    const isLearning = r.variant.includes("Probe"); // the single-lens row named Probe (ties full Synod here, loses on hold-out)
-    const cls = isFull ? "full" : isCausal ? "causal" : delta <= -2000 ? "crater" : "drop";
-    const deltaTxt = isFull ? "reference" : delta === 0 ? "±$0" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
-    return `<div class="drop-row${isCausal ? " drop-causal" : ""}">` +
-      `<span class="drop-label">${isFull ? "<b>Full Synod</b>" : r.variant}` +
-        `${isCausal ? ` <span class="causal-chip">PRIMARY CAUSAL RESULT</span>` : ""}` +
-        `${isLearning ? ` <span class="hint">ties here; loses on Exhibit C</span>` : ""}</span>` +
-      `<span class="drop-track"><span class="drop-fill ${cls}" style="width:${Math.max(2, (r.totalSurplusMean / max) * 100)}%"></span></span>` +
-      `<span class="drop-val">${money(r.totalSurplusMean)} <span class="drop-delta ${delta < -100 ? "lose" : ""}">${deltaTxt}</span></span>` +
-    `</div>`;
-  };
-  box.innerHTML = `<div class="dropbars">${report.rows.map(bar).join("")}</div>`;
-}
-
-/**
- * The council vote tableau — the page's hero visual: one real round, deciding.
- * Counterparty statement → five lens votes (they disagree) → Arbiter → verdict →
- * outcome. Maps 1:1 to the track brief (decomposition · roles · conflict resolution).
- * Votes are the canonical deterministic round 1 of the deceptive scenario, verified
- * against a real run; the engine is frozen, so they hold.
- */
-const CANON_VOTES = {
-  message: "Where we're landing is about $8,500 — can we make that work?",
-  note: "deceptive counterparty · round 1 · hides competitor leverage",
-  // by doctrine id → that lens's top action this round
-  votes: { empathy: "counter_soft", battle: "counter_hard", war: "concede_term", probe: "probe", risk: "probe" },
-  verdict: "probe",
-  // Real per-round offer trajectory (canonical deterministic run): the probe pulls the
-  // truth out in R2, and the offer on the table climbs because the bluff broke.
-  trajectory: [
-    { r: 1, offer: 8500, note: "probes" },
-    { r: 2, offer: 10217, note: "+$1,717", up: true },
-    { r: 3, offer: 11000, note: "closes", up: true },
-  ],
-  synod: 3000, baseline: 0,
-  // Why arbitration mattered — names the dissenter and what tipped it (real terrain).
-  why: `<b>Pressure</b> pushed to counter hard. But belief is unresolved (0%) and exposure is high (67%), so the Arbiter sided with <b>Probe</b> — buy information before committing. The decision changed <em>because</em> they disagreed.`,
-};
-function renderCast() {
-  const box = $("#council-tableau");
-  if (!box) return;
-  const c = CANON_VOTES;
-  const voteRows = ORDER.map((d) => {
-    const m = lens(d);
-    const carried = c.votes[d] === c.verdict;
-    return `<div class="tb-lens${carried ? " tb-carried" : ""}" data-d="${d}">` +
-      `<span class="tb-name" style="color:${LENS_COLORS[d]}">${m.cogFunction}</span>` +
-      `<span class="tb-q">${m.question}</span>` +
-      `<span class="tb-vote">${label(c.votes[d])}${carried ? " ◄" : ""}</span>` +
-    `</div>`;
-  }).join("");
-  box.innerHTML =
-    `<div class="tb-cp"><span class="tb-cp-lbl">COUNTERPARTY</span>` +
-      `<span class="tb-cp-msg">“${c.message}”</span><span class="tb-cp-note">${c.note}</span></div>` +
-    `<div class="tb-arrow">↓ five lenses score the move, in parallel</div>` +
-    `<div class="tb-lenses">${voteRows}</div>` +
-    `<div class="tb-weighing">⟳ the council is split — the Arbiter weighs the terrain…</div>` +
-    `<div class="tb-decision">` +
-      `<div class="tb-arrow">↓ not by who argued best</div>` +
-      `<div class="tb-verdict">VERDICT · <b>${label(c.verdict)}</b></div>` +
-      `<div class="tb-why">${c.why}</div>` +
-    `</div>`;
-
-  // The range of outcomes + the needle: a deceptive deal can end at WALK ($0) or a
-  // close ($3,000). Each round the needle sits at the real surplus on the table
-  // (offer − floor, as a fraction of the achievable close). The probe is what tilts it.
-  const FLOOR = 8000, BEST = c.synod; // $3,000 achievable surplus
-  const pos = (offer) => Math.round(Math.max(0, Math.min(1, (offer - FLOOR) / BEST)) * 100);
-  const marks = c.trajectory.map((s) =>
-    `<span class="range-mark" style="left:${pos(s.offer)}%"><b>R${s.r}</b><span class="rm-note">${s.note}</span></span>`,
-  ).join("");
-  const cq = $("#consequence");
-  if (cq) cq.innerHTML =
-    `<div class="cq-title">a deceptive deal ends one of two ways. <b>The probe tilts the needle</b> — here's where it sits each round.</div>` +
-    `<div class="range">` +
-      `<div class="range-cap worst"><span class="range-tag">WORST</span>WALK · $0</div>` +
-      `<div class="range-track">` +
-        `<div class="range-fill" style="width:${pos(c.trajectory.at(-1).offer)}%"></div>` +
-        `<span class="range-base" title="a single agent — bluffed, walks">✕ single agent</span>` +
-        marks +
-      `</div>` +
-      `<div class="range-cap best"><span class="range-tag">BEST</span>CLOSE · ${money(BEST)}</div>` +
-    `</div>` +
-    `<div class="cq-foot">the needle starts near <b class="col-amber">WALK</b> — contested, 39% confident, so the council probes rather than commit. The probe exposes the bluff (<b>the competitor leverage was air</b>) and the needle slides to <b class="col-green">CLOSE</b>. A single agent never probes; its needle stays pinned at $0.</div>`;
-}
-
-/**
- * The pre-verdict hesitation beat: when the council scene scrolls into view, the
- * five votes reveal one by one, the Arbiter "weighs the terrain" for a moment, then
- * the verdict stamps in. Makes the decision feel arrived-at, not computed. Pure
- * theater — skipped under reduced-motion or without IntersectionObserver (static).
- */
-function armTableauReveal() {
-  const scene = $("#scene-council");
-  const tableau = $("#council-tableau");
-  if (!scene || !tableau) return;
-  const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  if (reduced || !("IntersectionObserver" in window)) return; // leave fully visible
-  tableau.classList.add("tb-anim");
-  $("#consequence")?.classList.add("tb-anim");
-  const io = new IntersectionObserver((entries) => {
-    if (!entries[0].isIntersecting) return;
-    io.disconnect();
-    playTableau();
-  }, { threshold: 0.3 });
-  io.observe(scene);
-}
-
-function playTableau() {
-  const t = $("#council-tableau");
-  if (!t) return;
-  const lenses = [...t.querySelectorAll(".tb-lens")];
-  const base = 250, step = 170;
-  lenses.forEach((el, i) => setTimeout(() => el.classList.add("show"), base + i * step));
-  const afterVotes = base + lenses.length * step + 250;
-  const weigh = t.querySelector(".tb-weighing");
-  const decision = t.querySelector(".tb-decision");
-  setTimeout(() => weigh?.classList.add("show"), afterVotes);
-  setTimeout(() => {
-    weigh?.classList.remove("show");
-    decision?.classList.add("show");
-    $("#consequence")?.classList.add("show");
-  }, afterVotes + 1000);
-}
-
-function renderProvenance() {
-  const card = $("#provenance-card");
-  const p = state.meta.provenance;
-  if (!card || !p) return;
-  const rows = [
-    ["hold-out worlds", p.holdoutAuthor],
-    ["", p.holdoutFrozen],
-    ["baseline", p.baseline],
-    ["seeds", p.seeds],
-    ["determinism", p.determinism],
-    ["evaluated on commit", `<code>${p.commit}</code>`],
-  ];
-  card.innerHTML = rows.map(([k, v]) =>
-    `<div class="prov-row"><span class="prov-k">${k}</span><span class="prov-v">${v}</span></div>`,
-  ).join("");
-}
-
-async function loadHoldout() {
-  const box = $("#holdout-table");
-  if (!box) return;
-  const report = await (await fetch("/api/holdout?lenses=1")).json();
-  const lensNames = Object.keys(report.rows[0]?.lenses ?? {});
-  const cols = ["council", ...lensNames];
-  // Heatmap: red = a worldview wiped out on this world, green = thrived. The eye finds
-  // the red cells (a lens that craters) instantly — no number-parsing required.
-  const all = report.rows.flatMap((r) => [r.council.surplusMean, ...lensNames.map((n) => r.lenses[n].surplusMean)]);
-  const max = Math.max(...all, 1);
-  const k = (v) => (v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${Math.round(v)}`);
-  const heat = (v) => `hsl(${Math.round((Math.min(v, max) / max) * 130)} 48% ${14 + (v / max) * 12}%)`;
-  const colOf = (r, c) => (c === "council" ? r.council : r.lenses[c]);
-
-  const headCells = cols.map((c) => `<div class="hm-h${c === "council" ? " hm-council" : ""}">${c === "council" ? "COUNCIL" : c}</div>`).join("");
-  const rows = report.rows.map((r) => {
-    const cells = cols.map((c) => {
-      const s = colOf(r, c);
-      return `<div class="hm-cell${c === "council" ? " hm-council" : ""}" style="background:${heat(s.surplusMean)}" ` +
-        `title="${c} · ${r.title}: ${money(s.surplusMean)}, ${pctFmt(s.dealRate)} deals">${k(s.surplusMean)}</div>`;
-    }).join("");
-    return `<div class="hm-rowlabel" title="${r.targets.replace(/"/g, "&quot;")}">${r.title}</div>${cells}`;
-  }).join("");
-
-  const totals = cols.map((c) => report.rows.reduce((sum, r) => sum + colOf(r, c).surplusMean, 0));
-  const best = Math.max(...totals);
-  const totalCells = totals.map((tot, i) =>
-    `<div class="hm-total${cols[i] === "council" ? " hm-council" : ""}${tot >= best ? " hm-best" : ""}">${k(tot)}</div>`).join("");
-
-  box.innerHTML =
-    `<div class="heatmap" style="grid-template-columns: 8.5rem repeat(${cols.length}, 1fr)">` +
-      `<div class="hm-corner"></div>${headCells}` +
-      rows +
-      `<div class="hm-rowlabel hm-totlabel">total</div>${totalCells}` +
-    `</div>` +
-    `<div class="chart-total">redder = that worldview was wiped out on that world · the council column never reddens, and is first on total</div>`;
-}
-
-async function loadAb() {
-  const report = await (await fetch("/api/ab")).json();
-  state.abReport = report; // the disposition band's counterfactual reads from this
-  const n = report.rows[0]?.council.n ?? 1;
-  const max = Math.max(...report.rows.map((r) => Math.max(r.baseline.surplusMean, r.council.surplusMean)), 1);
-  const w = (v) => `${Math.max(1.5, (v / max) * 100)}%`;
-  const pair = (r) => {
-    const dec = r.id.includes("deceptive");
-    return `<div class="pbar-group${dec ? " pbar-hot" : ""}">` +
-      `<div class="pbar-label">${r.typeName}</div>` +
-      `<div class="pbar-row"><span class="pbar-who">baseline</span>` +
-        `<span class="pbar-track"><span class="pbar-fill base" style="width:${w(r.baseline.surplusMean)}"></span></span>` +
-        `<span class="pbar-val">${r.baseline.dealRate === 0 ? "<b class='walktag'>WALK · $0</b>" : money(r.baseline.surplusMean)} <span class="hint">${pctFmt(r.baseline.dealRate)} deals</span></span></div>` +
-      `<div class="pbar-row"><span class="pbar-who syn">Synod</span>` +
-        `<span class="pbar-track"><span class="pbar-fill syn" style="width:${w(r.council.surplusMean)}"></span></span>` +
-        `<span class="pbar-val"><b>${money(r.council.surplusMean)}</b> <span class="hint">${pctFmt(r.council.dealRate)} deals</span></span></div>` +
-    `</div>`;
-  };
-  const t = report.totals;
-  $("#ab-table").innerHTML =
-    `<div class="pbars">${report.rows.map(pair).join("")}</div>` +
-    `<div class="chart-total">total surplus captured · baseline <b>${money(t.baselineSurplusMean)}</b> · Synod <b class="win">${money(t.councilSurplusMean)}</b> <span class="hint">(n=${n} per type)</span></div>`;
-}
-
-/* ====== INTERACTIVE TOUR — a moving spotlight that operates the real UI.
-   Few words by default: one short headline per stop; a “+” reveals depth. ====== */
-
-const TOUR_STEPS = [
-  { sel: () => $(".stat-strip"), head: "One claim: $0 vs $3,000. Same opponent, ten runs.",
-    more: "A strong single agent gets bluffed and walks; the council probes and closes. Every number on this page is seeded and reproducible." },
-  { sel: () => $("#gm-select"), head: "Four ways to run it.",
-    more: "Watch the council work · play the counterparty and try to bluff it · duel it on the same seed · or face a live, unscripted AI adversary." },
-  { sel: () => state.round?.card?.querySelector(".turn-cp"), head: "They move. The tags are behaviour.",
-    more: "Signal tags — held firm, small concession, revealed — are the only evidence the belief system accepts." },
-  { sel: () => state.round?.card?.querySelector(".empathy-broadcast"), head: "It reads conduct, not words.",
-    more: "The belief bar moves on price movement, firmness, and reveals — never on talk. A bluffer and an honest buyer can say the same thing; only one will act it." },
-  { sel: () => state.round?.card?.querySelector(".lens"), head: "Five worldviews, in parallel.",
-    enter: (t) => t.classList.add("open"),
-    more: "Trust · Pressure · Frame · Probe · Hedge — each scores every action from its own worldview. Click any lens anytime to read its reasoning." },
-  { sel: () => state.round?.card?.querySelector(".challenge-record"), head: "Disagreement, on record.",
-    more: "The two most-opposed lenses file briefs against each other. It's causal: a genuinely persuaded defender concedes ground — which can flip a close round." },
-  { sel: () => state.round?.decision?.querySelector(".rec-line") ?? state.round?.decision, head: "Votes converge. A calculator decides.",
-    enter: () => { if (state.round?.engineResult) drawConvergence(state.round.engineResult); },
-    more: "Replaying the synthesis: thick beams agreed with the verdict, faint ones dissented. The final pick is deterministic arithmetic — no LLM decides." },
-  { sel: () => state.round?.card?.querySelector(".arbiter-section"), head: "Influence comes from terrain.",
-    more: "The Arbiter weights the lenses by the situation — trust, uncertainty, hostility, exposure. It never reads their arguments, so persuasion can't buy weight." },
-  { sel: () => state.round?.card?.querySelector(".receipt-chip"), head: "Signed.",
-    enter: (t) => t.nextElementSibling?.classList.remove("hidden"),
-    more: "Every round's decision is cryptographically signed and tamper-evident — a filed proceeding, not a chat log." },
-  { sel: () => state.round?.card?.querySelector(".gavel"), head: "Your hand on the scales.",
-    enter: (t) => t.setAttribute("open", ""),
-    more: "Drag a slider — the deterministic engine recomputes the verdict live. Pile everything on one lens and you've rerun Exhibit B by hand." },
-  { sel: () => $(".disposition"), head: "Case closed — and the baseline's fate.",
-    more: "Outcome, trust, the declassified type, and what a strong single agent did against this same counterparty: usually walked with $0." },
-  { sel: () => $("#exhibit-a"), head: "The evidence. Honest nulls included.",
-    more: "n=10 with spread; Exhibit B removes one component at a time and publishes everything — even the parts whose removal costs nothing. The README adds adversarially-authored hold-out worlds and the belief confusion matrix." },
-];
-
-let tour = null; // { i, spot, card }
-
-const waitForEl = (sel, timeoutMs = 120000) => new Promise((resolve) => {
-  const t0 = Date.now();
-  const tick = () => {
-    const n = document.querySelector(sel);
-    if (n) return resolve(n);
-    if (Date.now() - t0 > timeoutMs) return resolve(null);
-    setTimeout(tick, 350);
-  };
-  tick();
-});
-
-async function startTour() {
-  if (tour) return;
-  // No completed case on screen? Run one — the tour narrates real artifacts only.
-  if (!document.querySelector(".disposition")) {
-    $("#scenario-select").value = "type-c-deceptive";
-    if ($("#gm-select")) $("#gm-select").value = "deterministic";
-    const restoreSpeed = state.speed;
-    state.speed = 4;
-    run();
-    state.speed = restoreSpeed;
-    $("#guide-btn").textContent = "RUNNING…";
-    await waitForEl(".disposition");
-    $("#guide-btn").textContent = "GUIDE";
-  }
-  state.round?.card?.classList.remove("filed"); // tour walks the last round's record
-  state.autoFollow = false;
-  tour = { i: 0, spot: el("div", "tour-spot"), card: el("div", "tour-card") };
-  document.body.appendChild(tour.spot);
-  document.body.appendChild(tour.card);
-  showTourStep(0, +1);
-}
-
-function endTour() {
-  if (!tour) return;
-  tour.spot.remove();
-  tour.card.remove();
-  tour = null;
-}
-
-function showTourStep(i, dir) {
-  if (!tour) return;
-  if (i < 0) i = 0;
-  if (i >= TOUR_STEPS.length) return endTour();
-  const s = TOUR_STEPS[i];
-  const target = s.sel();
-  if (!target) return showTourStep(i + dir, dir); // skip stops whose artifact is absent
-  tour.i = i;
-  ensureTabVisible(target); // a step may live in a non-active tab
-  s.enter?.(target);
-  target.scrollIntoView({ behavior: "smooth", block: "center" });
-
-  setTimeout(() => {
-    if (!tour) return;
-    const r = target.getBoundingClientRect();
-    const sx = window.scrollX, sy = window.scrollY;
-    Object.assign(tour.spot.style, {
-      left: `${r.left + sx - 6}px`, top: `${r.top + sy - 6}px`,
-      width: `${r.width + 12}px`, height: `${r.height + 12}px`,
-    });
-    tour.card.innerHTML =
-      `<div class="tc-head">${s.head}</div>` +
-      `<div class="tc-more hidden">${s.more}</div>` +
-      `<div class="tc-row">` +
-        `<button class="tc-plus" title="more">+</button>` +
-        `<span class="tc-count">${i + 1}/${TOUR_STEPS.length}</span>` +
-        `<button class="tc-back" ${i === 0 ? "disabled" : ""}>‹</button>` +
-        `<button class="tc-next">${i === TOUR_STEPS.length - 1 ? "DONE" : "›"}</button>` +
-        `<button class="tc-end" title="end tour">✕</button>` +
-      `</div>`;
-    const cardW = 330;
-    const left = Math.max(12, Math.min(r.left + sx, window.innerWidth + sx - cardW - 12));
-    const below = r.bottom + sy + 14;
-    const above = r.top + sy - 14;
-    const useAbove = r.bottom > window.innerHeight - 170;
-    Object.assign(tour.card.style, {
-      left: `${left}px`,
-      top: useAbove ? "" : `${below}px`,
-      bottom: "",
-    });
-    if (useAbove) {
-      tour.card.style.top = `${above - tour.card.offsetHeight}px`;
-    }
-    tour.card.querySelector(".tc-plus").addEventListener("click", (e) => {
-      tour.card.querySelector(".tc-more").classList.toggle("hidden");
-      e.target.textContent = e.target.textContent === "+" ? "−" : "+";
-    });
-    tour.card.querySelector(".tc-back").addEventListener("click", () => showTourStep(tour.i - 1, -1));
-    tour.card.querySelector(".tc-next").addEventListener("click", () => showTourStep(tour.i + 1, +1));
-    tour.card.querySelector(".tc-end").addEventListener("click", endTour);
-  }, 420);
-}
-
-init();

@@ -5,6 +5,43 @@
 This document is the judge-facing map: what runs where, what is and is not an LLM call,
 where the information boundaries sit, and how Synod relates to prior work.
 
+## Two layers: the society on top of the engine
+
+Synod is **a society layer over a deterministic decision engine.** The engine (the diagram
+below) is unchanged in spirit — belief → five lenses → challenge → chair → argmax → gate →
+receipt. What sits on top:
+
+- **The society, two framings (same engine).** *War Room* — five real generals (Patton,
+  Zhukov, Eisenhower, Sun Tzu, Kutuzov), **each owning one lens** — one judgment faculty,
+  their distinct capability (Patton→Pressure, Sun Tzu→Probe/recon, Kutuzov→Hedge,
+  Eisenhower→Trust, Zhukov→Frame; a bijection). *Negotiation table* — the same five lenses,
+  bare. Switch in the UI; only the table changes. (`src/society/generals.ts`, `liveCouncil.ts`.)
+  This divides **judgment** into its faculties (the criteria), not **labor** into tasks —
+  so each agent has a genuinely distinct capability: remove Sun Tzu and the council loses recon.
+- **Live multi-round deliberation.** Each general is its own Qwen call, judging the move
+  through *their lens alone*; they argue across rounds and may change their call
+  (`generalReact`), until consensus or an arbiter-set cap. The chair's verdict goes through
+  the deterministic engine (the five owned-lens reads × terrain weights), so it never
+  contradicts the split.
+- **The complex task — a multi-division operational order.** After the decision, the chair
+  **decomposes** the response into divisions (security, intelligence, logistics,
+  medical/rescue, reconstruction) and **assigns each to the general whose capability fits,
+  at runtime** (`assignedBy: chair`); each general drafts their division. Task division +
+  role assignment + a coordinated deliverable. (`src/society/warplan.ts`.)
+- **Bounded adaptive policy.** Each lens owns a tunable parameter in a validated range —
+  Hedge's risk-aversion λ, Probe's EVI threshold, Pressure's future discount
+  (`src/engine/policy.ts`). The situation fills them; the engine **clamps and logs** the
+  choice. Adaptive *within bounds*, so the determinism guarantee survives.
+- **Reproducibility.** `npm run reproduce` (`src/reproduce.ts`) regenerates all evidence
+  exhibits from fixed seeds, prints provenance, and proves determinism (runs the A/B twice,
+  asserts byte-identical). Exhibits: A (society vs a single agent), B (component ablation),
+  C (hold-out worlds by a different model than the one under test), **D (society vs any
+  single general** — the chair beats 4/5 generals and ties the Probe-heavy one, matching
+  the best ex ante without knowing which).
+
+Two axes of distinctness: members are **temperament-distinct** in how they reason and
+**capability-distinct** in what they execute (each owns a different division).
+
 ## The system in one diagram
 
 ```

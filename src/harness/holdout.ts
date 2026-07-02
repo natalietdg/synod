@@ -99,7 +99,7 @@ export async function runHoldout(
       councilSurplusMean: rows.reduce((s, r) => s + r.council.surplusMean, 0),
     },
     provenance:
-      "Worlds authored adversarially by Claude (Anthropic), frozen before evaluation; " +
+      "Worlds authored by Claude (a different model and lab than Qwen, which the system runs on), chosen to stress the council; " +
       "the council's payoff model was calibrated on the ORIGINAL profiles only. " +
       "Results published as measured.",
   };

@@ -19,26 +19,26 @@ export interface MoveNarrative {
 export function phraseMove(n: MoveNarrative): string {
   const parts: string[] = [];
 
-  if (n.councilConcededNeed) parts.push("Appreciate you including that — it helps.");
+  if (n.councilConcededNeed) parts.push("Appreciate the movement — it helps.");
 
   if (n.revealedNeed) {
-    parts.push(`Honestly, ${n.revealedNeed} is the part we actually can't do without.`);
+    parts.push(`Honestly, ${n.revealedNeed} is the one thing we can't give up.`);
   }
   if (n.revealedCompetitor) {
-    parts.push("And I'll be straight with you, we do have another vendor in the conversation.");
+    parts.push("And I'll be straight with you — we have another option on the table.");
   }
 
   if (n.deceived) {
-    parts.push("Budget's genuinely tight on our side this quarter.");
+    parts.push("Our position is genuinely tighter than you're treating it.");
   }
 
-  if (n.movedUp > 250) parts.push(`We can come up to $${n.price.toLocaleString()}.`);
-  else if (n.movedUp > 0) parts.push(`I can nudge us to $${n.price.toLocaleString()}, but that's a stretch.`);
-  else parts.push(`We're still at $${n.price.toLocaleString()} — that's where we are.`);
+  if (n.movedUp > 250) parts.push(`We can come up to ${n.price.toLocaleString()}.`);
+  else if (n.movedUp > 0) parts.push(`I can move to ${n.price.toLocaleString()}, but that's a stretch.`);
+  else parts.push(`We're still at ${n.price.toLocaleString()} — that's our line.`);
 
   return parts.join(" ");
 }
 
 export function openingMessage(price: number): string {
-  return `Thanks for the proposal. Where we're landing is about $${price.toLocaleString()} — can we make that work?`;
+  return `Here's where we stand: about ${price.toLocaleString()}. Can you work with that?`;
 }
