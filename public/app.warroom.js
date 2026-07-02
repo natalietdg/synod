@@ -129,6 +129,15 @@ async function loadWarRoom() {
     // You may REMOVE a general first: they don't read, don't argue, and the chair decides
     // without their faculty — the switch-off, live (a fresh Qwen run per removal-set).
     `<div class="wr-runbar">` +
+      `<div class="wr-facing" id="wr-facing">` +
+        `<span class="wr-facing-lbl">FACING</span>` +
+        `<select id="wr-scenario" title="Pick the kind of opponent the live council convenes against">` +
+          `<option value="type-c-deceptive">A bluffed threat — reserves that may not exist</option>` +
+          `<option value="type-b-soft-floor">A firm red line — one term they truly won't move</option>` +
+          `<option value="type-a-relationship">An ally worth keeping — the relationship is the stake</option>` +
+        `</select>` +
+        `<span class="hint">a different opponent makes a different general decisive</span>` +
+      `</div>` +
       `<div class="wr-remove" id="wr-remove">` +
         `<div class="wr-remove-head"><span class="wr-opt">OPTIONAL</span> <b>Click a general to remove them</b> — then convene to watch the council decide without that faculty, live.</div>` +
         `<div class="wr-remove-chips">` +
@@ -210,7 +219,8 @@ async function wrRunLive() {
     : "5 generals reasoning on Qwen…";
   status.className = "wr-live-status working";
   try {
-    const qs = off.length ? `?off=${encodeURIComponent(off.join(","))}` : "";
+    const scenario = document.querySelector("#wr-scenario")?.value || "type-c-deceptive";
+    const qs = `?scenario=${encodeURIComponent(scenario)}${off.length ? `&off=${encodeURIComponent(off.join(","))}` : ""}`;
     const res = await fetch(`/api/warroom-live${qs}`);
     if (!res.ok) {
       const e = await res.json().catch(() => ({}));
@@ -237,6 +247,15 @@ async function wrRunLive() {
       if (host) host.innerHTML = `<div class="wr-step-h"><span class="wr-step-n">${step}</span>${title}` +
         `<span class="wr-live-flag">⚡ LIVE · Qwen</span></div>${inner}`;
     };
+    // The scenario may differ from the mock default — sync the move (step 1) to what the
+    // live council actually faced, so nothing upstream contradicts the proceedings.
+    if (live.move) {
+      WR.data.move = live.move;
+      const msg = document.querySelector("#warroom-body .wr-move-msg");
+      if (msg) msg.textContent = `“${live.move}”`;
+      const note = document.querySelector("#warroom-body .wr-move-note");
+      if (note && live.scenarioLabel) note.textContent = `adversary · ${live.scenarioLabel.toLowerCase()} — what's real, what's theatre?`;
+    }
     // Rebuild the turning-point timeline from the live verdict so nothing mock-derived shows.
     const tl = document.querySelector("#warroom-body .wr-timeline");
     if (tl) tl.outerHTML = wrTimelineHTML(WR.data);

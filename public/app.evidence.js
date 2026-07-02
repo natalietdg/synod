@@ -26,6 +26,30 @@ async function loadMcp() {
   };
   box.querySelectorAll(".mcp-tool.live").forEach((btn) => btn.addEventListener("click", () => invoke(btn.dataset.tool)));
   invoke("describe_council"); // show a real response by default
+  loadMcpAgentTranscript();
+}
+
+/* The claim "any AI can call Synod as a tool" — demonstrated, not asserted: a recorded run
+   of an INDEPENDENT Qwen agent that, given a deal decision and a toolbox, chose to consult
+   the council over real MCP stdio and decided from what it found. Regenerate any time with
+   `npm run mcp:agent-demo`; the file carries its own provenance. */
+async function loadMcpAgentTranscript() {
+  const host = $("#mcp-agent");
+  if (!host) return;
+  let t;
+  try { t = await (await fetch("/mcp-agent-transcript.json")).json(); }
+  catch { host.innerHTML = `<span class="hint">no recorded run — generate one with <code>npm run mcp:agent-demo</code></span>`; return; }
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const step = (who, body, cls) => `<div class="ma-step ${cls}"><span class="ma-who">${who}</span><div class="ma-body">${body}</div></div>`;
+  const parts = t.transcript.map((m) => {
+    if (m.role === "user") return step("THE TASK", esc(m.content), "task");
+    if (m.role === "agent-tool-call") return step("AGENT → SYNOD", `it chose to consult the council: <code>tools/call ${esc(m.tool)}(${esc(JSON.stringify(m.args))})</code>`, "call");
+    if (m.role === "synod-mcp-result") return step("SYNOD → AGENT", `<details><summary>the council's full deliberation output (${m.text.length.toLocaleString()} chars) — expand</summary><pre>${esc(m.text)}</pre></details>`, "result");
+    return step("AGENT DECIDES", esc(m.content), "decide");
+  }).join("");
+  host.innerHTML =
+    `<div class="ma-head">A real agent consulting the council <span class="hint">— recorded run (${new Date(t.recorded).toLocaleDateString("en-GB")}) · outer agent: ${esc(t.outerAgent)} · nothing told it what to conclude</span></div>` +
+    parts;
 }
 const meanStd = (s) => `${evMoney(s.surplusMean)} <span class="hint">±${evMoney(s.surplusStd)}</span>`;
 

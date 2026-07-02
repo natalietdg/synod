@@ -12,7 +12,8 @@
     "start": "tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "check:html": "node scripts/check-html.mjs",
-    "mcp:smoke": "node scripts/mcp-smoke.mjs"
+    "mcp:smoke": "node scripts/mcp-smoke.mjs",
+    "mcp:agent-demo": "node scripts/mcp-agent-demo.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

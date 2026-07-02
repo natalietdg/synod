@@ -37,11 +37,30 @@ import { runLiveCouncil } from "./society/liveCouncil.js";
 import { runWarPlan } from "./society/warplan.js";
 import { QwenAgents } from "./agents/qwen.js";
 
-// The war room's adversary opening (armistice skin over the deceptive opening). Shared by
-// the mock /api/warroom and the live /api/warroom-live so both rooms face the same move.
-const WAR_MOVE =
-  "We hold the eastern bank — and there are reserves we haven't shown you. " +
-  "Pull your line back to the river, or the ceasefire ends Thursday.";
+// The war room's adversary openings — one war-skinned move per counterparty type, so the
+// live council can be convened against a different KIND of opponent (the deceptive bluff
+// stays the canonical default, shared with the mock /api/warroom).
+const WAR_MOVES: Record<string, { move: string; label: string }> = {
+  "type-c-deceptive": {
+    label: "A bluffed threat",
+    move:
+      "We hold the eastern bank — and there are reserves we haven't shown you. " +
+      "Pull your line back to the river, or the ceasefire ends Thursday.",
+  },
+  "type-b-soft-floor": {
+    label: "A firm red line",
+    move:
+      "We can talk about everything else, but the river crossing stays ours — that is not " +
+      "posturing, it is the one line our command will not move. Bring us terms that respect it.",
+  },
+  "type-a-relationship": {
+    label: "An ally worth keeping",
+    move:
+      "We both know this ceasefire is worth more than any single position. We're prepared to " +
+      "give ground on the checkpoints — but if you humiliate us at the table, our coalition walks.",
+  },
+};
+const WAR_MOVE = WAR_MOVES["type-c-deceptive"]!.move;
 import { LENSES, TYPE_META, DOCTRINES } from "./core/types.js";
 import { ACTION_LABELS, ACTIONS, type ActionId } from "./core/actions.js";
 import { encodeMove } from "./protocol/encode.js";
@@ -423,9 +442,13 @@ app.get("/api/warroom", async (_req, res) => {
 const liveCouncilCache = new Map<string, unknown>();
 app.get("/api/warroom-live", async (req, res) => {
   // ?off=probe,risk — remove those generals and convene the rest live (a causal switch-off).
+  // ?scenario=type-b-soft-floor — face a different KIND of opponent (war-skinned move +
+  // that scenario's terrain), so a judge can watch a different general become decisive.
   const off = String(req.query.off ?? "").split(",").map((s) => s.trim()).filter(Boolean);
   const exclude = DOCTRINES.filter((d) => off.includes(d)); // validate against real lens ids
-  const cacheKey = [...exclude].sort().join(",");
+  const scenarioId = WAR_MOVES[String(req.query.scenario ?? "")] ? String(req.query.scenario) : "type-c-deceptive";
+  const warMove = WAR_MOVES[scenarioId]!.move;
+  const cacheKey = `${scenarioId}|${[...exclude].sort().join(",")}`;
   if (liveCouncilCache.has(cacheKey)) { res.json(liveCouncilCache.get(cacheKey)); return; }
   if (!process.env.DASHSCOPE_API_KEY) {
     res.status(503).json({ error: "no-key", message: "Live Qwen not configured — set DASHSCOPE_API_KEY." });
@@ -433,21 +456,23 @@ app.get("/api/warroom-live", async (req, res) => {
   }
   try {
     // Terrain is a property of THIS situation, so take it from the deterministic read of
-    // the same deceptive move — the chair then weighs the live pooled reads by it.
-    const entry = getEntry("type-c-deceptive")!;
+    // the matching scenario — the chair then weighs the live pooled reads by it.
+    const entry = getEntry(scenarioId)!;
     const canon = await runNegotiation(new MockAgents(), new GameMaster(entry.type, entry.seed), entry.id, entry.type);
     const r1 = canon.rounds[0]!;
     const qwen = new QwenAgents();
-    const live = await runLiveCouncil(qwen, WAR_MOVE, { arbiterWeights: r1.arbiter.weights, ctx: r1.ctx }, exclude);
+    const live = await runLiveCouncil(qwen, warMove, { arbiterWeights: r1.arbiter.weights, ctx: r1.ctx }, exclude);
     // Once the council has decided, it accomplishes the complex task: a multi-division
     // operational order — but ONLY the convened generals contribute (a removed general is
     // absent from the plan too, not just the debate).
     const convenedLenses = live.generals.map((g) => g.leadLens);
-    const plan = await runWarPlan(qwen, { directive: live.councilLabel }, WAR_MOVE, convenedLenses);
+    const plan = await runWarPlan(qwen, { directive: live.councilLabel }, warMove, convenedLenses);
     const payload = {
       ...live,
       plan,
-      move: WAR_MOVE,
+      move: warMove,
+      scenario: scenarioId,
+      scenarioLabel: WAR_MOVES[scenarioId]!.label,
       actions: WAR_ACTIONS,
       // Terrain checklist + war-game come from the deterministic read of the same move,
       // so the live proceedings are internally consistent end to end.

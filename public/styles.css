@@ -1783,6 +1783,13 @@ section { position: relative; z-index: 1; }
 .wr-play-sub { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.01em; opacity: 0.8; text-transform: none; }
 .wr-play-primary:hover { filter: brightness(1.06); box-shadow: 0 0 0 1px var(--gold), 0 8px 26px -8px var(--gold); }
 
+/* Facing — pick the kind of opponent the live council convenes against */
+.wr-facing { flex-basis: 100%; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+.wr-facing-lbl { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold); }
+#wr-scenario { font-family: var(--mono); font-size: 0.72rem; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line-strong); border-radius: 3px; padding: 0.35rem 0.5rem; max-width: 100%; }
+.wr-facing .hint { font-size: 0.66rem; }
+
 /* Remove a general, then convene live — the switch-off made causal on a real Qwen run */
 /* Removal panel — a distinct, obviously-interactive callout so it's clear you CAN remove one */
 .wr-remove { flex-basis: 100%; padding: 0.7rem 0.85rem; margin-bottom: 0.3rem;
@@ -2098,6 +2105,19 @@ body[data-track="nego"] .tw { display: none; }
 .mcp-io-lbl { font-family: var(--mono); font-size: 0.6rem; font-weight: 700; letter-spacing: 0.04em; color: var(--gold-dim); margin-bottom: 0.3rem; }
 .mcp-io pre { font-family: var(--mono); font-size: 0.66rem; line-height: 1.45; color: var(--ink); background: #0e0c08; border: 1px solid var(--line); border-radius: 4px; padding: 0.7rem 0.8rem; margin: 0; overflow-x: auto; white-space: pre; max-height: 280px; overflow-y: auto; }
 .mcp-wait { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+
+/* A real agent consulting the council — the recorded MCP-consumption run */
+.mcp-agent { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px dashed var(--line-strong); }
+.ma-head { font-family: var(--serif); font-size: 1.02rem; color: var(--ink); margin-bottom: 0.7rem; }
+.ma-step { display: grid; grid-template-columns: 118px 1fr; gap: 0.7rem; padding: 0.45rem 0; border-bottom: 1px solid var(--line-soft); }
+.ma-step:last-child { border-bottom: none; }
+.ma-who { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); padding-top: 0.2rem; }
+.ma-step.call .ma-who, .ma-step.result .ma-who { color: var(--gold); }
+.ma-step.decide .ma-who { color: var(--good, #3fb950); }
+.ma-body { font-family: var(--sans); font-size: 0.86rem; line-height: 1.55; color: var(--ink); min-width: 0; }
+.ma-body code { font-family: var(--mono); font-size: 0.72rem; color: var(--gold); }
+.ma-body pre { font-family: var(--mono); font-size: 0.62rem; line-height: 1.45; color: var(--muted); background: #0e0c08; border: 1px solid var(--line); border-radius: 4px; padding: 0.6rem 0.7rem; margin: 0.4rem 0 0; overflow-x: auto; max-height: 260px; overflow-y: auto; white-space: pre-wrap; }
+.ma-body summary { cursor: pointer; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
 
 /* Two-axis clarifiers (judgment vs labor) */
 .cap-axis { font-family: var(--mono); font-size: 0.72rem; line-height: 1.55; color: var(--gold-dim); margin: 0 0 0.9rem; max-width: 74ch; }
