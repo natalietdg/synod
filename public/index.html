@@ -288,6 +288,13 @@
         <div id="adaptive-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Adaptive beats the fixed clamp by 1,584</b> (8,968 vs 7,384) — the per-situation policy selection isn't decoration, it captures more. <details class="ex-more"><summary>why this is a real delta</summary>The reasoning layer fills bounded parameter slots per situation; the engine validates, clamps, and applies them deterministically. This measures what that <em>adaptivity</em> buys over a static parameter set — a genuine component, not a relabel.</details></p>
       </details>
+
+      <details class="exhibit">
+        <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span></summary>
+        <p class="ex-q">The three classic time-based negotiators from the research field (Faratin 1998 — the standard baselines of the international ANAC competition): they concede on the clock, hide nothing, and were not authored by this project.</p>
+        <div id="anac-bench" class="chart-box">Computing…</div>
+        <p class="ab-a"><b>Roughly a tie — and that's the honest, expected result.</b> These opponents hide nothing, so there's no bluff to expose and the council's information machinery buys little: it wins against the stubborn one (patience pays), ties the eager one, and gives a little back on the steady one by scouting an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>Running against these opponents exposed a real flaw: the council used to hold out past the final round and let a live offer die (its home worlds were kind about deadlines). We added a deterministic <b>deadline rule</b> — on the last round, take a standing offer above your floor rather than bet it on the other side's patience — and re-ran everything: every existing exhibit is byte-identical, and the council stopped burning deadline deals here. Opponents from outside the project finding a real bug is exactly what external tests are for.</details></p>
+      </details>
     </div></section>
 
     <!-- ====== §05 · ARCHITECTURE ====== -->

@@ -121,6 +121,18 @@ function batnaDominates(input: RoundInput): boolean {
 }
 
 /**
+ * Deadline rule (deterministic, mirror of the BATNA floor): on the FINAL round, a standing
+ * offer above the seller's floor is a sure gain, and holding past it bets the whole deal
+ * on the counterparty's deadline convention — kind ones close at the standing offer, the
+ * classic ANAC convention burns it to nothing. Bank the sure surplus. Found by running
+ * the council against literature opponents (Faratin time-dependent tactics), where the
+ * original hold-to-the-cap habit walked away from live money.
+ */
+function deadlineAccepts(input: RoundInput): boolean {
+  return input.ctx.roundsLeft <= 1 && input.buyerOffer > SELLER_FLOOR;
+}
+
+/**
  * Run one round of deliberation (spec §3 steps 2-4): doctrines score under the
  * updated belief, Battle/War challenge, the Arbiter weights the terrain, the
  * deterministic engine synthesizes, the Quant flags EV-divergence, and Dotto
@@ -151,7 +163,7 @@ export async function deliberateRound(
   const arbiter = await agents.arbiterWeights(input.ctx, read);
   await emit({ type: "arbiter", verdict: arbiter });
 
-  const engine = score(positions, arbiter.weights, config, { batnaWalk: batnaDominates(input) });
+  const engine = score(positions, arbiter.weights, config, { batnaWalk: batnaDominates(input), deadlineAccept: deadlineAccepts(input) });
   await emit({ type: "engine", engine });
 
   const quant = quantCheck(input.belief, input.buyerOffer, engine.recommendation);

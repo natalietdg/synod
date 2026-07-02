@@ -363,6 +363,26 @@ async function loadAdaptive() {
   box.innerHTML = `<div class="dropbars">${bar("adaptive — situation-conditioned", d.adaptive, true)}${bar("fixed clamp — situation-blind", d.fixed, false)}</div>`;
 }
 
+/* Exhibit F — literature opponents (Faratin time-dependent tactics, the ANAC baselines).
+   Not authored by this project; deterministic, so a single run per opponent is exact. */
+async function loadAnac() {
+  const box = $("#anac-bench");
+  if (!box) return;
+  let d;
+  try { d = await (await fetch("/api/anac-bench")).json(); }
+  catch { box.textContent = "Computing…"; return; }
+  const NAME = { boulware: "Boulware — stubborn, concedes only at the deadline", linear: "Linear — steady, concedes on schedule", conceder: "Conceder — eager, gives ground early" };
+  const rows = d.rows.map((r) => {
+    const win = r.council.surplus > r.solo.surplus, tie = r.council.surplus === r.solo.surplus;
+    const verdict = tie ? `<span class="anac-tie">tie</span>` : win ? `<span class="anac-win">council +${evMoney(r.council.surplus - r.solo.surplus)}</span>` : `<span class="anac-lose">solo +${evMoney(r.solo.surplus - r.council.surplus)}</span>`;
+    return `<div class="anac-row"><span class="anac-name">${NAME[r.tactic] || r.tactic}</span>` +
+      `<span class="anac-cell">solo <b>${r.solo.deal ? evMoney(r.solo.surplus) : "WALK"}</b></span>` +
+      `<span class="anac-cell">council <b>${r.council.deal ? evMoney(r.council.surplus) : "WALK"}</b></span>` +
+      `<span class="anac-verdict">${verdict}</span></div>`;
+  }).join("");
+  box.innerHTML = `<div class="anac-grid">${rows}</div>`;
+}
+
 /* ====== INTERACTIVE TOUR — a moving spotlight that operates the real UI.
    Few words by default: one short headline per stop; a “+” reveals depth. ====== */
 

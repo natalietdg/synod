@@ -28,6 +28,8 @@ import type { RoundInput } from "./agents/index.js";
 import { QwenGovernor } from "./dotto/governor.js";
 import { receiptStore } from "./dotto/store.js";
 import { SUITE, EVAL_SUITE, getEntry } from "./suite.js";
+import { HOLDOUT_WORLDS } from "./gm/holdout.js";
+import { ANAC_TACTICS, AnacGameMaster } from "./gm/anacBaselines.js";
 import { deliberateCouncil } from "./society/council.js";
 import { runWargame } from "./society/wargame.js";
 import { GENERALS, WAR_ACTIONS, generalForLens } from "./society/generals.js";
@@ -567,19 +569,49 @@ app.get("/api/capability", async (_req, res) => {
 let switchMatrixCache: unknown = null;
 app.get("/api/switch-matrix", async (_req, res) => {
   if (switchMatrixCache) { res.json(switchMatrixCache); return; }
-  const scenarios = ["type-a-relationship", "type-b-soft-floor", "type-c-deceptive"]
-    .map((id) => getEntry(id)!).filter(Boolean);
-  const surplus = async (agents: import("./agents/index.js").DeliberationAgents, e: typeof scenarios[number]) =>
-    (await runNegotiation(agents, new GameMaster(e.type, e.seed), e.id, e.type)).terminal.surplusCaptured;
+  // The three calibration opponents + the five Claude-authored hold-out worlds: eight
+  // opponents total, so "which general is decisive" is tested beyond the tuned suite.
+  const surplus = async (
+    agents: import("./agents/index.js").DeliberationAgents,
+    type: ConstructorParameters<typeof GameMaster>[0],
+    seed: number, id: string, profile?: ConstructorParameters<typeof GameMaster>[3],
+  ) => (await runNegotiation(agents, new GameMaster(type, seed, undefined, profile), id, type)).terminal.surplusCaptured;
   const rows = [];
-  for (const e of scenarios) {
-    const fullS = await surplus(new MockAgents(), e);
+  const suite = ["type-a-relationship", "type-b-soft-floor", "type-c-deceptive"].map((id) => getEntry(id)!);
+  for (const e of suite) {
+    const fullS = await surplus(new MockAgents(), e.type, e.seed, e.id);
     const offs: Record<string, number> = {};
-    for (const g of GENERALS) offs[g.id] = (await surplus(withLensOff(new MockAgents(), g.lens), e)) - fullS;
-    rows.push({ scenario: e.title, type: e.type, full: fullS, offs });
+    for (const g of GENERALS) offs[g.id] = (await surplus(withLensOff(new MockAgents(), g.lens), e.type, e.seed, e.id)) - fullS;
+    rows.push({ scenario: e.title, type: e.type, holdout: false, full: fullS, offs });
+  }
+  for (const w of HOLDOUT_WORLDS) {
+    const fullS = await surplus(new MockAgents(), w.type, 7001, w.id, w.profile);
+    const offs: Record<string, number> = {};
+    for (const g of GENERALS) offs[g.id] = (await surplus(withLensOff(new MockAgents(), g.lens), w.type, 7001, w.id, w.profile)) - fullS;
+    rows.push({ scenario: w.title, type: w.type, holdout: true, full: fullS, offs });
   }
   switchMatrixCache = { generals: GENERALS.map((g) => ({ id: g.id, name: g.name, lens: g.lens, lensName: LENSES[g.lens].cogFunction })), rows };
   res.json(switchMatrixCache);
+});
+
+// Exhibit F: opponents from the LITERATURE — the ANAC-standard time-dependent tactics
+// (Faratin et al. 1998; the canonical ANAC/ANL baselines). Not authored by this project:
+// a first external-validity step beyond self- and Claude-authored worlds.
+let anacCache: unknown = null;
+app.get("/api/anac-bench", async (_req, res) => {
+  if (anacCache) { res.json(anacCache); return; }
+  const rows = [];
+  for (const p of ANAC_TACTICS) {
+    const solo = await runBaseline(new MockAgents(), new AnacGameMaster(p), "strong");
+    const council = await runNegotiation(new MockAgents(), new AnacGameMaster(p), `anac-${p.tactic}`, "soft_floor");
+    rows.push({
+      tactic: p.tactic, e: p.e,
+      solo: { surplus: solo.surplusCaptured, deal: solo.dealSurvived },
+      council: { surplus: council.terminal.surplusCaptured, deal: council.terminal.dealSurvived },
+    });
+  }
+  anacCache = { rows, note: "Faratin et al. (1998) time-dependent tactics — the standard ANAC baselines; deterministic, no seeds needed." };
+  res.json(anacCache);
 });
 
 // Exhibit E: the adaptive policy layer vs a fixed clamp — the measured algorithmic delta.

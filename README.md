@@ -209,29 +209,32 @@ Remove one component at a time. If removal doesn't hurt, the table says so.
 |---|--:|--:|--:|--:|
 | **Full Synod** | **$8,968** | — | 100% | $3,000 |
 | − causal challenge | $8,968 | ±$0 | 100% | $3,000 |
-| − probe trigger | $7,384 | **−$1,584** | 100% | $1,423 |
-| uniform Arbiter | $8,923 | −$45 | 100% | $3,000 |
+| − probe trigger | $7,362 | **−$1,606** | 100% | $1,423 |
+| uniform Arbiter (no chair) | $7,845 | −$1,123 | 100% | $1,922 |
 | single lens — Trust | $6,466 | −$2,502 | 100% | $1,423 |
-| single lens — Pressure | $2,941 | **−$6,027** | **33%** | $0 |
+| single lens — Pressure | $5,150 | **−$3,817** | **63%** | $0 |
 | single lens — Frame | $8,354 | −$614 | 100% | $2,410 |
 | single lens — Probe | $8,968 | ±$0 | 100% | $3,000 |
-| single lens — Hedge | $8,832 | −$136 | 100% | $2,832 |
+| single lens — Hedge | $8,949 | −$18 | 100% | $2,949 |
 
-Three findings, two of them nulls we report as found:
+Three findings, one of them a null we report as found:
 
-1. **The EVI probe trigger is load-bearing**: removing it costs $1,584 and collapses the
-   deceptive scenario to $1,423.
+1. **The EVI probe trigger is load-bearing**: removing it costs $1,606 and collapses the
+   deceptive scenario to $1,423. **The chair's situation-weighting is too**: flattening it
+   to uniform weights costs $1,123 and drops the deceptive capture to $1,922.
 2. **The council's value is ex-ante robustness, not hindsight genius.** Collapsing to a
-   single worldview spans $2,941–$8,968 depending on which lens you bet on — betting wrong
-   costs up to 67% of achievable surplus and craters the deal rate to 33%. The Probe
-   lens happens to win *on this suite*; you only know that in hindsight. The full council
-   matches the best single lens without knowing in advance which worldview the counterparty
-   will reward — the same argument as ensembles vs. the best-model-in-hindsight.
-3. **Honest nulls:** the causal-challenge concession rarely flips a round in the
-   deterministic council (the confidence-edge rule is deliberately conservative; live-Qwen
-   defenders concede on merit instead), and uniform weighting costs only $45 on this suite —
-   the Arbiter's terrain reading shows up in confidence calibration more than raw surplus.
-   We publish what the harness returns, not what flatters the architecture.
+   single worldview spans $5,150–$8,968 depending on which lens you bet on — betting wrong
+   costs up to 43% of achievable surplus and cuts the deal rate to 63%. The Probe
+   lens happens to win *on this suite*; you only know that in hindsight (and on the
+   hold-out suite below, Probe-alone wipes out on a world). The full council matches the
+   best single lens without knowing in advance which worldview the counterparty will
+   reward — the same argument as ensembles vs. the best-model-in-hindsight.
+3. **Honest null:** removing the debate step changes the deterministic total by $0 — by
+   design. The five are independent procedures aggregated by a deterministic chair, so
+   persuasion cannot override the computation (anti-groupthink); debate's causal role
+   shows up live, where a general genuinely talked round shifts their lens's vote and can
+   change the chair's call. We publish what the harness returns, not what flatters the
+   architecture.
 
 Run it yourself: `GET /api/ablation`, or `npm run demo`.
 
@@ -254,8 +257,8 @@ as measured.
 | Hair-trigger founder | any aggressive weighting | **$0 · 0%** | **$2,800 · 100%** |
 | Probe-punisher | the EVI probe rule itself | **$0 · 0%** | **$3,396 · 100%** |
 | Generous whale | over-caution (a tie is honest here) | $3,525 · 100% | $3,997 · 100% |
-| Stonewall bluffer | the probe→close path (partial disarm) | **$0 · 0%** | **$1,971 · 100%** |
-| **Total** | | **$4,525** | **$13,164** |
+| Stonewall bluffer | the probe→close path (partial disarm) | **$0 · 0%** | **$2,200 · 100%** |
+| **Total** | | **$4,525** | **$13,393** |
 
 The single agent walked to $0 in three of five adversarial worlds; the council closed
 all fifty negotiations. The world built to break the probe rule is the one the council
@@ -270,25 +273,58 @@ the full council ($8,968). Fair question. The hold-out suite answers it empirica
 | World | Council | Trust | Pressure | Frame | Probe | Hedge |
 |---|--:|--:|--:|--:|--:|--:|
 | Iron procurement | $1,000 | $933 | $1,000 | $1,000 | $1,000 | $1,000 |
-| Hair-trigger founder | $2,800 | $2,800 | **$0 (0%)** | $2,800 | $2,800 | $2,800 |
-| Probe-punisher | **$3,396** | $1,259 | **$0 (0%)** | $2,305 | $3,305 | $2,882 |
-| Generous whale | **$3,997** | $3,979 | $3,764 | $3,979 | $3,979 | $3,982 |
-| Stonewall bluffer | $1,971 | $1,465 | **$0 (0%)** | **$2,200** | $1,971 | $2,149 |
-| **Total** | **$13,164** | $10,436 | $4,764 | $12,284 | $13,055 | $12,813 |
+| Hair-trigger founder | $2,800 | $2,800 | **$0 (0%)** | $2,800 | **$0 (0%)** | $2,800 |
+| Probe-punisher | **$3,396** | $1,259 | **$0 (0%)** | $2,305 | $3,305 | $3,099 |
+| Generous whale | **$3,997** | $3,979 | $3,979 | $3,979 | $3,979 | $3,995 |
+| Stonewall bluffer | $2,200 | $1,465 | **$0 (0%)** | $2,200 | $2,200 | $2,200 |
+| **Total** | **$13,393** | $10,436 | $4,979 | $12,284 | $10,484 | $13,094 |
 
-Three observations, including the honest one:
+Three observations, including the honest ones:
 
-1. **The council is first on total and never catastrophic.** Every single-lens arm
-   except Probe has at least one wiped-out world; Pressure has three.
-2. **Probe (the information lens) is genuinely strong** ($13,055, no wipeouts) — its
-   information-theoretic scoring is the most robust single worldview. The council still
-   beats it where its own instinct is the trap (Probe-punisher: $3,396 vs $3,305) and never loses.
-3. **Single lenses can win individual worlds** — Frame takes Stonewall by $229.
-   No lens dominates across worlds, and which one wins is only knowable in hindsight.
+1. **The council is first on total and never catastrophic.** Pressure-alone wipes out on
+   three worlds — and even Probe-alone, the winner on the tuned suite, **wipes out on the
+   hair-trigger world** ($0): the lens that buys information is exactly the wrong sole
+   commander against a counterparty who punishes any probing move.
+2. **Hedge is the best single arm here** ($13,094, no wipeouts) and still trails the
+   council — which also beats every arm on the worlds designed as traps (Probe-punisher:
+   $3,396 vs $3,305).
+3. **Which lens wins is only knowable in hindsight.** Probe wins the tuned suite and
+   craters on hold-out; Hedge wins hold-out and merely ties on the tuned suite. No fixed
+   bet survives both.
 
 That's the answer: **zero hindsight regret.** Across both suites the council matches or
 beats every single worldview without knowing in advance which one the terrain will
 reward — and betting on the wrong one costs up to everything.
+
+## Opponents we didn't write — ANAC literature baselines
+
+The strongest objection left is authorship: the calibration worlds are ours and the
+hold-outs are Claude's. So Exhibit F runs the council against the **classic time-dependent
+tactics from the negotiation literature** (Faratin, Sierra & Jennings 1998 — the standard
+baselines of the international [ANAC](https://github.com/autoneg/anl) competition):
+Boulware (concedes only at the deadline), Linear, and Conceder. Published formulas, not
+authored by this project, and deliberately alien to the council's machinery — they hide
+nothing, so there is no bluff to expose and no trust to win (`src/gm/anacBaselines.ts`,
+`GET /api/anac-bench`).
+
+| Literature opponent | Solo agent | Council | Verdict |
+|---|--:|--:|---|
+| Boulware (e=0.2) | $2,796 | **$3,000** | council +$204 — patience pays against the stubborn |
+| Linear (e=1) | **$2,880** | $2,593 | solo +$287 — an honest null: the council probed an opponent with no secret |
+| Conceder (e=3) | $3,000 | $3,000 | tie |
+
+Read it honestly: **against opponents that hide nothing, the council roughly ties** — its
+measured edge (Exhibits A–C) is specific to counterparties with hidden state, which is the
+problem it exists for. And the exercise earned its keep another way: **it found a real
+bug.** The council used to hold past the final round and let a live offer die (its home
+worlds close kindly at the deadline; the classic ANAC convention burns the deal to
+nothing). We added a deterministic **deadline rule** — on the last round, accept a
+standing offer above your floor rather than bet it on the counterparty's deadline
+convention (`round.ts:deadlineAccepts`, mirror of the BATNA floor) — and verified every
+existing exhibit is **byte-identical** with the rule on. Opponents from outside the
+project finding a real flaw is exactly what external tests are for. Next step on this
+axis: a [NegMAS](https://github.com/yasserfarouk/negmas) bridge to face actual ANAC/ANL
+league agents.
 
 ## Belief calibration (the confusion matrix a skeptic asks for)
 
@@ -410,9 +446,16 @@ the lenses accordingly. The weight distribution is itself an updating, evidence-
 
 ## Boundaries — found by adversarial testing
 
-Surfaced by judges and rival models, published because the failure modes are as
-informative as the wins (the first one is now closed):
+Surfaced by judges, rival models, and literature opponents — published because the
+failure modes are as informative as the wins (the first two are now closed):
 
+0. **Deadline blindness — closed (found by the ANAC baselines, Exhibit F).** The council's
+   home worlds close kindly at the round cap, so it learned to hold out — and against the
+   classic conflict-deadline convention it let live offers die. Closed with the
+   deterministic **deadline rule** (`round.ts:deadlineAccepts` → `score(..., {deadlineAccept})`):
+   on the final round, accept a standing offer above the floor rather than bet the deal on
+   the counterparty's deadline convention. Verified byte-identical on every existing
+   exhibit; the council stopped burning deadline deals against Boulware/Conceder tactics.
 1. **Walking away — closed (was a boundary).** The lens type-space has no representation
    of a doomed negotiation, so the council used to grind every futile deal to the round
    cap (**0/10 self-walks** on a "no-zone" test). Fixed with a deterministic **BATNA

@@ -177,6 +177,11 @@ export interface EngineResult {
    *  beats walking away. A deterministic backstop — the lens type-space has no
    *  representation of a doomed negotiation. */
   batnaWalk?: boolean;
+  /** Set when the deadline rule made `accept` the argmax: on the final round, a standing
+   *  offer above the seller's floor is a sure gain, and letting it expire risks nothing —
+   *  a rational seller takes it rather than bet the deal on the counterparty's deadline
+   *  convention. The mirror-image backstop to batnaWalk. */
+  deadlineAccept?: boolean;
 }
 
 /** The Quant flags money-EV divergence; it has no veto (spec §5). */

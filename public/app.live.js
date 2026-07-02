@@ -56,6 +56,7 @@ async function init() {
   loadReproduce();
   loadMcp();
   loadAdaptive();
+  loadAnac();
   loadCapability();
   loadSwitchMatrix();
   loadWarRoom();

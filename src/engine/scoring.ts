@@ -44,7 +44,7 @@ export function score(
   positions: DoctrinePosition[],
   weights: Record<DoctrineId, number>,
   config: EngineConfig = DEFAULT_CONFIG,
-  opts: { batnaWalk?: boolean } = {},
+  opts: { batnaWalk?: boolean; deadlineAccept?: boolean } = {},
 ): EngineResult {
   const byDoctrine = new Map(positions.map((p) => [p.doctrine, p]));
 
@@ -76,6 +76,26 @@ export function score(
       deadlock: false,
       deadlockReason: null,
       batnaWalk: true,
+    };
+  }
+
+  // Deadline rule — the mirror image of the BATNA floor. On the LAST round, a standing
+  // offer above the seller's floor is a sure gain and holding out risks the whole deal
+  // on the counterparty's deadline convention (a kind one closes at the standing offer;
+  // the classic ANAC convention burns it to nothing). A rational seller banks the sure
+  // surplus. Deterministic, uses only visible state; on kind-deadline worlds this is
+  // outcome-neutral (accepting the standing offer = what the cap would have paid anyway).
+  if (opts.deadlineAccept) {
+    return {
+      matrix,
+      recommendation: "accept",
+      runnerUp: ([...matrix].sort((a, b) => b.utility - a.utility)[0]!).action as ActionId,
+      margin: 0,
+      dispersion: 0,
+      confidence: 0.85,
+      deadlock: false,
+      deadlockReason: null,
+      deadlineAccept: true,
     };
   }
 

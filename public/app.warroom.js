@@ -85,10 +85,13 @@ async function loadSwitchMatrix() {
       const decisive = delta === min && delta < 0;
       return `<span class="sm-cell${decisive ? " decisive" : ""}${delta < 0 ? " loss" : ""}"${decisive ? ` style="--c:${LENS_COLORS[g.lens]}"` : ""}>${delta === 0 ? "·" : delta}</span>`;
     }).join("");
-    return `<div class="sm-row"><span class="sm-op">${TYPE[r.type] || r.type}<span class="sm-full">council keeps ${Math.round(r.full)}</span></span>${cells}</div>`;
+    const label = r.holdout ? `${r.scenario} <i class="sm-ho">hold-out</i>` : (TYPE[r.type] || r.type);
+    return `<div class="sm-row"><span class="sm-op">${label}<span class="sm-full">council keeps ${Math.round(r.full)}</span></span>${cells}</div>`;
   }).join("");
   box.innerHTML = `<div class="sm-grid">${head}${rows}</div>` +
-    `<p class="sm-take"><b>The decisive general changes with the opponent</b> — Probe carries the bluffer, Hedge carries the firm-floor negotiator. You can't know in advance which you'll face, so you keep all five. <span class="hint">(“·” = removing that lens changed nothing against that opponent)</span></p>`;
+    `<p class="sm-take"><b>The decisive general changes with the opponent</b> — Sun Tzu (Probe) carries the bluffers; Kutuzov (Hedge) carries the firm floor and is the <em>whole deal</em> against the hair-trigger ally (−2,800). ` +
+    `<b>Honestly read:</b> across all eight opponents only these two are ever the swing vote — Patton, Zhukov and Eisenhower never flip a call by removal here. Their value shows on the other axis: bet on any one lens <em>alone</em> and it craters somewhere (Exhibit C), and each writes their own part of the plan. ` +
+    `<span class="hint">(“·” = removing that lens changed nothing against that opponent · hold-out rows are the Claude-authored stress worlds)</span></p>`;
 }
 
 async function loadWarRoom() {
