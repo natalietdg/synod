@@ -322,9 +322,27 @@ nothing). We added a deterministic **deadline rule** — on the last round, acce
 standing offer above your floor rather than bet it on the counterparty's deadline
 convention (`round.ts:deadlineAccepts`, mirror of the BATNA floor) — and verified every
 existing exhibit is **byte-identical** with the rule on. Opponents from outside the
-project finding a real flaw is exactly what external tests are for. Next step on this
-axis: a [NegMAS](https://github.com/yasserfarouk/negmas) bridge to face actual ANAC/ANL
-league agents.
+project finding a real flaw is exactly what external tests are for.
+
+### Rung 2: inside a real NegMAS mechanism
+
+The bridge is built: Synod sits inside a **real [NegMAS](https://github.com/yasserfarouk/negmas)
+`SAOMechanism`** as a negotiator, against agents **from the NegMAS library, not ours**
+(`bridge/synod_negmas.py` → `POST /api/bridge/decide`, which replays the canonical
+belief → lenses → chair → gate loop over the observed offer history — stateless and
+deterministic, so the replay is always self-consistent). First recorded session
+(single-issue price domain, alternating offers, n_steps=8):
+
+| NegMAS opponent | Outcome | Synod surplus |
+|---|---|--:|
+| AspirationNegotiator (boulware) | deal @ $10,501 | $2,501 |
+| AspirationNegotiator (linear) | deal @ $9,781 | $1,781 |
+| AspirationNegotiator (conceder) | deal @ $11,269 | $3,269 |
+| NaiveTitForTatNegotiator | no deal | $0 — honest null: a mirror strategy against a firm seller deadlocks with almost nothing on the table |
+
+Run it: `bridge/.venv/bin/python bridge/synod_negmas.py` (server on :4173). Next rung:
+the [anl-agents](https://github.com/autoneg/anl-agents) package — actual ANAC/ANL league
+entrants over the same bridge.
 
 ## Belief calibration (the confusion matrix a skeptic asks for)
 

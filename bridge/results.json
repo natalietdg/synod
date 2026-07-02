@@ -1,0 +1,43 @@
+{
+  "protocol": "NegMAS SAOMechanism (alternating offers), n_steps=8",
+  "domain": "single issue: price 8,000\u201312,000; seller (Synod) utility rises with price",
+  "opponents": "NegMAS library negotiators \u2014 not authored by this project",
+  "results": [
+    {
+      "opponent": "AspirationNegotiator (boulware)",
+      "agreement": true,
+      "price": 10501,
+      "synodSurplus": 2501,
+      "synodUtility": 2.625,
+      "opponentUtility": -2.625,
+      "steps": 8
+    },
+    {
+      "opponent": "AspirationNegotiator (linear)",
+      "agreement": true,
+      "price": 9781,
+      "synodSurplus": 1781,
+      "synodUtility": 2.445,
+      "opponentUtility": -2.445,
+      "steps": 4
+    },
+    {
+      "opponent": "AspirationNegotiator (conceder)",
+      "agreement": true,
+      "price": 11269,
+      "synodSurplus": 3269,
+      "synodUtility": 2.817,
+      "opponentUtility": -2.817,
+      "steps": 4
+    },
+    {
+      "opponent": "NaiveTitForTatNegotiator",
+      "agreement": false,
+      "price": null,
+      "synodSurplus": 0,
+      "synodUtility": 0.0,
+      "opponentUtility": 0.0,
+      "steps": 8
+    }
+  ]
+}

@@ -23,7 +23,8 @@ import { OPENING_ASK, ROUND_CAP, profileOf, type TypeProfile } from "./gm/profil
 import { isTerminal } from "./gm/types.js";
 import { deliberateRound } from "./protocol/round.js";
 import { computeContext } from "./protocol/context.js";
-import { UNIFORM_PRIOR } from "./belief/update.js";
+import { UNIFORM_PRIOR, updateBelief } from "./belief/update.js";
+import type { CounterpartyMove } from "./gm/types.js";
 import type { RoundInput } from "./agents/index.js";
 import { QwenGovernor } from "./dotto/governor.js";
 import { receiptStore } from "./dotto/store.js";
@@ -617,6 +618,42 @@ app.get("/api/switch-matrix", async (_req, res) => {
   }
   switchMatrixCache = { generals: GENERALS.map((g) => ({ id: g.id, name: g.name, lens: g.lens, lensName: LENSES[g.lens].cogFunction })), rows };
   res.json(switchMatrixCache);
+});
+
+// NegMAS bridge (external-validity rung 2): lets Synod sit inside a real NegMAS
+// SAOMechanism against actual negotiation-literature agents. STATELESS by replay: each
+// call re-runs the canonical loop (belief → lenses → chair → gate → ask evolution) over
+// the full offer history — deterministic mock, so the replay is always self-consistent.
+// POST { offers: number[], deadline?: number } → { action, ask, belief }.
+app.post("/api/bridge/decide", async (req, res) => {
+  const offers = (Array.isArray(req.body?.offers) ? req.body.offers : [])
+    .map((x: unknown) => Number(x)).filter((x: number) => Number.isFinite(x));
+  const deadline = Math.max(2, Math.min(12, Number(req.body?.deadline) || ROUND_CAP));
+  if (!offers.length) { res.status(400).json({ error: "offers[] required" }); return; }
+  try {
+    const agents = new MockAgents();
+    let belief = UNIFORM_PRIOR;
+    let councilAsk = OPENING_ASK;
+    const priorMoves: CounterpartyMove[] = [];
+    let decision: Awaited<ReturnType<typeof deliberateRound>> | null = null;
+    for (let i = 0; i < offers.length; i++) {
+      // Signals derived from observable movement only — same thresholds the GM emits.
+      const delta = i === 0 ? 0 : offers[i]! - offers[i - 1]!;
+      const signals = i === 0 ? ["opening"] : delta <= 60 ? ["held_firm"] : delta < 400 ? ["small_concession"] : ["soft_concession"];
+      const move: CounterpartyMove = { round: i + 1, message: "", offer: { price: offers[i]!, features: [] }, signals, terminal: false };
+      belief = updateBelief(belief, signals);
+      const roundsLeft = Math.max(1, deadline - i);
+      const ctx = computeContext(belief, councilAsk, roundsLeft, signals);
+      const input = { round: i + 1, move, history: [...priorMoves], belief, ctx, buyerOffer: offers[i]!, councilAsk };
+      decision = await deliberateRound(agents, input, { scenarioId: "negmas-bridge" });
+      const councilMove = encodeMove(decision.gate.finalAction, councilAsk, offers[i]!, [], []);
+      councilAsk = councilMove.ask.price;
+      priorMoves.push(move);
+    }
+    res.json({ action: decision!.gate.finalAction, ask: councilAsk, belief });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
 });
 
 // Exhibit F: opponents from the LITERATURE — the ANAC-standard time-dependent tactics
