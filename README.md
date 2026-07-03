@@ -330,19 +330,24 @@ The bridge is built: Synod sits inside a **real [NegMAS](https://github.com/yass
 `SAOMechanism`** as a negotiator, against agents **from the NegMAS library, not ours**
 (`bridge/synod_negmas.py` → `POST /api/bridge/decide`, which replays the canonical
 belief → lenses → chair → gate loop over the observed offer history — stateless and
-deterministic, so the replay is always self-consistent). First recorded session
-(single-issue price domain, alternating offers, n_steps=8):
+deterministic, so the replay is always self-consistent). Recorded sessions (single-issue price domain, alternating offers, n_steps=8, 3 sessions
+per opponent — some league agents are stochastic), including **actual ANL 2024 league
+entrants** from the [anl-agents](https://github.com/autoneg/anl-agents) package:
 
-| NegMAS opponent | Outcome | Synod surplus |
-|---|---|--:|
-| AspirationNegotiator (boulware) | deal @ $10,501 | $2,501 |
-| AspirationNegotiator (linear) | deal @ $9,781 | $1,781 |
-| AspirationNegotiator (conceder) | deal @ $11,269 | $3,269 |
-| NaiveTitForTatNegotiator | no deal | $0 — honest null: a mirror strategy against a firm seller deadlocks with almost nothing on the table |
+| Opponent | Provenance | Outcome | Synod surplus (mean) |
+|---|---|--:|--:|
+| **Shochan** | **real ANL 2024 entrant — the competition winner** | 3/3 closed @ $11,300 | **$3,300** |
+| **UOAgent** | real ANL 2024 entrant | 3/3 closed @ $11,440 | **$3,440** |
+| CARCAgent | real ANL 2024 entrant (stochastic) | 1/3 closed @ $9,884 | $628 |
+| Aspiration (boulware) | NegMAS library | 3/3 closed @ $10,501 | $2,501 |
+| Aspiration (linear) | NegMAS library | 3/3 closed @ $10,158 | $2,158 |
+| Aspiration (conceder) | NegMAS library | 3/3 closed @ $11,887 | $3,887 |
+| NaiveTitForTat | NegMAS library | 0/3 | $0 — honest null: mirror strategy vs a firm seller deadlocks with ~nothing on the table |
 
-Run it: `bridge/.venv/bin/python bridge/synod_negmas.py` (server on :4173). Next rung:
-the [anl-agents](https://github.com/autoneg/anl-agents) package — actual ANAC/ANL league
-entrants over the same bridge.
+Against the **winner of the actual competition**, Synod closes every session and keeps
+$3,300 of the $4,000 range. This exercise also caught a bridge bug of ours (deduping a
+repeated offer destroyed the round count, so the deadline rule never fired) — fixed and
+recorded. Run it: `bridge/.venv/bin/python bridge/synod_negmas.py` (server on :4173).
 
 ## Belief calibration (the confusion matrix a skeptic asks for)
 

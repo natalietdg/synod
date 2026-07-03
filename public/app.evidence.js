@@ -407,6 +407,30 @@ async function loadAnac() {
   box.innerHTML = `<div class="anac-grid">${rows}</div>`;
 }
 
+/* §05 Why it matters — the recorded NegMAS/ANL results: Synod inside a real ANAC-platform
+   mechanism against agents we didn't write (library negotiators + real league entrants).
+   Recorded runs with provenance; regenerate with bridge/synod_negmas.py. */
+async function loadValueAnl() {
+  const box = $("#vp-anl");
+  if (!box) return;
+  let d;
+  try { d = await (await fetch("/anl-results.json")).json(); }
+  catch { box.innerHTML = `<span class="hint">no recorded results — run <code>bridge/.venv/bin/python bridge/synod_negmas.py</code></span>`; return; }
+  const head = `<div class="vp-anl-row head"><span>opponent (theirs, not ours)</span><span>outcome</span><span>Synod kept (mean)</span><span>sessions</span></div>`;
+  const rows = d.results.map((r) => {
+    const dealPrices = (r.prices || []).filter((p) => p != null);
+    const out = r.deals > 0
+      ? `<span class="vp-anl-out deal">${r.deals}/${r.runs} CLOSED${dealPrices.length ? ` @ $${dealPrices[0].toLocaleString()}` : ""}</span>`
+      : `<span class="vp-anl-out nodeal">0/${r.runs} — both walk with nothing</span>`;
+    return `<div class="vp-anl-row"><span class="vp-anl-name">${r.opponent}${r.league ? `<i>real ANAC league entrant · ${r.league}</i>` : `<i>NegMAS library negotiator</i>`}</span>` +
+      `${out}` +
+      `<span class="vp-anl-cell"><b>$${(r.synodSurplus).toLocaleString()}</b> above floor</span>` +
+      `<span class="vp-anl-cell">${(r.prices || []).map((p) => p == null ? "walk" : `$${p.toLocaleString()}`).join(" · ")}</span></div>`;
+  }).join("");
+  box.innerHTML = `<div class="vp-anl-grid">${head}${rows}</div>` +
+    `<div class="vp-anl-note">recorded runs (${d.results[0]?.runs ?? 3} sessions each; some league agents are stochastic) · ${d.protocol} · ${d.domain} · reproduce: <code>bridge/.venv/bin/python bridge/synod_negmas.py</code></div>`;
+}
+
 /* ====== INTERACTIVE TOUR — a moving spotlight that operates the real UI.
    Few words by default: one short headline per stop; a “+” reveals depth. ====== */
 
