@@ -416,19 +416,32 @@ async function loadValueAnl() {
   let d;
   try { d = await (await fetch("/anl-results.json")).json(); }
   catch { box.innerHTML = `<span class="hint">no recorded results — run <code>bridge/.venv/bin/python bridge/synod_negmas.py</code></span>`; return; }
-  const head = `<div class="vp-anl-row head"><span>opponent (theirs, not ours)</span><span>outcome</span><span>Synod kept (mean)</span><span>sessions</span></div>`;
-  const rows = d.results.map((r) => {
+  const ACT = { accept: "says YES", walk: "walks away", probe: "asks a question", counter_hard: "holds firm", hold: "holds firm", counter_soft: "meets them a step", concede_term: "gives a little" };
+  const head = `<div class="vp-anl-row head"><span>who Synod played</span><span>result</span><span>Synod's profit</span><span>all ${d.results[0]?.runs ?? 3} games</span></div>`;
+  const rows = d.results.map((r, idx) => {
     const dealPrices = (r.prices || []).filter((p) => p != null);
-    const out = r.deals > 0
-      ? `<span class="vp-anl-out deal">${r.deals}/${r.runs} CLOSED${dealPrices.length ? ` @ $${dealPrices[0].toLocaleString()}` : ""}</span>`
-      : `<span class="vp-anl-out nodeal">0/${r.runs} — both walk with nothing</span>`;
-    return `<div class="vp-anl-row"><span class="vp-anl-name">${r.opponent}${r.league ? `<i>real ANAC league entrant · ${r.league}</i>` : `<i>NegMAS library negotiator</i>`}</span>` +
+    const out = r.deals === r.runs
+      ? `<span class="vp-anl-out deal">won the deal, ${r.deals} of ${r.runs} games — settled at $${dealPrices[0].toLocaleString()}</span>`
+      : r.deals > 0
+        ? `<span class="vp-anl-out deal">won ${r.deals} of ${r.runs} games</span>`
+        : `<span class="vp-anl-out nodeal">no deal — they never offered real money, so walking cost nothing</span>`;
+    // The council's actual round-by-round thinking, from the recorded session.
+    const trace = (r.trace || []).map((t) =>
+      `<div class="vp-tr-row"><span class="vp-tr-r">R${t.round}</span>` +
+        `<span class="vp-tr-them">they offer <b>$${t.theirOffer.toLocaleString()}</b></span>` +
+        `<span class="vp-tr-us">council ${ACT[t.councilAction] || t.councilAction}${t.councilAction !== "accept" && t.councilAction !== "walk" && t.councilAsk ? ` at <b>$${t.councilAsk.toLocaleString()}</b>` : ""}</span>` +
+        `<span class="vp-tr-why">${t.why || ""}</span></div>`,
+    ).join("");
+    const traceBlock = trace
+      ? `<details class="vp-trace"><summary>watch the council think, round by round</summary><div class="vp-tr-grid">${trace}</div><div class="vp-tr-note">every line is the engine's real decision state for that round — not written after the fact</div></details>`
+      : "";
+    return `<div class="vp-anl-row"><span class="vp-anl-name">${r.opponent}${r.league ? `<i>real contest entrant · ${r.league}</i>` : `<i>textbook negotiator (research library)</i>`}</span>` +
       `${out}` +
-      `<span class="vp-anl-cell"><b>$${(r.synodSurplus).toLocaleString()}</b> above floor</span>` +
-      `<span class="vp-anl-cell">${(r.prices || []).map((p) => p == null ? "walk" : `$${p.toLocaleString()}`).join(" · ")}</span></div>`;
+      `<span class="vp-anl-cell"><b>$${(r.synodSurplus).toLocaleString()}</b> <span class="vp-of">of $4,000 possible</span></span>` +
+      `<span class="vp-anl-cell">${(r.prices || []).map((p) => p == null ? "no deal" : `$${p.toLocaleString()}`).join(" · ")}</span></div>` + traceBlock;
   }).join("");
   box.innerHTML = `<div class="vp-anl-grid">${head}${rows}</div>` +
-    `<div class="vp-anl-note">recorded runs (${d.results[0]?.runs ?? 3} sessions each; some league agents are stochastic) · ${d.protocol} · ${d.domain} · reproduce: <code>bridge/.venv/bin/python bridge/synod_negmas.py</code></div>`;
+    `<div class="vp-anl-note">real recorded games, ${d.results[0]?.runs ?? 3} each (a few opponents play differently each time) · re-create them yourself: <code>bridge/.venv/bin/python bridge/synod_negmas.py</code></div>`;
 }
 
 /* ====== INTERACTIVE TOUR — a moving spotlight that operates the real UI.

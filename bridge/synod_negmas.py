@@ -70,6 +70,8 @@ class SynodNegotiator(SAONegotiator):
         self._their_offers: list[int] = []
         # Each side speaks ~once per mechanism step, so their offer budget ≈ N_STEPS.
         self._deadline = N_STEPS
+        # The council's real round-by-round reasoning, for the record shown on the site.
+        self.trace: list[dict] = []
 
     def _record(self, state):
         offer = state.current_offer
@@ -86,6 +88,14 @@ class SynodNegotiator(SAONegotiator):
     def respond(self, state, source=None):
         self._record(state)
         d = self._decide()
+        if self._their_offers:
+            self.trace.append({
+                "round": len(self._their_offers),
+                "theirOffer": self._their_offers[-1],
+                "councilAction": d["action"],
+                "councilAsk": d.get("ask"),
+                "why": d.get("why", ""),
+            })
         if d["action"] == "accept":
             return ResponseType.ACCEPT_OFFER
         if d["action"] == "walk":
@@ -137,18 +147,20 @@ def one_session(factory):
     m.add(synod)
     m.run()
     price = int(m.agreement[0]) if m.agreement else None
-    return price, buyer_u
+    return price, buyer_u, synod.trace
 
 
 def main():
     results = []
     for name, factory, league in OPPONENTS:
-        prices, opp_utils = [], []
+        prices, opp_utils, first_trace = [], [], None
         try:
-            for _ in range(R):
-                price, buyer_u = one_session(factory)
+            for run_i in range(R):
+                price, buyer_u, trace = one_session(factory)
                 prices.append(price)
                 opp_utils.append(round(float(buyer_u((price,))), 3) if price is not None else 0.0)
+                if run_i == 0:
+                    first_trace = trace  # session 1's full reasoning, for the record
         except Exception as e:  # a league agent crashing is their bug — report, don't sink the run
             print(f"{name:36} → ERROR ({type(e).__name__}: {e})")
             continue
@@ -162,6 +174,7 @@ def main():
             "prices": prices,
             "synodSurplus": mean_surplus,  # mean over ALL runs (no-deals count as 0)
             "opponentUtility": round(sum(opp_utils) / R, 3),
+            "trace": first_trace or [],  # session 1, round by round, with the council's why
         }
         results.append(row)
         tag = f"  [{league}]" if league else ""

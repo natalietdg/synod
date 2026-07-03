@@ -2161,6 +2161,23 @@ body[data-track="nego"] .tw { display: none; }
 .vp-anl-out.nodeal { color: var(--muted); }
 .vp-anl-note { margin-top: 0.6rem; font-family: var(--mono); font-size: 0.62rem; color: var(--muted); }
 .vp-anl-note code { color: var(--gold-dim); }
+.vp-of { font-size: 0.64rem; color: var(--muted); }
+.vp-setup { margin: 0 0 1rem; max-width: 86ch; padding: 0.7rem 0.9rem; font-family: var(--sans); font-size: 0.9rem; line-height: 1.55;
+  color: var(--muted); background: var(--panel); border-left: 2px solid var(--gold-dim); border-radius: 2px; }
+.vp-setup b { color: var(--ink); }
+/* Round-by-round council reasoning, per recorded game */
+.vp-trace { margin: -0.1rem 0 0.5rem; padding: 0 0.75rem 0.4rem; }
+.vp-trace summary { cursor: pointer; font-family: var(--mono); font-size: 0.66rem; color: var(--gold-dim); padding: 0.3rem 0; }
+.vp-trace summary:hover { color: var(--gold); }
+.vp-tr-grid { display: flex; flex-direction: column; gap: 3px; margin-top: 0.3rem; }
+.vp-tr-row { display: grid; grid-template-columns: 2rem minmax(120px, 0.8fr) minmax(150px, 1fr) 2.4fr; gap: 0.6rem; align-items: baseline;
+  padding: 0.35rem 0.5rem; background: var(--bg-2, #14110c); border: 1px solid var(--line-soft); border-radius: 2px; }
+.vp-tr-r { font-family: var(--mono); font-size: 0.6rem; font-weight: 700; color: var(--gold-dim); }
+.vp-tr-them { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.vp-tr-them b, .vp-tr-us b { color: var(--ink); }
+.vp-tr-us { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.vp-tr-why { font-family: var(--sans); font-size: 0.78rem; line-height: 1.45; color: var(--muted); font-style: italic; }
+@media (max-width: 760px) { .vp-tr-row { grid-template-columns: 2rem 1fr; } .vp-tr-why { grid-column: 1 / -1; } }
 
 /* Two-axis clarifiers (judgment vs labor) */
 .cap-axis { font-family: var(--mono); font-size: 0.72rem; line-height: 1.55; color: var(--gold-dim); margin: 0 0 0.9rem; max-width: 74ch; }

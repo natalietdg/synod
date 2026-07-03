@@ -14,7 +14,58 @@
         11300
       ],
       "synodSurplus": 3300,
-      "opponentUtility": 0.175
+      "opponentUtility": 0.175,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8001,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (52% sure)"
+        },
+        {
+          "round": 3,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (63% sure)"
+        },
+        {
+          "round": 4,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (70% sure)"
+        },
+        {
+          "round": 5,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (76% sure)"
+        },
+        {
+          "round": 6,
+          "theirOffer": 10000,
+          "councilAction": "counter_soft",
+          "councilAsk": 11300,
+          "why": "they're moving, so meet them a step \u2014 the council reads they have a real limit they won't cross (52% sure) and keeps the deal alive"
+        },
+        {
+          "round": 7,
+          "theirOffer": 11300,
+          "councilAction": "concede_term",
+          "councilAsk": 11300,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they have a real limit they won't cross (79% sure)"
+        }
+      ]
     },
     {
       "opponent": "UOAgent",
@@ -27,20 +78,129 @@
         11440
       ],
       "synodSurplus": 3440,
-      "opponentUtility": 0.14
+      "opponentUtility": 0.14,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8000,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (52% sure)"
+        },
+        {
+          "round": 3,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (63% sure)"
+        },
+        {
+          "round": 4,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (70% sure)"
+        },
+        {
+          "round": 5,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (76% sure)"
+        },
+        {
+          "round": 6,
+          "theirOffer": 8062,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (70% sure)"
+        },
+        {
+          "round": 7,
+          "theirOffer": 10399,
+          "councilAction": "counter_soft",
+          "councilAsk": 11440,
+          "why": "they're moving, so meet them a step \u2014 the council reads they have a real limit they won't cross (60% sure) and keeps the deal alive"
+        }
+      ]
     },
     {
       "opponent": "CARCAgent",
       "league": "ANL 2024",
       "runs": 3,
-      "deals": 1,
+      "deals": 0,
       "prices": [
-        9884,
+        null,
         null,
         null
       ],
-      "synodSurplus": 628,
-      "opponentUtility": 0.176
+      "synodSurplus": 0,
+      "opponentUtility": 0.0,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8214,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8433,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they have a real limit they won't cross (40% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 3,
+          "theirOffer": 8548,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they have a real limit they won't cross (47% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 4,
+          "theirOffer": 8383,
+          "councilAction": "counter_hard",
+          "councilAsk": 11819,
+          "why": "the council reads they have a real limit they won't cross (53% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 5,
+          "theirOffer": 9141,
+          "councilAction": "counter_hard",
+          "councilAsk": 11685,
+          "why": "the council reads they have a real limit they won't cross (70% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 6,
+          "theirOffer": 9130,
+          "councilAction": "counter_hard",
+          "councilAsk": 11557,
+          "why": "the council reads they have a real limit they won't cross (75% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 7,
+          "theirOffer": 9797,
+          "councilAction": "counter_hard",
+          "councilAsk": 11469,
+          "why": "the council reads they have a real limit they won't cross (86% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 8,
+          "theirOffer": 9572,
+          "councilAction": "hold",
+          "councilAsk": 11469,
+          "why": "last chance to say yes \u2014 their offer beats walking away with nothing, so take the sure win instead of betting it on their patience"
+        }
+      ]
     },
     {
       "opponent": "AspirationNegotiator (boulware)",
@@ -53,7 +213,65 @@
         10501
       ],
       "synodSurplus": 2501,
-      "opponentUtility": 0.375
+      "opponentUtility": 0.375,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8004,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8013,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (52% sure)"
+        },
+        {
+          "round": 3,
+          "theirOffer": 8053,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (63% sure)"
+        },
+        {
+          "round": 4,
+          "theirOffer": 8160,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (56% sure)"
+        },
+        {
+          "round": 5,
+          "theirOffer": 8385,
+          "councilAction": "counter_hard",
+          "councilAsk": 11819,
+          "why": "the council reads they have a real limit they won't cross (49% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 6,
+          "theirOffer": 8794,
+          "councilAction": "counter_hard",
+          "councilAsk": 11668,
+          "why": "the council reads they have a real limit they won't cross (75% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 7,
+          "theirOffer": 9467,
+          "councilAction": "counter_hard",
+          "councilAsk": 11558,
+          "why": "the council reads they have a real limit they won't cross (86% sure) \u2014 hold the number and let them come to us"
+        },
+        {
+          "round": 8,
+          "theirOffer": 10501,
+          "councilAction": "accept",
+          "councilAsk": 10501,
+          "why": "last chance to say yes \u2014 their offer beats walking away with nothing, so take the sure win instead of betting it on their patience"
+        }
+      ]
     },
     {
       "opponent": "AspirationNegotiator (linear)",
@@ -66,7 +284,37 @@
         10158
       ],
       "synodSurplus": 2158,
-      "opponentUtility": 0.461
+      "opponentUtility": 0.461,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8448,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8892,
+          "councilAction": "counter_soft",
+          "councilAsk": 10912,
+          "why": "they're moving, so meet them a step \u2014 the council reads they mostly want to keep the relationship (57% sure) and keeps the deal alive"
+        },
+        {
+          "round": 3,
+          "theirOffer": 9337,
+          "councilAction": "counter_soft",
+          "councilAsk": 10361,
+          "why": "they're moving, so meet them a step \u2014 the council reads they mostly want to keep the relationship (73% sure) and keeps the deal alive"
+        },
+        {
+          "round": 4,
+          "theirOffer": 9781,
+          "councilAction": "counter_soft",
+          "councilAsk": 10158,
+          "why": "they're moving, so meet them a step \u2014 the council reads they mostly want to keep the relationship (83% sure) and keeps the deal alive"
+        }
+      ]
     },
     {
       "opponent": "AspirationNegotiator (conceder)",
@@ -79,7 +327,65 @@
         11887
       ],
       "synodSurplus": 3887,
-      "opponentUtility": 0.028
+      "opponentUtility": 0.028,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 10313,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they mostly want to keep the relationship (33% sure)"
+        },
+        {
+          "round": 2,
+          "theirOffer": 10750,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they mostly want to keep the relationship (57% sure)"
+        },
+        {
+          "round": 3,
+          "theirOffer": 11043,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they mostly want to keep the relationship (51% sure)"
+        },
+        {
+          "round": 4,
+          "theirOffer": 11269,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they have a real limit they won't cross (47% sure)"
+        },
+        {
+          "round": 5,
+          "theirOffer": 11457,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they have a real limit they won't cross (54% sure)"
+        },
+        {
+          "round": 6,
+          "theirOffer": 11618,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they have a real limit they won't cross (61% sure)"
+        },
+        {
+          "round": 7,
+          "theirOffer": 11760,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they have a real limit they won't cross (68% sure)"
+        },
+        {
+          "round": 8,
+          "theirOffer": 11887,
+          "councilAction": "accept",
+          "councilAsk": 11887,
+          "why": "last chance to say yes \u2014 their offer beats walking away with nothing, so take the sure win instead of betting it on their patience"
+        }
+      ]
     },
     {
       "opponent": "NaiveTitForTatNegotiator",
@@ -92,7 +398,65 @@
         null
       ],
       "synodSurplus": 0,
-      "opponentUtility": 0.0
+      "opponentUtility": 0.0,
+      "trace": [
+        {
+          "round": 1,
+          "theirOffer": 8000,
+          "councilAction": "probe",
+          "councilAsk": 12000,
+          "why": "the council isn't sure who it's facing (they mostly want to keep the relationship (33% sure)) \u2014 asking a question is worth more than committing blind"
+        },
+        {
+          "round": 2,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (52% sure)"
+        },
+        {
+          "round": 3,
+          "theirOffer": 8001,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (63% sure)"
+        },
+        {
+          "round": 4,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (70% sure)"
+        },
+        {
+          "round": 5,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (76% sure)"
+        },
+        {
+          "round": 6,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (81% sure)"
+        },
+        {
+          "round": 7,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (85% sure)"
+        },
+        {
+          "round": 8,
+          "theirOffer": 8000,
+          "councilAction": "concede_term",
+          "councilAsk": 12000,
+          "why": "give a little on a side term \u2014 not the price \u2014 to get them moving; the council reads they're likely bluffing (88% sure)"
+        }
+      ]
     }
   ]
 }

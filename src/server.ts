@@ -650,7 +650,32 @@ app.post("/api/bridge/decide", async (req, res) => {
       councilAsk = councilMove.ask.price;
       priorMoves.push(move);
     }
-    res.json({ action: decision!.gate.finalAction, ask: councilAsk, belief });
+    // The council's reasoning, in plain words — composed from the REAL decision state
+    // (belief, engine flags, chosen action), never free-written. This is what the
+    // recorded ANAC sessions show as "why Synod did that".
+    const d = decision!;
+    const TYPE_PLAIN: Record<string, string> = {
+      relationship: "they mostly want to keep the relationship",
+      soft_floor: "they have a real limit they won't cross",
+      deceptive: "they're likely bluffing",
+    };
+    const likely = (Object.entries(belief) as Array<[string, number]>).sort((a, b) => b[1] - a[1])[0]!;
+    const read = `${TYPE_PLAIN[likely[0]] ?? likely[0]} (${Math.round(likely[1] * 100)}% sure)`;
+    const action = d.gate.finalAction;
+    const why = d.engine.deadlineAccept
+      ? `last chance to say yes — their offer beats walking away with nothing, so take the sure win instead of betting it on their patience`
+      : d.engine.batnaWalk
+        ? `even the best price they could believably reach is worse than walking away — stop wasting rounds`
+        : action === "accept"
+          ? `their offer is already better than anything more pushing would win — the council reads ${read} and takes it`
+          : action === "probe"
+            ? `the council isn't sure who it's facing (${read}) — asking a question is worth more than committing blind`
+            : action === "counter_soft"
+              ? `they're moving, so meet them a step — the council reads ${read} and keeps the deal alive`
+              : action === "concede_term"
+                ? `give a little on a side term — not the price — to get them moving; the council reads ${read}`
+                : `the council reads ${read} — hold the number and let them come to us`;
+    res.json({ action, ask: councilAsk, belief, why, read });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
