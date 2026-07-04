@@ -1,6 +1,7 @@
 import { ACTIONS, ACTION_LABELS, type ActionId } from "../core/actions.js";
 import { DOCTRINES, LENSES, type DoctrineId, type DoctrinePosition, type ArbiterVerdict, type ContextVector } from "../core/types.js";
 import { score } from "../engine/scoring.js";
+import { createHash } from "node:crypto";
 import { GENERALS, WAR_ACTIONS, type General } from "./generals.js";
 import type { QwenAgents } from "../agents/qwen.js";
 
@@ -38,6 +39,10 @@ export interface LiveProceedings {
   benched: Array<{ id: string; name: string; lens: DoctrineId; lensName: string; why: string }>;
   convenedNote: string;
   dissenters: string[];
+  /** The chair's math on this run's reads, recomputed and hash-compared — live reasoning,
+   *  deterministic decision, proven in the same run. */
+  mathReplayed: boolean;
+  mathHash: string;
   deliberation: {
     cap: number; rounds: DelibRound[]; stopReason: "consensus" | "stable" | "cap";
     changedCall: boolean; round1Call: ActionId; round1Label: string; finalLabel: string;
@@ -183,6 +188,14 @@ export async function runLiveCouncil(qwen: QwenAgents, moveText: string, terrain
   const engineR1 = score(positionsFromReads(reads.map((r) => ({ g: r.g, read: r.read }))), weights);
   const finalReads = state.map((s, i) => ({ g: s.g, read: { action: s.call, intensity: reads[i]!.read.intensity } }));
   const engine = score(positionsFromReads(finalReads), weights);
+  // The live-and-deterministic proof, fused into the run itself: the generals' reasoning is
+  // live (it varies), but the chair's math on THESE reads is pure code — recompute it and
+  // it must land on identical bytes. Hash both computations; expose the match.
+  const engineReplay = score(positionsFromReads(finalReads), weights);
+  const hashOf = (x: unknown) => createHash("sha256").update(JSON.stringify(x)).digest("hex");
+  const h1 = hashOf(engine);
+  const mathReplayed = h1 === hashOf(engineReplay);
+  const mathHash = `#${h1.slice(0, 4)}…${h1.slice(-4)}`;
   const council = engine.recommendation;
   const debateChangedCall = engineR1.recommendation !== council;
 
@@ -209,6 +222,7 @@ export async function runLiveCouncil(qwen: QwenAgents, moveText: string, terrain
       ? `You removed ${GENERALS.filter((g) => excluded.has(g.lens)).map((g) => g.name).join(" and ")}. The council decided this call — and wrote the plan — without that faculty.`
       : `All five generals convened. Remove one above to watch the council decide without that faculty.`,
     dissenters: dissenters.map((x) => x.id),
+    mathReplayed, mathHash,
     deliberation: {
       cap, rounds, stopReason,
       // Did the debate move the chair's call vs. round-1 positions? Causality, recorded.

@@ -271,11 +271,13 @@ async function wrRunLive() {
     const ageMs = live.ranAt ? Date.now() - new Date(live.ranAt).getTime() : 0;
     const fresh = ageMs < 20_000;
     const ranClock = live.ranAt ? new Date(live.ranAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
-    status.textContent = fresh
+    // The fused beat: the reasoning is live; the decision math replays byte-for-byte.
+    const mathBeat = live.mathReplayed ? ` · ✓ and the chair's math on these reads replays byte-for-byte (${live.mathHash})` : "";
+    status.textContent = (fresh
       ? (offNames.length
           ? `✓ live — decided without ${offNames.join(" & ")}, straight from Qwen just now`
           : "✓ live — the whole proceedings came from Qwen just now")
-      : `✓ replaying this configuration's recorded live run (ran on Qwen at ${ranClock}) — change the opponent or remove a general to run fresh`;
+      : `✓ replaying this configuration's recorded live run (ran on Qwen at ${ranClock}) — change the opponent or remove a general to run fresh`) + mathBeat;
     status.className = "wr-live-status ok";
     const badge = document.querySelector("#provider-badge");
     if (badge) badge.textContent = fresh ? "⚡ RAN LIVE ON QWEN" : "⚡ LIVE RUN · RECORDED";
