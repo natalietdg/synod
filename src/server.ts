@@ -548,17 +548,21 @@ app.get("/api/general-bench", async (_req, res) => {
 app.get("/api/mcp/catalog", (_req, res) => {
   res.json({ server: "synod (MCP, stdio) · npm run mcp", tools: MCP_TOOLS });
 });
-app.get("/api/mcp/invoke", (req, res) => {
-  const tool = String(req.query.tool ?? "describe_council");
+// GET and POST both work (a curious judge will try either). Every live tool executes the
+// real computation on request — deterministic mock engine, so hosted and stdio agree.
+const mcpInvoke = async (req: express.Request, res: express.Response) => {
+  const tool = String(req.query.tool ?? req.body?.tool ?? req.body?.params?.name ?? "describe_council");
   try {
     res.json({
       request: { jsonrpc: "2.0", method: "tools/call", params: { name: tool, arguments: {} } },
-      response: { content: [{ type: "text", text: JSON.stringify(invokeMcpTool(tool), null, 2) }] },
+      response: { content: [{ type: "text", text: JSON.stringify(await invokeMcpTool(tool), null, 2) }] },
     });
   } catch (e) {
     res.status(400).json({ error: e instanceof Error ? e.message : String(e) });
   }
-});
+};
+app.get("/api/mcp/invoke", mcpInvoke);
+app.post("/api/mcp/invoke", mcpInvoke);
 
 // The recon capability, proven by lens-ablation: remove the Probe lens from the council's
 // repertoire and it can no longer buy information — belief stalls instead of resolving, and

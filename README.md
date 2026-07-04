@@ -345,9 +345,14 @@ entrants** from the [anl-agents](https://github.com/autoneg/anl-agents) package:
 | NaiveTitForTat | NegMAS library | 0/3 | $0 — honest null: mirror strategy vs a firm seller deadlocks with ~nothing on the table |
 
 Against the **winner of the actual competition**, Synod closes every session and keeps
-$3,300 of the $4,000 range. This exercise also caught a bridge bug of ours (deduping a
-repeated offer destroyed the round count, so the deadline rule never fired) — fixed and
-recorded. Run it: `bridge/.venv/bin/python bridge/synod_negmas.py` (server on :4173).
+$3,300 of the $4,000 range. Every recorded game also carries the council's
+**round-by-round reasoning** — composed from the real decision state (belief, engine
+flags, chosen action), never written after the fact — shown on the site's "Why it
+matters" section: watch it read Shochan's lowball as a bluff (52% → 76% sure), then flip
+to "they have a real limit" the moment Shochan actually moves. This exercise also caught
+a bridge bug of ours (deduping a repeated offer destroyed the round count, so the
+deadline rule never fired) — fixed and recorded. Run it:
+`bridge/.venv/bin/python bridge/synod_negmas.py` (server on :4173).
 
 ## Belief calibration (the confusion matrix a skeptic asks for)
 
@@ -400,6 +405,19 @@ receipts), `run_ab_comparison`, `run_ablation`, `list_scenarios`, `get_receipts`
 and assign each to the general whose capability fits). The deliberation that powers the UI
 is the same one returned to the calling agent — Synod is a *society another agent can
 consult*.
+
+**Six of the seven run live from the hosted page** (the MCP panel's ▶ buttons, or
+`GET|POST /api/mcp/invoke` with `{"tool": "run_ablation"}`) — each executes the real
+computation on the deterministic engine, so the hosted answer and the stdio answer are
+identical. Only `draft_operational_order` is CLI-only: it drafts with live Qwen and spends
+tokens. Three ways to verify the integration is real:
+
+- `npm run mcp:smoke` — a real stdio client does the full handshake (initialize →
+  tools/list → tools/call).
+- `npm run mcp:agent-demo` — an **independent Qwen agent** is given a deal decision and a
+  toolbox; it chooses, unprompted, to consult the council over MCP and decides from what
+  it finds. The recorded transcript renders on the site's MCP panel.
+- The hosted invoke path above, from any browser or `curl`.
 
 ### Live Qwen (the demo mode)
 

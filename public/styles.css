@@ -2119,6 +2119,13 @@ body[data-track="nego"] .tw { display: none; }
 .ma-body pre { font-family: var(--mono); font-size: 0.62rem; line-height: 1.45; color: var(--muted); background: #0e0c08; border: 1px solid var(--line); border-radius: 4px; padding: 0.6rem 0.7rem; margin: 0.4rem 0 0; overflow-x: auto; max-height: 260px; overflow-y: auto; white-space: pre-wrap; }
 .ma-body summary { cursor: pointer; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
 
+.prior-art { max-width: 80ch; margin: 1.6rem 0 1rem; font-family: var(--sans); font-size: 0.88rem; line-height: 1.6; color: var(--muted);
+  padding: 0.7rem 0.9rem; background: var(--panel); border-left: 2px solid var(--muted); border-radius: 2px; }
+.prior-art b { color: var(--ink); }
+.prior-art a { color: var(--gold); text-decoration: none; }
+.ftcols a { color: var(--muted); text-decoration: none; }
+.ftcols a:hover { color: var(--gold); }
+
 /* ============ §05 WHY IT MATTERS — the value proposition ============ */
 .vp-problem { max-width: 76ch; margin: 0 0 1.6rem; }
 .vp-problem p { font-family: var(--sans); font-size: 1.04rem; line-height: 1.65; color: var(--muted); margin: 0; }
