@@ -49,7 +49,9 @@
             <div class="track-pane" data-track="war">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">prevents a war.</span></h1>
               <p class="lede">
-                The other side says: <em>“back off, or else.”</em> Real, or a bluff? Guess wrong and you pay.
+                The other side says: <em>“back off, or else.”</em> <br/><br/>
+                Real, or a bluff? Guess wrong and you pay.
+<br/><br/>
                 <strong>Synod is five AI judges and one neutral chair.</strong> Each judge checks one thing. Is this worth verifying? What's the worst case? What do they actually want? The chair weighs the disagreement. <strong>Then it commits.</strong>
                 One decider gets fooled. Five checks don't.
               </p>
@@ -254,7 +256,7 @@
           <span class="repro-badge" id="repro-badge">checking the engine…</span>
           <button class="repro-run" id="repro-run">↻ Re-run the check</button>
         </div>
-        <p class="repro-note">Every number is re-made from fixed starting points and run <b>twice</b> to prove it matches to the digit — hit <b>re-run</b> to recompute it live. <span class="hint">(same check as <code>npm run reproduce</code>.)</span></p>
+        <p class="repro-note">Every number is re-made from scratch, twice. The two results match to the digit. Hit <b>re-run</b> to recompute it live. <span class="hint">(same check as <code>npm run reproduce</code>)</span></p>
       </div>
       <p class="ev-frame">
         <span class="tw">⚔ War-room view — a lone commander vs the council, against three kinds of opponent. Stakes shown as units. <b>Same runs as the negotiation table</b>, just in war terms.</span>
@@ -265,42 +267,42 @@
         <div class="brief-label">Exhibit A — does a council beat one agent alone?</div>
         <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The solo baseline is built to win, not to lose: same engine, same moves, same games — only the council removed. One head instead of five.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Yes — and the bluffer is where it shows:</b> the solo agent is fooled and walks with nothing while the council checks the claim and <span class="tw">holds the line</span><span class="tn">closes the deal</span>, all 10 runs. <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent: one values the relationship, one has a hidden hard limit, one is bluffing. The “±” is how much the result wobbled run-to-run — smaller is steadier.</details></p>
+        <p class="ab-a"><b>Yes. The bluffer is where it shows.</b> The solo agent is fooled and walks with nothing. The council checks the claim and <span class="tw">holds the line</span><span class="tn">closes the deal</span> — all 10 games. <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent. One values the relationship. One has a hidden hard limit. One is bluffing. The “±” is how much the result wobbled between games. Smaller is steadier.</details></p>
       </div>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Cut the check-the-claim step: −$1,606, the biggest loss. Cut the argument step: $0 — on purpose, so nobody can talk the system into a bad call. Swap the chair for simple voting: −$1,113. Every part earns its seat.</span></summary>
         <p class="ex-q">Re-run the same 10, switching off one part each time. A big drop = that part was doing real work.</p>
         <div id="ablation-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>The “check the claim first” step matters most — −1,606,</b> the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this the hard way, twice. In the deterministic engine, removing the argument changes the result by <b>$0</b>. Then we ran the <b>controlled live version</b>: matched pairs inside real Qwen councils — the chair scores the same judges' positions with the same weights before the argument and after it, so only the argument differs. Result: <span id="debate-live-n">in 12 recorded trials</span>, <b>no judge was ever argued off their position, and the final call never changed</b>. That is the design working, not a gap: each judge is the <em>only</em> voice for its one question, so there is no one to be talked around — persuasion is simply not a channel here, which is what makes the system immune to a well-argued bad idea. Disagreement gets resolved by the chair weighing the situation instead — and <b>that</b> is causal and measured: flatten the chair's weighting and the council loses <b>$1,123</b> (row above). <span class="hint">(full trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
+        <p class="ab-a"><b>The “check the claim first” step matters most: −1,606.</b> That's the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this twice. In the engine, removing the argument changes the result by <b>$0</b>. Then we tested it live, as matched pairs. The chair scored the same judges before the argument and after it. Same weights. Only the argument differed. Result, <span id="debate-live-n">in 12 recorded trials</span>: <b>no judge ever moved. The final call never changed.</b> That's the design, not a gap. Each judge is the only voice for its question. So there is nobody to talk around. A well-argued bad idea has no way in. Disagreement is settled by the chair instead. And the chair's weighing IS causal: flatten it and the council loses <b>$1,123</b> (row above). <span class="hint">(trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit C — why keep five, not just the best one? <span class="hint">— expand</span><span class="ex-take">Every judge fails badly in at least one test world. The full council never does. And you can't know in advance which judge you'll need.</span></summary>
         <p class="ex-q">Five worlds written by a different model (Claude) to stress the council. Greener = better; red = wiped out.</p>
         <div id="holdout-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model than the one under test (Qwen), so the system didn't write its own exam — a partial guard against tuning to your own tests. <b>Honest limit:</b> the 10 runs measure how steady a result is <em>within</em> a world, not whether it holds <em>across</em> the space of real worlds — and five worlds from one author (Claude) is a small, correlated sample. So read the numbers as “stable in these worlds,” not “proven in general.” Widening this needs worlds from a third source or real transcripts.</details></p>
+        <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model (Claude), not from Qwen. So the system didn't write its own exam. <b>Honest limit:</b> the 10 games show a result is steady <em>within</em> a world. They don't prove it holds across all real worlds. And five worlds from one author is a small sample. Read the numbers as “stable in these worlds.” Not “proven in general.” Widening this needs a third source, or real transcripts.</details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span><span class="ex-take">One good general matches the council most days. But you'd have to pick him in advance. The council never has to.</span></summary>
         <p class="ex-q">The same 10 games, but decided by <b>one judge alone</b> each time, vs the full council (the chair adapts). Longer bar = more won.</p>
         <div id="general-bench" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>The society beats four of five generals and ties the fifth (the probe-heavy one)</b> — matching the best general <em>without knowing in advance which one fits</em>, and that probe-heavy worldview is exactly the one Exhibit C breaks on a hold-out world. <details class="ex-more"><summary>the honest tie</summary>On this tuned set a probe-leaning general can match the council; the society's real edge is robustness — it never craters across the hold-out worlds, where any single fixed temperament eventually does.</details></p>
+        <p class="ab-a"><b>The council beats four of five generals. It ties the fifth.</b> And it never had to guess which general to bet on. The one that ties here is exactly the one Exhibit C breaks. <details class="ex-more"><summary>the honest tie</summary>On this tuned set, a probe-leaning general can match the council. The council's real edge is robustness. It never craters across the hold-out worlds. Every single general eventually does.</details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit E — does the adaptive policy earn its place? <span class="hint">— expand</span><span class="ex-take">Yes. Judges that adjust to the situation beat fixed settings by $1,584.</span></summary>
-        <p class="ex-q">Each judge has a few dials — how cautious Hedge is, how eager Probe is to ask, how far ahead Pressure looks. The situation sets them, within hard limits — compared here to <b>leaving the dials fixed</b>, same tests.</p>
+        <p class="ex-q">Each judge has a few dials. How cautious Hedge is. How eager Probe is to ask. The situation sets them, within hard limits. Compared here to <b>leaving the dials fixed</b> — same tests.</p>
         <div id="adaptive-bench" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Adaptive beats the fixed clamp by 1,584</b> (8,968 vs 7,384) — the per-situation policy selection isn't decoration, it captures more. <details class="ex-more"><summary>why this is a real delta</summary>The reasoning layer fills bounded parameter slots per situation; the engine validates, clamps, and applies them deterministically. This measures what that <em>adaptivity</em> buys over a static parameter set — a genuine component, not a relabel.</details></p>
+        <p class="ab-a"><b>Adjusting to the situation beats fixed dials by 1,584</b> (8,968 vs 7,384). <details class="ex-more"><summary>why this is a real delta</summary>The situation sets each judge's dials, within hard limits. The engine checks and applies them. This measures what that adjustment buys over never touching the dials. A real component, not a relabel.</details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Three classic bots from negotiation research. We win one, tie one, lose one. The loss is real, and shown. Synod's edge only appears when the opponent hides something. That's the problem it was built for.</span></summary>
-        <p class="ex-q">The three classic time-based negotiators from the research field (Faratin 1998 — the standard baselines of the international ANAC competition): they concede on the clock, hide nothing, and were not authored by this project.</p>
+        <p class="ex-q">Three classic negotiators from the research field (Faratin 1998 — the standard ANAC baselines). They concede on a clock. They hide nothing. We didn't write them.</p>
         <div id="anac-bench" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Roughly a tie — and that's the honest, expected result.</b> These opponents hide nothing, so there's no bluff to expose and the council's information machinery buys little: it wins against the stubborn one (patience pays), ties the eager one, and gives a little back on the steady one by scouting an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>Running against these opponents exposed a real flaw: the council used to hold out past the final round and let a live offer die (its home worlds were kind about deadlines). We added a deterministic <b>deadline rule</b> — on the last round, take a standing offer above your floor rather than bet it on the other side's patience — and re-ran everything: every existing exhibit is byte-identical, and the council stopped burning deadline deals here. Opponents from outside the project finding a real bug is exactly what external tests are for.</details></p>
+        <p class="ab-a"><b>Roughly a tie — the honest, expected result.</b> These opponents hide nothing. So there's no bluff to expose, and checking buys little. Synod beats the stubborn one. It ties the eager one. It loses a little to the steady one — it scouted an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
       </details>
     </div></section>
 
@@ -324,12 +326,12 @@
       <h3 class="vp-h">Who loses this money today</h3>
       <p class="vp-sub">Anyone who negotiates, again and again, with someone who has a reason to lie. And decides alone.</p>
       <div class="vp-grid">
-        <div class="vp-card"><div class="vp-ind">Buying for a company</div><p>The supplier's "best and final offer" usually isn't — the council works out what they'd actually accept before you sign.</p></div>
-        <div class="vp-card"><div class="vp-ind">Selling &amp; discounts</div><p>"We have a cheaper quote from your competitor" is the oldest trick going — test it before you cut your price for it.</p></div>
-        <div class="vp-card"><div class="vp-ind">Recruiting &amp; job offers</div><p>Candidates, clients and counter-offers all come with hidden numbers — is that "better offer" real, or a bargaining move?</p></div>
-        <div class="vp-card"><div class="vp-ind">Buying &amp; selling companies</div><p>The rarest deals with the most at stake — "we have another interested buyer" deserves a test, not a better price.</p></div>
-        <div class="vp-card"><div class="vp-ind">Insurance payouts</div><p>Every claim is a negotiation with someone who knows more than you — small overpayments, thousands of times over, add up.</p></div>
-        <div class="vp-card"><div class="vp-ind">Ceasefires &amp; standoffs</div><p>The war room isn't just a story — "back off or else" is exactly the bluff-or-real decision, with the highest stakes there are.</p></div>
+        <div class="vp-card"><div class="vp-ind">Buying for a company</div><p>"Best and final offer" usually isn't. The council works out what they'd actually accept — before you sign.</p></div>
+        <div class="vp-card"><div class="vp-ind">Selling &amp; discounts</div><p>"We have a cheaper quote elsewhere." The oldest trick going. Test it before you cut your price.</p></div>
+        <div class="vp-card"><div class="vp-ind">Recruiting &amp; job offers</div><p>Every counter-offer comes with hidden numbers. Is that "better offer" real? Or a bargaining move?</p></div>
+        <div class="vp-card"><div class="vp-ind">Buying &amp; selling companies</div><p>The rarest deals. The most at stake. "We have another interested buyer" deserves a test, not a better price.</p></div>
+        <div class="vp-card"><div class="vp-ind">Insurance payouts</div><p>Every claim is a negotiation with someone who knows more than you. Small overpayments add up, thousands of times over.</p></div>
+        <div class="vp-card"><div class="vp-ind">Ceasefires &amp; standoffs</div><p>The war room isn't just a story. "Back off or else" is the same bluff-or-real call. Just with the highest stakes there are.</p></div>
       </div>
 
       <h3 class="vp-h">We put it up against real competition negotiators</h3>

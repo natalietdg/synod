@@ -48,8 +48,8 @@ async function loadCapability() {
     }
     const load = g.delta <= -500;
     const verdict = load
-      ? `<b>${g.name} is the one that matters here.</b> Take him away and ${g.off.probed ? "" : "no one can scout — so "}the council ${g.off.probed ? "still works it out" : "never finds out the bluff is fake"}; it wins <b>${money(g.off.surplus)}</b> instead of ${money(FULL)} (<b>${g.delta}</b>).`
-      : `<b>${g.name} off: barely changes a thing</b> (${g.delta || "±0"}). The others already agreed with this call — but ${g.name} still has their own part in the war plan.`;
+      ? `<b>${g.name} is the one that matters here.</b> Take him away${g.off.probed ? "" : " and no one can scout"}. The council ${g.off.probed ? "still works it out" : "never finds out the bluff is fake"}. It wins <b>${money(g.off.surplus)}</b> instead of ${money(FULL)} (<b>${g.delta}</b>).`
+      : `<b>${g.name} off: barely changes a thing</b> (${g.delta || "±0"}). The others already agreed with this call. But ${g.name} still writes their own part of the war plan.`;
     stage.innerHTML = `<div class="cap-cols">${col("FULL COUNCIL", d.full, true)}<span class="cap-vs">vs</span>${col(`${g.name.toUpperCase()} OFF`, g.off, false)}</div>` +
       `<p class="cap-note">${verdict}</p>`;
   };
@@ -89,9 +89,9 @@ async function loadSwitchMatrix() {
     return `<div class="sm-row"><span class="sm-op">${label}<span class="sm-full">council keeps ${Math.round(r.full)}</span></span>${cells}</div>`;
   }).join("");
   box.innerHTML = `<div class="sm-grid">${head}${rows}</div>` +
-    `<p class="sm-take"><b>The decisive general changes with the opponent</b> — Sun Tzu (Probe) carries the bluffers; Kutuzov (Hedge) carries the firm floor and is the <em>whole deal</em> against the hair-trigger ally (−2,800). ` +
-    `<b>Honestly read:</b> across all eight opponents only these two are ever the swing vote — Patton, Zhukov and Eisenhower never flip a call by removal here. Their value shows on the other axis: bet on any one judge <em>alone</em> and it craters somewhere (Exhibit C), and each writes their own part of the plan. ` +
-    `<span class="hint">(“·” = removing that judge changed nothing against that opponent · hold-out rows are the Claude-authored stress worlds)</span></p>`;
+    `<p class="sm-take"><b>The decisive general changes with the opponent.</b> Sun Tzu carries the bluffers. Kutuzov carries the firm floor. Against the hair-trigger ally, Kutuzov is the <em>whole deal</em> (−2,800). ` +
+    `<b>Honestly read:</b> only these two are ever the swing vote here. Patton, Zhukov and Eisenhower never flip a call by removal. Their value shows elsewhere. Bet on any one judge alone, and it craters somewhere (Exhibit C). And each writes their own part of the plan. ` +
+    `<span class="hint">(“·” = removing that judge changed nothing · hold-out rows are the Claude-authored stress worlds)</span></p>`;
 }
 
 async function loadWarRoom() {

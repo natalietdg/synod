@@ -685,18 +685,18 @@ app.post("/api/bridge/decide", async (req, res) => {
     const read = `${TYPE_PLAIN[likely[0]] ?? likely[0]} (${Math.round(likely[1] * 100)}% sure)`;
     const action = d.gate.finalAction;
     const why = d.engine.deadlineAccept
-      ? `last chance to say yes — their offer beats walking away with nothing, so take the sure win instead of betting it on their patience`
+      ? `last chance to say yes. Their offer beats walking away. Take the sure win`
       : d.engine.batnaWalk
-        ? `even the best price they could believably reach is worse than walking away — stop wasting rounds`
+        ? `no believable price beats walking away. Stop wasting rounds`
         : action === "accept"
-          ? `their offer is already better than anything more pushing would win — the council reads ${read} and takes it`
+          ? `the council reads ${read}. This offer beats anything more pushing would win. Take it`
           : action === "probe"
-            ? `the council isn't sure who it's facing (${read}) — asking a question is worth more than committing blind`
+            ? `the council reads ${read}. A question is worth more than a blind commitment`
             : action === "counter_soft"
-              ? `they're moving, so meet them a step — the council reads ${read} and keeps the deal alive`
+              ? `they're moving. Meet them a step. The council reads ${read}`
               : action === "concede_term"
-                ? `give a little on a side term — not the price — to get them moving; the council reads ${read}`
-                : `the council reads ${read} — hold the number and let them come to us`;
+                ? `give a little on a side term, not the price. It gets them moving. The council reads ${read}`
+                : `the council reads ${read}. Hold the number. Let them come to us`;
     res.json({ action, ask: councilAsk, belief, why, read });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

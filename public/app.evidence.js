@@ -452,7 +452,7 @@ async function loadValueAnl() {
   box.innerHTML =
     `<div class="vp-hero">` +
       `<div class="vp-hero-num">$${hero.synodSurplus.toLocaleString()}<span> of the $4,000, every game</span></div>` +
-      `<div class="vp-hero-txt">That's Synod's profit against <b>${hero.opponent}</b> — the program that <b>won the whole competition</b>. It tried the oldest move there is: offer almost nothing and wait. The council read it as a bluff, refused to budge, and ${hero.opponent} came up $3,300.</div>` +
+      `<div class="vp-hero-txt">That's Synod's profit against <b>${hero.opponent}</b> — the program that <b>won the whole competition</b>. It tried the oldest move there is. Offer almost nothing. Wait. The council read it as a bluff and refused to budge. ${hero.opponent} came up $3,300.</div>` +
       traceBlock(hero, "watch the council figure it out, round by round") +
     `</div>` +
     `<details class="vp-rest"><summary>the other ${rest.length} opponents it played</summary>` +
