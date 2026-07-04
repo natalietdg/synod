@@ -49,21 +49,22 @@
             <div class="track-pane" data-track="war">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">prevents a war.</span></h1>
               <p class="lede">
-                The other side claims strength it may not have. A lone commander has to guess: believe the bluff and give away ground for nothing, or call it — and if it's real, restart the war.
-                <strong>A council of five generals decides instead. Each owns one strategic question — is more information worth gathering, what do they really want, where's the leverage, what's the long game, what's the downside — and a fair chair makes the final call.</strong>
+                <strong>Synod is five AI judges and one referee</strong>, built for one moment: the other side just made a threat or a claim you can't verify. Believe it, and you may be paying for a bluff. Call it, and you may be wrong. One judge alone guesses.
+                <strong>Synod's five each check something different — is this worth verifying, what's the worst case, who are we really dealing with — and the referee weighs their disagreement by how risky the moment is, then commits.</strong> Five checks, one committed call, a receipt you can audit after.
               </p>
             </div>
             <div class="track-pane hidden" data-track="nego">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">closes the deal.</span></h1>
               <p class="lede">
-                A counterparty hides what they'll really take. A lone agent is bluffed into walking from a win.
-                <strong>A council closes instead. Five ways of judging, one fair chair — reading what they <em>do</em>, not what they say.</strong>
+                <strong>Before you agree to a deal, discount, or ultimatum where the other side might be bluffing, Synod tells you: bluff or real — and what to do about it.</strong>
+                Five AI judges each check something different; a referee weighs them by how risky the moment is, and commits — reading what the other side <em>does</em>, not what they say.
               </p>
             </div>
             <div class="btn-row">
               <a class="btn btn-primary" href="#warroom">Watch it decide live ▾</a>
               <a class="btn" href="#evidence">See the evidence</a>
             </div>
+            <p class="hero-pair">Against a bluffer it wins <b>66% more</b> than a single agent, every run. Against opponents with nothing to hide it roughly ties — <b>and once, it lost.</b> We show you that too, in the evidence below.</p>
             <p class="cap-line">10 runs each · same answer every time · every call signed</p>
           </div>
           <div class="hero-c-art council" data-council aria-hidden="true"></div>
@@ -264,35 +265,35 @@
       </div>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span></summary>
+        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Yes — except one, on purpose: cutting the check-the-claim step costs $1,606, the biggest single loss; cutting the argument step costs $0 — by design, so no one can talk the system into a bad call.</span></summary>
         <p class="ex-q">Re-run the same 10, switching off one part each time. A big drop = that part was doing real work.</p>
         <div id="ablation-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>The “check the claim first” step matters most — −1,606,</b> the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 (and where debate <em>is</em> causal)</summary>By design. The five are <b>independent decision procedures</b> aggregated by a deterministic chair — so debate moving the <em>deterministic</em> aggregate would mean persuasion overriding the computation, which is the groupthink failure we built out. So −0 here isn't “debate does nothing,” it's “debate can't override the math in the reproducible core.” Its causal role shows up <b>live</b>: convene the war council and watch round-1 vs the final call — when a general is genuinely talked round, the chair's call changes, and the room says so (<b>“the argument changed the call”</b>). Debate moves calls where it should — live, on the record — not by shouting down the math.</details></p>
+        <p class="ab-a"><b>The “check the claim first” step matters most — −1,606,</b> the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this the hard way, twice. In the deterministic engine, removing the argument changes the result by <b>$0</b>. Then we ran the <b>controlled live version</b>: matched pairs inside real Qwen councils — the referee scores the same judges' positions with the same weights before the debate and after it, so only the debate differs. Result: <span id="debate-live-n">in 12 recorded trials</span>, <b>no judge was ever argued off their position, and the final call never changed</b>. That is the design working, not a gap: each judge is the <em>only</em> voice for its one question, so there is no one to be talked around — persuasion is simply not a channel here, which is what makes the system immune to a well-argued bad idea. Disagreement gets resolved by the referee weighing the situation instead — and <b>that</b> is causal and measured: flatten the referee's weighting and the council loses <b>$1,123</b> (row above). <span class="hint">(full trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
       </details>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit C — why keep five, not just the best one? <span class="hint">— expand</span></summary>
+        <summary class="brief-label">Exhibit C — why keep five, not just the best one? <span class="hint">— expand</span><span class="ex-take">Because you can't know in advance which one the situation will reward — every lens fails badly in at least one test world; the full council never does.</span></summary>
         <p class="ex-q">Five worlds written by a different model (Claude) to stress the council. Greener = better; red = wiped out.</p>
         <div id="holdout-table" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Every single lens goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model than the one under test (Qwen), so the system didn't write its own exam — a partial guard against tuning to your own tests. <b>Honest limit:</b> the 10 runs measure how steady a result is <em>within</em> a world, not whether it holds <em>across</em> the space of real worlds — and five worlds from one author (Claude) is a small, correlated sample. So read the numbers as “stable in these worlds,” not “proven in general.” Widening this needs worlds from a third source or real transcripts.</details></p>
       </details>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span></summary>
+        <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span><span class="ex-take">One good general matches the council most of the time — the council's real edge is never needing to know in advance which general that is.</span></summary>
         <p class="ex-q">The same 10 runs, but decided by <b>one general's fixed temperament</b> each time, vs the full society (the chair adapts). Longer bar = more captured.</p>
         <div id="general-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>The society beats four of five generals and ties the fifth (the probe-heavy one)</b> — matching the best general <em>without knowing in advance which one fits</em>, and that probe-heavy worldview is exactly the one Exhibit C breaks on a hold-out world. <details class="ex-more"><summary>the honest tie</summary>On this tuned set a probe-leaning general can match the council; the society's real edge is robustness — it never craters across the hold-out worlds, where any single fixed temperament eventually does.</details></p>
       </details>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit E — does the adaptive policy earn its place? <span class="hint">— expand</span></summary>
+        <summary class="brief-label">Exhibit E — does the adaptive policy earn its place? <span class="hint">— expand</span><span class="ex-take">Yes: letting the judges adjust to the situation instead of using fixed settings is worth $1,584 on this test.</span></summary>
         <p class="ex-q">Each lens exposes bounded parameters (Hedge's risk-aversion λ, Probe's info threshold, Pressure's discount) that the situation fills and the engine clamps and applies — compared here to a <b>fixed, situation-blind clamp</b>, same seeds.</p>
         <div id="adaptive-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Adaptive beats the fixed clamp by 1,584</b> (8,968 vs 7,384) — the per-situation policy selection isn't decoration, it captures more. <details class="ex-more"><summary>why this is a real delta</summary>The reasoning layer fills bounded parameter slots per situation; the engine validates, clamps, and applies them deterministically. This measures what that <em>adaptivity</em> buys over a static parameter set — a genuine component, not a relabel.</details></p>
       </details>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span></summary>
+        <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Against three classic bots from negotiation research: win one, tie one, lose one — the loss is real and shown; the edge only appears against opponents actually hiding something, which is the problem this was built for.</span></summary>
         <p class="ex-q">The three classic time-based negotiators from the research field (Faratin 1998 — the standard baselines of the international ANAC competition): they concede on the clock, hide nothing, and were not authored by this project.</p>
         <div id="anac-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Roughly a tie — and that's the honest, expected result.</b> These opponents hide nothing, so there's no bluff to expose and the council's information machinery buys little: it wins against the stubborn one (patience pays), ties the eager one, and gives a little back on the steady one by scouting an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>Running against these opponents exposed a real flaw: the council used to hold out past the final round and let a live offer die (its home worlds were kind about deadlines). We added a deterministic <b>deadline rule</b> — on the last round, take a standing offer above your floor rather than bet it on the other side's patience — and re-ran everything: every existing exhibit is byte-identical, and the council stopped burning deadline deals here. Opponents from outside the project finding a real bug is exactly what external tests are for.</details></p>

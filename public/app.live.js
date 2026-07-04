@@ -58,6 +58,7 @@ async function init() {
   loadAdaptive();
   loadAnac();
   loadValueAnl();
+  loadDebateAblation();
   loadCapability();
   loadSwitchMatrix();
   loadWarRoom();
@@ -820,7 +821,7 @@ function renderEngine(engine) {
   // Dispersion gauge: how much doctrines disagreed on the winning action
   const dispNorm = Math.min(engine.dispersion / 1.5, 1); // rough ceiling at 1.5
   const dispLabel = engine.dispersion < 0.3 ? "low conflict" : engine.dispersion < 0.7 ? "contested" : "high conflict";
-  const dispTip = "Weighted spread of doctrine scores on the winning action. Low = the council pulled in the same direction. High = the Arbiter weights broke genuine disagreement — the recommendation is correct but not obvious.";
+  const dispTip = "Weighted spread of doctrine scores on the winning action. Low = the council pulled in the same direction. High = the chair had to break a genuine disagreement — the recommendation is correct but not obvious.";
   const dispBar =
     `<div class="dispersion-row">` +
     `<span class="ctx-lbl">conflict${info(dispTip)}</span>` +

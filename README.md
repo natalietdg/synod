@@ -229,12 +229,18 @@ Three findings, one of them a null we report as found:
    hold-out suite below, Probe-alone wipes out on a world). The full council matches the
    best single lens without knowing in advance which worldview the counterparty will
    reward — the same argument as ensembles vs. the best-model-in-hindsight.
-3. **Honest null:** removing the debate step changes the deterministic total by $0 — by
-   design. The five are independent procedures aggregated by a deterministic chair, so
-   persuasion cannot override the computation (anti-groupthink); debate's causal role
-   shows up live, where a general genuinely talked round shifts their lens's vote and can
-   change the chair's call. We publish what the harness returns, not what flatters the
-   architecture.
+3. **Honest null — now measured in both modes.** Removing the debate step changes the
+   deterministic total by $0, and the **controlled live ablation agrees**: across 12
+   recorded Qwen councils (matched pairs — the chair scores the same generals' positions
+   with the same weights before and after the debate, so only the debate differs), no
+   general was ever argued off their round-1 call and the chair's decision never changed
+   (0/12; `public/debate-ablation.json`, `npx tsx src/harness/debateAblation.ts`). This is
+   the design, not a gap: each member is the *sole* voice for its faculty, so persuasion
+   is not a channel — which is exactly what makes the council immune to a well-argued bad
+   idea. Conflict is resolved by the chair's situation-weighting instead, and *that* is
+   causal and measured (flatten it: −$1,123). Dialogue's role is to surface the
+   disagreement the chair weighs and to put the dissent on the record. We publish what
+   the harness returns, not what flatters the architecture.
 
 Run it yourself: `GET /api/ablation`, or `npm run demo`.
 

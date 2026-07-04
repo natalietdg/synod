@@ -1393,6 +1393,12 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .lede strong, .lede b { color: var(--fg); font-weight: 600; }
 .impact-line { font-size: 1.22rem; line-height: 1.6; }
 .cap-line { font-family: var(--mono); font-size: 0.8rem; color: var(--faint); letter-spacing: 0.06em; }
+/* The paired win/loss line — the credibility sentence, above the fold */
+.hero-pair { margin: 0.9rem auto 0.5rem; max-width: 640px; font-family: var(--sans); font-size: 0.95rem; line-height: 1.55; color: var(--muted); }
+.hero-pair b { color: var(--gold); }
+/* One honest sentence per exhibit, visible WITHOUT expanding */
+.ex-take { display: block; margin-top: 0.35rem; font-family: var(--sans); font-size: 0.9rem; font-weight: 400; line-height: 1.55;
+  color: var(--muted); text-transform: none; letter-spacing: 0; max-width: 92ch; }
 .who-bleeds { margin-top: 1rem; max-width: 76ch; font-family: var(--sans); font-size: 0.96rem; line-height: 1.6; color: var(--muted);
   padding: 0.8rem 1rem; background: var(--panel); border-left: 2px solid var(--gold-dim); border-radius: 2px; }
 .who-bleeds b { color: var(--ink); }

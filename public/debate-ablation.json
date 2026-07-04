@@ -1,0 +1,139 @@
+{
+  "recorded": "2026-07-04T06:12:42.137Z",
+  "method": "Matched-pair within each live council: the chair scores the same generals' positions with the same terrain weights before the debate (round-1 reads) and after it (final calls). Only the deliberation differs, so any change in the chair's call is attributable to the debate.",
+  "models": {
+    "judgment": "qwen3.7-plus-2026-05-26",
+    "fast": "qwen-turbo"
+  },
+  "trialsPerScenario": 4,
+  "trials": [
+    {
+      "scenario": "type-c-deceptive",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-c-deceptive",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-c-deceptive",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-c-deceptive",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-b-soft-floor",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-b-soft-floor",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-b-soft-floor",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-b-soft-floor",
+      "round1Call": "Demand verification — call the bluff",
+      "finalCall": "Demand verification — call the bluff",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-a-relationship",
+      "round1Call": "Demand verification — call the bluff",
+      "finalCall": "Demand verification — call the bluff",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-a-relationship",
+      "round1Call": "Demand verification — call the bluff",
+      "finalCall": "Demand verification — call the bluff",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-a-relationship",
+      "round1Call": "Demand verification — call the bluff",
+      "finalCall": "Demand verification — call the bluff",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    },
+    {
+      "scenario": "type-a-relationship",
+      "round1Call": "Hold the line",
+      "finalCall": "Hold the line",
+      "chairFlipped": false,
+      "generalsMoved": 0,
+      "generalsTotal": 5,
+      "deliberationRounds": 2,
+      "stopReason": "stable"
+    }
+  ],
+  "summary": {
+    "trials": 12,
+    "generalsMovedInAtLeastOneRound": 0,
+    "generalsMovedRate": 0,
+    "meanGeneralsMovedPerTrial": 0,
+    "chairFlips": 0,
+    "chairFlipRate": 0
+  }
+}

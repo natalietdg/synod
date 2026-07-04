@@ -407,6 +407,17 @@ async function loadAnac() {
   box.innerHTML = `<div class="anac-grid">${rows}</div>`;
 }
 
+/* The controlled live debate ablation — keep the on-page trial count synced to the
+   recorded JSON so the copy can never drift from the data. */
+async function loadDebateAblation() {
+  const el = $("#debate-live-n");
+  if (!el) return;
+  try {
+    const d = await (await fetch("/debate-ablation.json")).json();
+    el.textContent = `in ${d.summary.trials} recorded trials (${new Date(d.recorded).toLocaleDateString("en-GB")})`;
+  } catch { /* keep the static text */ }
+}
+
 /* §05 Why it matters — the recorded NegMAS/ANL results: Synod inside a real ANAC-platform
    mechanism against agents we didn't write (library negotiators + real league entrants).
    Recorded runs with provenance; regenerate with bridge/synod_negmas.py. */
