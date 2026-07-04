@@ -111,7 +111,7 @@ async function loadGeneralBench() {
     const delta = r.totalSurplusMean - society.totalSurplusMean;
     const isSociety = r === society;
     const cls = isSociety ? "full" : delta === 0 ? "causal" : delta <= -2500 ? "crater" : "drop";
-    const tag = isSociety ? "the society" : delta === 0 ? "ties" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
+    const tag = isSociety ? "the council" : delta === 0 ? "ties" : `${delta > 0 ? "+" : "−"}${money(Math.abs(delta))}`;
     return `<div class="drop-row${isSociety ? " drop-causal" : ""}">` +
       `<span class="drop-label">${isSociety ? `<b>${r.variant}</b>` : r.variant}` +
         `${delta === 0 && !isSociety ? ` <span class="hint">— Exhibit C breaks it</span>` : ""}</span>` +
@@ -131,7 +131,7 @@ async function loadGeneralBench() {
  */
 const CANON_VOTES = {
   message: "Here's where we stand: about 8,500. Can you work with that?",
-  note: "deceptive counterparty · round 1 · hides claimed leverage",
+  note: "a bluffing opponent · round 1 · hides what they really hold",
   // by doctrine id → that lens's top action this round
   votes: { empathy: "counter_soft", battle: "counter_hard", war: "concede_term", probe: "probe", risk: "probe" },
   // Voices = the lens rationale the engine ACTUALLY produced for this canonical round
@@ -173,7 +173,7 @@ async function fetchCanonical() {
     });
     return {
       message: data.message,
-      note: `${data.live ? "live qwen · " : ""}deceptive counterparty · round 1 · hides claimed leverage`,
+      note: `${data.live ? "live qwen · " : ""}a bluffing opponent · round 1 · hides what they really hold`,
       votes: data.votes, voices: data.voices, verdict: data.verdict, why: data.why,
       trajectory: traj.length ? traj : CANON_VOTES.trajectory,
       synod: data.synod || CANON_VOTES.synod, baseline: data.baseline ?? CANON_VOTES.baseline,
@@ -219,7 +219,7 @@ async function renderCast() {
   box.innerHTML =
     `<div class="tb-cp"><span class="tb-cp-lbl" id="tb-cp-lbl">COUNTERPARTY</span>` +
       `<span class="tb-cp-msg" id="tb-cp-msg">“${c.message}”</span><span class="tb-cp-note" id="tb-cp-note">${c.note}</span></div>` +
-    `<div class="tb-arrow">↓ five lenses score the move, in parallel</div>` +
+    `<div class="tb-arrow">↓ five judges score the move, each on their own</div>` +
     `<div class="tb-lenses">${voteRows}</div>` +
     `<div class="tb-weighing">⟳ the council is split — the chair reads the situation…</div>` +
     `<div class="tb-decision">` +
@@ -345,7 +345,7 @@ async function loadHoldout() {
       rows +
       `<div class="hm-rowlabel hm-totlabel">total</div>${totalCells}` +
     `</div>` +
-    `<div class="chart-total">red = that lens got wiped out in that world · the council's column never goes red, and captures the most overall</div>`;
+    `<div class="chart-total">red = that judge got wiped out in that world · the council's column never goes red, and wins the most overall</div>`;
 }
 
 async function loadAb() {
@@ -369,7 +369,7 @@ async function loadAb() {
   const t = report.totals;
   $("#ab-table").innerHTML =
     `<div class="pbars">${report.rows.map(pair).join("")}</div>` +
-    `<div class="chart-total">captured across all three opponents · one agent alone <b>${evMoney(t.baselineSurplusMean)}</b> · the council <b class="win">${evMoney(t.councilSurplusMean)}</b> <span class="hint">(${n} runs each · ± is the spread across the ${n} seeded instances, not a stochastic CI — seeds are fixed)</span></div>`;
+    `<div class="chart-total">won across all three opponents · one agent alone <b>${evMoney(t.baselineSurplusMean)}</b> · the council <b class="win">${evMoney(t.councilSurplusMean)}</b> <span class="hint">(${n} games each · ± is how much it wobbled between games, and the games are fixed, so it barely does)</span></div>`;
 }
 
 /* Exhibit E — the adaptive policy layer vs a fixed clamp: the measured algorithmic delta. */
@@ -471,16 +471,16 @@ const TOUR_STEPS = [
   { sel: () => $(".stat-strip"), head: "One claim: 0 vs 3,000. Same opponent, ten runs.",
     more: "A strong single agent gets bluffed and walks; the council probes and closes. Every number on this page comes from a fixed setup and repeats exactly." },
   { sel: () => $("#gm-select"), head: "Four ways to run it.",
-    more: "Watch the council work · play the counterparty and try to bluff it · duel it on the same seed · or face a live, unscripted AI adversary." },
+    more: "Watch the council work · play the opponent and try to bluff it · duel it on the same game · or face a live, unscripted AI opponent." },
   { sel: () => state.round?.card?.querySelector(".turn-cp"), head: "They move. The tags are behaviour.",
     more: "Signal tags — held firm, small concession, revealed — are the only evidence the belief system accepts." },
   { sel: () => state.round?.card?.querySelector(".empathy-broadcast"), head: "It reads conduct, not words.",
     more: "The belief bar moves on price movement, firmness, and reveals — never on talk. A bluffer and an honest buyer can say the same thing; only one will act it." },
   { sel: () => state.round?.card?.querySelector(".lens"), head: "Five worldviews, in parallel.",
     enter: (t) => t.classList.add("open"),
-    more: "Trust · Pressure · Frame · Probe · Hedge — each scores every action from its own worldview. Click any lens anytime to read its reasoning." },
+    more: "Trust · Pressure · Frame · Probe · Hedge — each judge scores every action from its own point of view. Click any of them to read its reasoning." },
   { sel: () => state.round?.card?.querySelector(".challenge-record"), head: "Disagreement, on record.",
-    more: "The two most-opposed lenses file briefs against each other. It's causal: a genuinely persuaded defender concedes ground — which can flip a close round." },
+    more: "The two most-opposed judges file briefs against each other, and the disagreement goes on the record for the chair to weigh." },
   { sel: () => state.round?.decision?.querySelector(".rec-line") ?? state.round?.decision, head: "Votes converge. A calculator decides.",
     enter: () => { if (state.round?.engineResult) drawConvergence(state.round.engineResult); },
     more: "Replaying the synthesis: thick beams agreed with the verdict, faint ones dissented. The final pick is deterministic arithmetic — no LLM decides." },
@@ -491,9 +491,9 @@ const TOUR_STEPS = [
     more: "Every round's decision is cryptographically signed and tamper-evident — a filed proceeding, not a chat log." },
   { sel: () => state.round?.card?.querySelector(".gavel"), head: "Your hand on the scales.",
     enter: (t) => t.setAttribute("open", ""),
-    more: "Drag a slider — the deterministic engine recomputes the verdict live. Pile everything on one lens and you've rerun Exhibit B by hand." },
+    more: "Drag a slider — the engine recomputes the verdict live. Pile everything on one judge and you've rerun Exhibit B by hand." },
   { sel: () => $(".disposition"), head: "Case closed — and the baseline's fate.",
-    more: "Outcome, trust, the declassified type, and what a strong single agent did against this same counterparty: usually walked with 0." },
+    more: "Outcome, trust, who they really were, and what a strong single agent did against this same opponent: usually walked with 0." },
   { sel: () => $("#exhibit-a"), head: "The evidence. Honest nulls included.",
     more: "n=10 with spread; Exhibit B removes one component at a time and publishes everything — even the parts whose removal costs nothing. The README adds adversarially-authored hold-out worlds and the belief confusion matrix." },
 ];

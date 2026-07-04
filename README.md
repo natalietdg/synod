@@ -211,6 +211,7 @@ Remove one component at a time. If removal doesn't hurt, the table says so.
 | − causal challenge | $8,968 | ±$0 | 100% | $3,000 |
 | − probe trigger | $7,362 | **−$1,606** | 100% | $1,423 |
 | uniform Arbiter (no chair) | $7,845 | −$1,123 | 100% | $1,922 |
+| majority vote (no chair) | $7,855 | −$1,113 | 100% | $1,953 |
 | single lens — Trust | $6,466 | −$2,502 | 100% | $1,423 |
 | single lens — Pressure | $5,150 | **−$3,817** | **63%** | $0 |
 | single lens — Frame | $8,354 | −$614 | 100% | $2,410 |
@@ -220,8 +221,12 @@ Remove one component at a time. If removal doesn't hurt, the table says so.
 Three findings, one of them a null we report as found:
 
 1. **The EVI probe trigger is load-bearing**: removing it costs $1,606 and collapses the
-   deceptive scenario to $1,423. **The chair's situation-weighting is too**: flattening it
-   to uniform weights costs $1,123 and drops the deceptive capture to $1,922.
+   deceptive scenario to $1,423. **The chair's situation-weighting is too** — and this is
+   the project's own design choice, isolated: replace the chair with **one-judge-one-vote
+   plurality** (same five judges, same reads, only the aggregation changes) and the
+   council loses **$1,113** (deceptive: $3,000 → $1,953); flatten it to uniform weights
+   and it loses $1,123. The chair is not decoration — it is the measured delta over the
+   naive aggregator.
 2. **The council's value is ex-ante robustness, not hindsight genius.** Collapsing to a
    single worldview spans $5,150–$8,968 depending on which lens you bet on — betting wrong
    costs up to 43% of achievable surplus and cuts the deal rate to 63%. The Probe

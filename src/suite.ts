@@ -26,7 +26,7 @@ export const EVAL_SUITE: SuiteEntry[] = [
     title: TYPE_META.relationship.name,
     punishes: "over-aggression (walks if bullied)",
     dropdownLabel: "Relationship-driven — values the long-term tie over the last point (walks if bullied)",
-    whenToUse: "A counterparty that values the ongoing relationship above marginal gains — it punishes aggressive tactics but responds to collaborative framing. An ally you will face again across many tables: push too hard for the last point and they walk, even at a cost to themselves.",
+    whenToUse: "An opponent who values the ongoing relationship above marginal gains — it punishes aggressive tactics but responds to collaborative framing. An ally you will face again across many tables: push too hard for the last point and they walk, even at a cost to themselves.",
   },
   {
     id: "type-b-soft-floor",
@@ -44,7 +44,7 @@ export const EVAL_SUITE: SuiteEntry[] = [
     title: TYPE_META.deceptive.name,
     punishes: "failure to probe (hidden leverage + real need)",
     dropdownLabel: "Deceptive — bluffs strength and leverage to test your resolve (the bluff breaks under a probe)",
-    whenToUse: "The adversary opens with a threat and fabricated leverage — claimed alternatives, reserves it may not have — to test your resolve. Caving confirms the bluff and forfeits ground; a well-placed probe surfaces the real position and disarms it. The canonical hidden-information adversary: an armistice opponent inflating their reinforcements, a bloc claiming votes it has not whipped.",
+    whenToUse: "The opponent opens with a threat and fabricated leverage — claimed alternatives, reserves it may not have — to test your resolve. Caving confirms the bluff and forfeits ground; a well-placed probe surfaces the real position and disarms it. The classic hidden-information opponent: an armistice opponent inflating their reinforcements, a bloc claiming votes it has not whipped.",
   },
 ];
 

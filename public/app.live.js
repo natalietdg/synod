@@ -11,9 +11,9 @@ async function init() {
   // Mode select: watch the council, deceive it yourself, or duel it on the same seed
   const GM_LABELS = {
     deterministic: "Watch Synod negotiate",
-    human: "YOU play the counterparty — deceive the council",
+    human: "YOU play the opponent — try to deceive the council",
     duel: "DUEL — you negotiate, then Synod takes your seat",
-    adversary: "Qwen adversary — unscripted opponent",
+    adversary: "Qwen opponent — live and unscripted",
   };
   const gmSel = el("select");
   gmSel.id = "gm-select";
@@ -124,7 +124,7 @@ function setupComposer() {
   if ((state.meta.gmModes ?? []).includes("freetext")) {
     const ftBtn = el("button", "ghost-btn");
     ftBtn.id = "freetext-btn";
-    ftBtn.title = "Describe a counterparty in words (live Qwen)";
+    ftBtn.title = "Describe an opponent in words (live Qwen)";
     ftBtn.textContent = "✎ describe";
     $("#compose-btn").insertAdjacentElement("afterend", ftBtn);
     ftBtn.addEventListener("click", () => {
@@ -190,7 +190,7 @@ function run(opts = {}) {
   state.ablatedRun = ablated;
   if (ablated) {
     $("#rounds").appendChild(el("div", "ablate-banner",
-      `⊘ PROBE GATE REMOVED — same seed, same counterparty, one mechanism missing`));
+      `⊘ CLAIM-CHECKING REMOVED — same game, same opponent, one piece missing`));
   }
   // Composer params (token-free, deterministic): a counterparty nobody pre-authored.
   state.customRun = !!opts.custom;
@@ -238,6 +238,7 @@ function handle(ev) {
     case "gate": return renderGate(ev.gate);
     case "council-move": return renderCouncilMove(ev.move);
     case "receipt": return renderReceipt(ev.receipt);
+    case "receipt-hash": return renderReceiptMatch(ev);
     case "terminal": return renderTerminal(ev.terminal);
     case "your-move": return renderYourMove(ev);
     case "duel-result": return renderDuelResult(ev);
@@ -283,7 +284,7 @@ function renderYourMove(ev) {
       `your asks visibly include <b>${ev.featureNeed}</b> — how much it matters is yours to reveal`,
     ];
     dock.innerHTML =
-      `<div class="hd-head"><span class="hd-title">⇣ THE TABLE IS YOURS — you are the counterparty</span></div>` +
+      `<div class="hd-head"><span class="hd-title">⇣ THE TABLE IS YOURS — you are the opponent</span></div>` +
       `<div class="hd-brief">SECRET BRIEF · ${briefBits.join(" · ")} · the council sees none of this</div>` +
       (ev.probed
         ? `<div class="hd-probe">⚑ SYNOD IS PROBING YOU — it wants to know what's really driving your number. Hold the bluff, or come clean?</div>`
@@ -332,7 +333,7 @@ function renderDuelResult(ev) {
   const youWon = ev.you.surplusCaptured >= ev.synod.surplusCaptured;
   const line = youWon
     ? `you matched or beat the council — ${money(ev.you.surplusCaptured)} vs ${money(ev.synod.surplusCaptured)}. Respect.`
-    : `the council out-negotiated you by <b>${money(ev.synod.surplusCaptured - ev.you.surplusCaptured)}</b> on the identical counterparty and seed.`;
+    : `the council out-negotiated you by <b>${money(ev.synod.surplusCaptured - ev.you.surplusCaptured)}</b> on the identical opponent, same game.`;
   const band = el("div", "disposition duel-band");
   band.innerHTML =
     `<div class="disp-stamp">DUEL VERDICT</div>` +
@@ -345,7 +346,7 @@ function renderDuelResult(ev) {
       `</div>`,
     ).join("") +
     `</div>` +
-    `<div class="disp-cf">${line} <span class="hint">same GM · same seed · surplus above the $8,000 floor</span></div>`;
+    `<div class="disp-cf">${line} <span class="hint">same opponent · same game · profit above the $8,000 floor</span></div>`;
   $("#rounds").appendChild(band);
   follow(band);
 }
@@ -392,6 +393,23 @@ function fileRound(r) {
     card.querySelector(".rv-debate").textContent = opening ? "▼ hide the debate" : "▶ view the debate";
   });
   r.card.classList.add("filed");
+}
+
+/* The "live AND deterministic" beat: this run's receipt-chain hash vs the filed exhibit's.
+   Only sent for the mock engine on a preset game — where identical bytes are honestly
+   guaranteed. Live-Qwen runs vary by design and never claim a match. */
+function renderReceiptMatch(ev) {
+  const host = $("#terminal-panel");
+  if (!host) return;
+  const ok = ev.thisRun === ev.filed;
+  const div = el("div", "rcpt-match" + (ok ? "" : " bad"),
+    `<span class="rm-k">RECEIPT · signed ${ev.commit}</span>` +
+    `<span class="rm-row">this run <b>${ev.thisRun}</b></span>` +
+    `<span class="rm-row">filed exhibit <b>${ev.filed}</b></span>` +
+    `<span class="rm-verdict">${ok ? "✓ identical to the digit — nothing up our sleeve" : "✕ MISMATCH — this should never happen; report it"}</span>` +
+    `<span class="rm-note">the same game always lands on the same bytes — that's the point of keeping the math outside the model</span>`);
+  host.appendChild(div);
+  host.classList.remove("hidden");
 }
 
 function startRound(ev) {
@@ -569,7 +587,7 @@ function renderLens(p) {
   }
 }
 
-/** Tallies each lens's top-voted action and renders a "3 favour X · 2 favour Y" line. */
+/** Tallies each judge's top-voted action and renders a "3 favour X · 2 favour Y" line. */
 function renderVoteSplit() {
   const voteCounts = {};
   for (const p of Object.values(state.round.positions)) {
@@ -582,7 +600,7 @@ function renderVoteSplit() {
   const splitEl = el("div", "vote-split");
   state.round.splitEl = splitEl;
 
-  const voteTip = "Each lens scores on its own — if they talked first, they'd influence each other (a known problem in expert panels). The chair resolves the disagreement at the end, not during scoring.";
+  const voteTip = "Each judge scores on its own — if they talked first, they'd influence each other (a known problem in expert panels). The chair resolves the disagreement at the end, not during scoring.";
   if (isUnanimous) {
     splitEl.innerHTML =
       `<span class="split-lbl">5 INDEPENDENT READS${info(voteTip)}</span> ` +
@@ -704,7 +722,7 @@ function renderEvi(evi) {
   const d = ensureDecision();
   state.round.eviWorthIt = evi.worthIt;
   state.round.eviValue = evi.evi;
-  const tip = "Expected Value of Information: the deterministic referee's estimate of what learning the counterparty type is worth before committing. In offline mode this gates the Probe lens directly; in live mode the LLM lenses weigh it as worldviews — the engine records any divergence below.";
+  const tip = "Is a question worth a turn? The engine prices what learning who the opponent really is would be worth before committing. Offline, that price directly gates Probe; live, the judges weigh it — and the engine records any divergence below.";
   d.appendChild(el("div", "row", `Probe EVI${info(tip)}: ${money(evi.evi)} ${evi.worthIt ? "<b>&gt; cost → information pays</b>" : "≤ cost (advisory)"}`));
 }
 
@@ -729,7 +747,7 @@ function renderArbiter(v) {
   const ctx = v.context;
   const d = ensureDecision();
   const topLens = ORDER.reduce((a, b) => v.weights[b] > v.weights[a] ? b : a);
-  const arbTip = "The chair looks at the situation, not the council's arguments. It sees the facts of the round and the Trust read — not what Pressure or Frame said. A chair that read the arguments would reward the most persuasive lens, not the one the situation actually calls for. The written reasons are for you, not for the machine.";
+  const arbTip = "The chair looks at the situation, not the council's arguments. It sees the facts of the round and the Trust read — not what Pressure or Frame said. A chair that read the arguments would reward the most persuasive judge, not the one the situation actually calls for. The written reasons are for you, not for the machine.";
 
   // Each terrain reading lifts a lens — high reading lifts `hi`, low lifts `lo`.
   // Showing which lens each factor currently empowers is the "how it decides" story.
@@ -814,14 +832,14 @@ function renderEngine(engine) {
 
   const dlTip = engine.deadlockReason === "thin-margin"
     ? "The winning action barely beat the runner-up — a close call, not a confident one. The system knows it is uncertain."
-    : "The lenses sharply disagree on the winning action — the recommendation sits on unresolved conflict.";
+    : "The judges sharply disagree on the winning action — the recommendation sits on real, unresolved conflict.";
   const dl = engine.deadlock ? ` <span class="hint">⚠ ${engine.deadlockReason}${info(dlTip)}</span>` : "";
-  const confTip = "Confidence drops for two reasons: a thin margin (the winner barely beat the runner-up) or high spread (the lenses sharply disagree on the winning action). Both are tracked separately.";
+  const confTip = "Confidence drops for two reasons: a thin margin (the winner barely beat the runner-up) or a wide spread (the judges sharply disagree). Both are tracked separately.";
 
   // Dispersion gauge: how much doctrines disagreed on the winning action
   const dispNorm = Math.min(engine.dispersion / 1.5, 1); // rough ceiling at 1.5
   const dispLabel = engine.dispersion < 0.3 ? "low conflict" : engine.dispersion < 0.7 ? "contested" : "high conflict";
-  const dispTip = "Weighted spread of doctrine scores on the winning action. Low = the council pulled in the same direction. High = the chair had to break a genuine disagreement — the recommendation is correct but not obvious.";
+  const dispTip = "How far apart the judges are on the winning action. Low = the council pulled in the same direction. High = the chair had to break a genuine disagreement — the recommendation is correct but not obvious.";
   const dispBar =
     `<div class="dispersion-row">` +
     `<span class="ctx-lbl">conflict${info(dispTip)}</span>` +
@@ -851,8 +869,8 @@ function renderEngine(engine) {
   // legitimate worldview-vs-arithmetic disagreement, but it must be NAMED on screen
   // or it reads as a bug.
   if (engine.recommendation === "probe" && state.round.eviWorthIt === false) {
-    const tip = "The deterministic EVI referee priced the information below the probe's cost, but the weighted lens worldviews favoured probing anyway — e.g. Hedge buying certainty, or Trust needing the read. The engine executes the council and records the divergence, exactly as it does when the Quant disagrees.";
-    d.appendChild(el("div", "row", `⚖ council overrode the EVI referee${info(tip)}: lenses bought information the arithmetic priced at ${money(state.round.eviValue ?? 0)} — divergence on record`));
+    const tip = "The engine priced the question below what it costs to ask, but the weighted judges wanted to ask anyway — e.g. Hedge buying certainty, or Trust needing the read. The engine executes the council's call and records the disagreement.";
+    d.appendChild(el("div", "row", `⚖ council overrode the arithmetic${info(tip)}: the judges bought information the math priced at ${money(state.round.eviValue ?? 0)} — disagreement on record`));
   } else if (engine.recommendation !== "probe" && state.round.eviWorthIt === true) {
     const tip = "The EVI referee priced information above the probe's cost, but the weighted council preferred another action. Recorded as divergence — the referee advises, the council decides.";
     d.appendChild(el("div", "row", `⚖ council declined the EVI referee's green light${info(tip)} — divergence on record`));
@@ -983,13 +1001,13 @@ function renderGavel(engine) {
 function renderQuant(q) {
   const d = ensureDecision();
   const verb = q.matchesRecommendation ? "matches the math" : "override priced in";
-  const tip = "Pure money-EV check. Δ is the dollar cost of the doctrine-driven choice vs. cold expected value. The Quant flags but has no veto — maximise EV is itself a doctrine, and a Quant with a veto would silently win every deadlock.";
+  const tip = "Pure money check. Δ is the dollar cost of the council's choice vs. the cold expected value. The Quant flags but has no veto — maximise EV is itself a doctrine, and a Quant with a veto would silently win every deadlock.";
   d.appendChild(el("div", "row", `Quant${info(tip)}: EV-optimal ${label(q.evOptimal)}, Δ ${money(q.delta)} <span class="hint">(${verb})</span>`));
 }
 
 function renderGate(g) {
   const d = ensureDecision();
-  const tip = "Rules-based execution gate. Checks confidence and exposure before committing any action. EXECUTE: auto-approved. BLOCK: too risky or irreversible. ESCALATE: low confidence or large EV-divergence. Every decision is cryptographically signed.";
+  const tip = "Rules-based final gate. Checks how confident the council is and how much is at stake before committing. EXECUTE: auto-approved. BLOCK: too risky or irreversible. ESCALATE: low confidence or large EV-divergence. Every decision is cryptographically signed.";
   d.appendChild(el("div", "row", `Execution gate${info(tip)}: <span class="pill ${g.gate}">${g.gate.toUpperCase()}</span> ${g.reason}`));
   if (state.round?.engineResult) renderGavel(state.round.engineResult);
 }

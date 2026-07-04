@@ -34,16 +34,16 @@ async function loadCapability() {
       `<span class="cap-bar-v">${Math.round(b.deceptive * 100)}%</span><span class="cap-bar-r">R${b.round}</span></span>`).join("");
     return `<div class="cap-col${isFull ? " with" : ""}">` +
       `<div class="cap-col-h">${title}</div>` +
-      `<div class="cap-trace" title="belief the adversary is bluffing, per round">${bars}</div>` +
+      `<div class="cap-trace" title="how sure the council is that the opponent is bluffing, per round">${bars}</div>` +
       `<div class="cap-meta">${t.probed ? "✓ scouts — <b>figures out the bluff</b>" : "✕ never scouts — <b>stays in the dark</b>"} (got to ${Math.round(t.peak * 100)}% sure)</div>` +
-      `<div class="cap-out${isFull ? " close" : ""}">captured <b>${money(t.surplus)}</b> <span class="cap-of">of ${money(FULL)}</span></div>` +
+      `<div class="cap-out${isFull ? " close" : ""}">won <b>${money(t.surplus)}</b> <span class="cap-of">of ${money(FULL)}</span></div>` +
     `</div>`;
   };
   const draw = (g) => {
     const stage = $("#cap-stage");
     if (!g) {
       stage.innerHTML = `<div class="cap-cols">${col("FULL COUNCIL", d.full, true)}</div>` +
-        `<p class="cap-note">The full council resolves the bluff and captures the whole ${money(FULL)}. <b>Switch off a general</b> above to see what it loses.</p>`;
+        `<p class="cap-note">The full council works out the bluff and wins the whole ${money(FULL)}. <b>Switch off a general</b> above to see what it loses.</p>`;
       return;
     }
     const load = g.delta <= -500;
@@ -90,8 +90,8 @@ async function loadSwitchMatrix() {
   }).join("");
   box.innerHTML = `<div class="sm-grid">${head}${rows}</div>` +
     `<p class="sm-take"><b>The decisive general changes with the opponent</b> — Sun Tzu (Probe) carries the bluffers; Kutuzov (Hedge) carries the firm floor and is the <em>whole deal</em> against the hair-trigger ally (−2,800). ` +
-    `<b>Honestly read:</b> across all eight opponents only these two are ever the swing vote — Patton, Zhukov and Eisenhower never flip a call by removal here. Their value shows on the other axis: bet on any one lens <em>alone</em> and it craters somewhere (Exhibit C), and each writes their own part of the plan. ` +
-    `<span class="hint">(“·” = removing that lens changed nothing against that opponent · hold-out rows are the Claude-authored stress worlds)</span></p>`;
+    `<b>Honestly read:</b> across all eight opponents only these two are ever the swing vote — Patton, Zhukov and Eisenhower never flip a call by removal here. Their value shows on the other axis: bet on any one judge <em>alone</em> and it craters somewhere (Exhibit C), and each writes their own part of the plan. ` +
+    `<span class="hint">(“·” = removing that judge changed nothing against that opponent · hold-out rows are the Claude-authored stress worlds)</span></p>`;
 }
 
 async function loadWarRoom() {
@@ -122,7 +122,7 @@ async function loadWarRoom() {
       step(1, "The move",
         `<div class="wr-move"><span class="wr-move-lbl">ACROSS THE TABLE</span>` +
           `<span class="wr-move-msg">“${data.move}”</span>` +
-          `<span class="wr-move-note">adversary · true strength hidden — bluff or real?</span></div>`) +
+          `<span class="wr-move-note">the other side · true strength hidden — bluff or real?</span></div>`) +
     `</div>` +
     // The run control — live only. The chair decides on the terrain (no human knob, no
     // deterministic replay): convening means the five generals actually deliberate on Qwen.
@@ -139,7 +139,7 @@ async function loadWarRoom() {
         `<span class="hint">a different opponent makes a different general decisive</span>` +
       `</div>` +
       `<div class="wr-remove" id="wr-remove">` +
-        `<div class="wr-remove-head"><span class="wr-opt">OPTIONAL</span> <b>Click a general to remove them</b> — then convene to watch the council decide without that faculty, live.</div>` +
+        `<div class="wr-remove-head"><span class="wr-opt">OPTIONAL</span> <b>Click a general to remove them</b> — then convene to watch the council decide without that judge, live.</div>` +
         `<div class="wr-remove-chips">` +
           data.generals.map((g) =>
             `<button class="wr-rm-chip" data-lens="${g.leadLens}" data-name="${g.name}" style="--c:${LENS_COLORS[g.leadLens]}" title="click to remove ${g.name} (${g.lead}) from the live council">` +
@@ -254,7 +254,7 @@ async function wrRunLive() {
       const msg = document.querySelector("#warroom-body .wr-move-msg");
       if (msg) msg.textContent = `“${live.move}”`;
       const note = document.querySelector("#warroom-body .wr-move-note");
-      if (note && live.scenarioLabel) note.textContent = `adversary · ${live.scenarioLabel.toLowerCase()} — what's real, what's theatre?`;
+      if (note && live.scenarioLabel) note.textContent = `the other side · ${live.scenarioLabel.toLowerCase()} — what's real, what's theatre?`;
     }
     // Rebuild the turning-point timeline from the live verdict so nothing mock-derived shows.
     const tl = document.querySelector("#warroom-body .wr-timeline");
@@ -265,12 +265,20 @@ async function wrRunLive() {
     set(5, "The range of outcomes", wrOutcomeHTML(WR.data) + `<div class="wr-wargame" id="wr-wargame"></div>`);
     set(6, "The war plan", wrPlanHTML(WR.data));
     wrWirePlan();
-    status.textContent = offNames.length
-      ? `✓ live — decided without ${offNames.join(" & ")}, straight from Qwen just now`
-      : "✓ live — the whole proceedings came from Qwen just now";
+    // HONEST REPLAY LABELING: each configuration runs on Qwen once and is then served as
+    // a recording (that's why a repeat click answers instantly). Say which one this was —
+    // a fast repeat must never masquerade as a fresh model call.
+    const ageMs = live.ranAt ? Date.now() - new Date(live.ranAt).getTime() : 0;
+    const fresh = ageMs < 20_000;
+    const ranClock = live.ranAt ? new Date(live.ranAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }) : "";
+    status.textContent = fresh
+      ? (offNames.length
+          ? `✓ live — decided without ${offNames.join(" & ")}, straight from Qwen just now`
+          : "✓ live — the whole proceedings came from Qwen just now")
+      : `✓ replaying this configuration's recorded live run (ran on Qwen at ${ranClock}) — change the opponent or remove a general to run fresh`;
     status.className = "wr-live-status ok";
     const badge = document.querySelector("#provider-badge");
-    if (badge) badge.textContent = "⚡ RAN LIVE ON QWEN";
+    if (badge) badge.textContent = fresh ? "⚡ RAN LIVE ON QWEN" : "⚡ LIVE RUN · RECORDED";
     $("#wr-proceedings")?.classList.remove("hidden");
     wrPlay();
     wrRenderWargame(WR.data.wargame);
@@ -341,7 +349,7 @@ function wrCastHTML(data) {
     `<span class="cast-op">+</span>` +
     `<span class="cast-grp"><b>1 chair</b> <span class="cast-chip chair" title="Takes no side — reads the situation and makes the call">neutral chair</span></span>` +
     `<span class="cast-op">vs</span>` +
-    `<span class="cast-grp"><b>1 adversary</b> <span class="cast-sub">true strength hidden</span></span>` +
+    `<span class="cast-grp"><b>1 opponent</b> <span class="cast-sub">true strength hidden</span></span>` +
   `</div>`;
 }
 
@@ -421,7 +429,7 @@ function wrSplitHTML(data) {
   const benched = (data.benched && data.benched.length)
     ? `<div class="wr-benched"><b>The chair convened ${data.generals.length} of 5 for this call.</b> ` +
       `Sitting out: ${data.benched.map((b) => `<span class="wr-bench-x">${b.name} <i>(${b.lensName})</i> — ${b.why}</span>`).join(", ")}. ` +
-      `<span class="hint">A different situation calls in a different set — the society isn't always the same committee.</span></div>`
+      `<span class="hint">A different situation calls in a different set — the council isn't always the same committee.</span></div>`
     : (data.convenedNote ? `<div class="wr-benched"><b>All five convened</b> — ${data.convenedNote.replace(/^.*chair convened all five\.?/i, "this call was uncertain and high-stakes enough to need everyone.")}</div>` : "");
   const n = data.generals.length;
   return `<div class="wr-split">` +
@@ -551,7 +559,7 @@ function wrDeliberationHTML(data) {
     ? `<div class="wr-causal yes">⚖ <b>The argument changed the call.</b> Before they argued, the chair would have picked <b>${del.round1Label}</b>; after some generals were talked round, it's <b>${del.finalLabel}</b>.</div>`
     : `<div class="wr-causal no">⚖ <b>The argument didn't change the call</b> — it stayed <b>${del.finalLabel}</b>. That's on purpose: the chair decides on the <b>situation</b>, not on who argues hardest. The argument's job is to <b>put the disagreement on the record</b> and test the leading idea — not to talk anyone into it.</div>`;
   return `<div class="wr-delib">` +
-    `<div class="wr-delib-lbl">THE DELIBERATION <span class="hint">— all five argue each round and may move; ${capNote}</span></div>` +
+    `<div class="wr-delib-lbl">THE ARGUMENT, ROUND BY ROUND <span class="hint">— all five argue each round and may change their mind; ${capNote}</span></div>` +
     causal +
     wrInfluenceHTML(data) +
     `<div class="wr-pg-wrap">${grid}</div>` +
@@ -599,7 +607,7 @@ function wrPlanHTML(data) {
       `<div class="gdoc-people" title="contributors — hover to see their passages">${people}</div>` +
     `</div>` +
     `<div class="gdoc-sub">One war plan · ${plan.sections.length} contributors · drafted live on Qwen · <b>hover a contributor</b> to light up their passages</div>` +
-    `<div class="gdoc-situation"><span class="gdoc-sk">SITUATION</span>${data.move || "the adversary's move on the table"}</div>` +
+    `<div class="gdoc-situation"><span class="gdoc-sk">SITUATION</span>${data.move || "the other side's move on the table"}</div>` +
     `<div class="gdoc-body">${paras}</div>` +
     `<div class="gdoc-note" id="wp-note"><span class="gdoc-note-hint">Hover a contributor to see why they own their part of the plan.</span></div>` +
   `</div>`;
@@ -781,10 +789,10 @@ async function loadFit() {
 
   box.innerHTML =
     `<div class="fit-headline"><b>Wrong worldview → walk away. Right worldview → close.</b> There is no universal strategy.</div>` +
-    `<div class="fit-lbl">Which worldview fits the counterparty ` +
-      `<span class="hint">— each single lens vs each counterparty · real runs · the <b>COUNCIL matches the best fit every time</b></span></div>` +
+    `<div class="fit-lbl">Which judge fits which opponent ` +
+      `<span class="hint">— each judge alone vs each kind of opponent · real games · the <b>COUNCIL matches the best fit every time</b></span></div>` +
     `<div class="fit-grid" style="grid-template-columns: 9rem repeat(${d.lenses.length}, 1fr) 5.5rem">${head}${body}</div>` +
-    `<div class="fit-foot">The council doesn't <em>type</em> the counterparty and pick a lens. All five worldviews weigh the uncertainty at once, and arbitration decides — it just happens to land on the fit. <b>Judgment under uncertainty, not classification.</b></div>`;
+    `<div class="fit-foot">The council doesn't label the opponent and then pick a judge. All five weigh the uncertainty at once and the chair decides — it just happens to land on the best fit. <b>Judging under uncertainty, not sorting into boxes.</b></div>`;
 }
 
 init();

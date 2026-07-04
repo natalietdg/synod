@@ -1,4 +1,5 @@
 import { GameMaster } from "../gm/gameMaster.js";
+import { ACTIONS } from "../core/actions.js";
 import { runNegotiation } from "../protocol/loop.js";
 import { EVAL_SUITE } from "../suite.js";
 import { DOCTRINES, LENSES, type DoctrineId } from "../core/types.js";
@@ -82,6 +83,27 @@ const withUniformArbiter = (base: DeliberationAgents): DeliberationAgents =>
     },
   });
 
+/** MAJORITY VOTE — the naive aggregator the chair replaces. Each judge casts one vote for
+ *  its single favourite action (scores collapse to one-hot), all votes count equally, and
+ *  plurality wins. Same five judges, same reads — only the aggregation differs. This
+ *  isolates the project's OWN design choice: does the situation-weighted chair beat plain
+ *  voting by the same council? */
+const withMajorityVote = (base: DeliberationAgents): DeliberationAgents =>
+  wrap(base, {
+    doctrinePosition: async (...args: Parameters<DeliberationAgents["doctrinePosition"]>) => {
+      const p = await base.doctrinePosition(...args);
+      const top = ACTIONS.reduce((a, b) => (p.scores[b] > p.scores[a] ? b : a));
+      const scores = {} as typeof p.scores;
+      for (const a of ACTIONS) scores[a] = a === top ? 1 : 0;
+      return { ...p, scores };
+    },
+    arbiterWeights: async (ctx: ContextVector, _read: EmpathyRead): Promise<ArbiterVerdict> => {
+      const weights = {} as Record<DoctrineId, number>;
+      for (const d of DOCTRINES) weights[d] = 1 / DOCTRINES.length;
+      return { context: ctx, weights, rationale: "Ablation: one judge, one vote — plurality wins, no chair." };
+    },
+  });
+
 /** Single lens: all weight on one doctrine — the council collapsed to one worldview.
  *  Exported: the hold-out harness uses it to answer "why not just Learning?" on
  *  worlds the council was never tuned on. */
@@ -153,6 +175,12 @@ export async function runAblation(
     withUniformArbiter(agents),
     "no chair (equal weights)",
     "every lens counts the same, no matter the situation",
+    nSeeds,
+  ));
+  rows.push(await runVariant(
+    withMajorityVote(agents),
+    "majority vote (no chair)",
+    "one judge one vote, plurality wins — the naive aggregator the chair replaces",
     nSeeds,
   ));
 

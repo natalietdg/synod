@@ -33,7 +33,7 @@
     <div class="track-bar" id="track-bar">
       <div class="wrap track-bar-in">
         <span class="track-id" id="track-id">⚔ The War Council</span>
-        <span class="track-line"><span class="gold">One society · five lenses · one engine</span> — the same council, whichever world it's in.</span>
+        <span class="track-line"><span class="gold">One council · five judges · one chair</span> — the same council, whichever world it's in.</span>
         <button class="scenario-swap" id="scenario-swap" title="Same architecture, different domain — watch the identical council close a business deal instead">
           Same council, different world&nbsp;<b id="scenario-swap-to">🤝 Business deal&nbsp;→</b>
         </button>
@@ -49,15 +49,17 @@
             <div class="track-pane" data-track="war">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">prevents a war.</span></h1>
               <p class="lede">
-                <strong>Synod is five AI judges and one referee</strong>, built for one moment: the other side just made a threat or a claim you can't verify. Believe it, and you may be paying for a bluff. Call it, and you may be wrong. One judge alone guesses.
-                <strong>Synod's five each check something different — is this worth verifying, what's the worst case, who are we really dealing with — and the referee weighs their disagreement by how risky the moment is, then commits.</strong> Five checks, one committed call, a receipt you can audit after.
+                The other side says: <em>“back off, or else.”</em> Is that real, or a bluff? Guess wrong either way and you pay.
+                <strong>Synod is five AI judges and one neutral chair.</strong> Each judge checks one thing — should we verify first? what's the worst case? what do they actually want? — <strong>and the chair weighs their disagreement by how risky the moment is, then commits.</strong>
+                One decider gets fooled. Five checks don't.
               </p>
             </div>
             <div class="track-pane hidden" data-track="nego">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">closes the deal.</span></h1>
               <p class="lede">
-                <strong>Before you agree to a deal, discount, or ultimatum where the other side might be bluffing, Synod tells you: bluff or real — and what to do about it.</strong>
-                Five AI judges each check something different; a referee weighs them by how risky the moment is, and commits — reading what the other side <em>does</em>, not what they say.
+                They say: <em>“we have a better offer — match it or we walk.”</em> Real, or a bluff?
+                <strong>Before you agree to any deal, discount, or ultimatum, Synod tells you: bluff or real — and what to do about it.</strong>
+                Five AI judges each check one thing; a neutral chair weighs them and commits — reading what the other side <em>does</em>, not what they say.
               </p>
             </div>
             <div class="btn-row">
@@ -65,7 +67,7 @@
               <a class="btn" href="#evidence">See the evidence</a>
             </div>
             <p class="hero-pair">Against a bluffer it wins <b>66% more</b> than a single agent, every run. Against opponents with nothing to hide it roughly ties — <b>and once, it lost.</b> We show you that too, in the evidence below.</p>
-            <p class="cap-line">10 runs each · same answer every time · every call signed</p>
+            <p class="cap-line">every test played 10 times · same answer every time · every decision gets a receipt</p>
           </div>
           <div class="hero-c-art council" data-council aria-hidden="true"></div>
         </div>
@@ -78,24 +80,26 @@
 
       <div class="track-pane" data-track="war">
         <h2 class="display sec-display">Same opponent. Same scenario. <span class="serif-italic gold">One restarts a war.</span></h2>
+        <p class="hook-line">One head believed the bluff and walked away with nothing.<br/><b>Five checked it and held the line — all ten runs.</b></p>
         <div class="ledger">
           <a class="row" href="#evidence"><div class="stat s-walk">WAR</div><div class="desc"><b>A lone commander</b>, bluffed by strength that was never there, breaks off — and the war reignites, for nothing.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-close">PEACE</div><div class="desc"><b>The society, same opponent.</b> It probes, exposes the bluff, and holds the armistice — every run.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove the Probe lens and the council misreads the bluff — the one decision that lets the war reignite.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-close">PEACE</div><div class="desc"><b>The council, same opponent.</b> It checks the claim, exposes the bluff, and keeps the peace — every time.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe — the judge that checks claims — and the council misreads the bluff — the one decision that lets the war reignite.</div></a>
         </div>
-        <p class="impact-line">A single bluff reignites a war that didn't need to happen — the cost the society removes by <b>probing before it commits</b>. <span class="hint">(stakes abstract — no currency on a war table)</span></p>
+        <p class="impact-line">A single bluff reignites a war that didn't need to happen — the cost the council removes by <b>checking before it commits</b>. <span class="hint">(stakes abstract — no currency on a war table)</span></p>
         <a class="result-cta" data-goto="nego">See how Synod applies the <b>same engine</b> to real <b>negotiations &amp; M&amp;A</b> <span class="rc-arr">→</span></a>
       </div>
 
       <div class="track-pane hidden" data-track="nego">
-        <h2 class="display sec-display">Same counterparty. Same scenario. <span class="serif-italic gold">One walks with nothing.</span></h2>
+        <h2 class="display sec-display">Same opponent. Same scenario. <span class="serif-italic gold">One walks with nothing.</span></h2>
+        <p class="hook-line">One head believed the bluff and walked away with <b>$0</b>.<br/><b>Five checked it and closed for $3,000 — all ten runs.</b></p>
         <div class="ledger">
-          <a class="row" href="#evidence"><div class="stat s-walk">$0</div><div class="desc"><b>A single agent</b> against a counterparty bluffing leverage — fooled by a threat that was never real, it walks away from a win.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-close">$3,000</div><div class="desc"><b>Synod, the same counterparty.</b> The society probes, breaks the bluff, and closes the deal — every run.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">What Synod <b>loses without the Probe lens</b>, same scenario — the one decision that turns a win into nothing.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-walk">$0</div><div class="desc"><b>A single agent</b> against an opponent bluffing leverage — fooled by a threat that was never real, it walks away from a win.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-close">$3,000</div><div class="desc"><b>Synod, the same opponent.</b> The council checks the claim, breaks the bluff, and closes the deal — every time.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">What Synod <b>loses without Probe, the judge that checks claims</b> — same scenario — the one decision that turns a win into nothing.</div></a>
         </div>
         <p class="impact-line">A single bluff turns a winning deal into <b class="walk-c">$0</b> — the cost Synod removes wherever the other side hides what they'll take. <span class="hint">(real $ on this deal — same result every time)</span></p>
-        <p class="who-bleeds"><b>The value, in one number: what decisions are worth with structured dissent minus what they're worth without it.</b> A single-perspective agent systematically overpays in adversarial deals — it takes the other side's story at face value, and it's biased toward closing over walking. The council's dissent cuts both ways: it walks away from the bad deals <em>and</em> captures good ones a purely suspicious agent would flee. Who bleeds this daily: procurement teams renegotiating supplier contracts, deal desks approving discount asks, recruiters in fee and counter-offer negotiations, founders on term sheets — repeated high-stakes deals against counterparties with reason to misrepresent. On this one deal: $3,000 vs $0.</p>
+        <p class="who-bleeds"><b>The value, in one number: what decisions are worth with structured dissent minus what they're worth without it.</b> One decider overpays in hard deals — it believes the other side's story, and it wants the deal too much to walk. The council's disagreement fixes both: it walks away from the bad deals <em>and</em> wins the good ones a purely suspicious agent would flee. Who loses this money daily: buyers renegotiating supplier contracts, sales desks approving discounts, recruiters handling counter-offers, founders on term sheets — anyone negotiating again and again with someone who has a reason to lie. On this one deal: $3,000 vs $0.</p>
         <a class="result-cta" data-goto="war">See the <b>same engine</b> hold a ceasefire in the <b>war room</b> <span class="rc-arr">→</span></a>
       </div>
     </div></section>
@@ -107,7 +111,7 @@
       <p class="lede">Five judges look at the same move and often disagree. No one is in charge — a fair chair weighs them and makes the call.</p>
       <div class="why-not-one">
         <div class="wno-q">“Why not just ask one model to weigh five perspectives?”</div>
-        <div class="wno-a">Because these aren't five opinions — they're five <b>decision procedures</b>. In the reproducible engine (every number on this page), three are pure formulas, not an AI: <b>Probe</b> computes the value of scouting, <b>Hedge</b> computes the worst case, <b>Trust</b> computes who they most likely are. In the live run the five agents <em>reason</em> on Qwen — and the math still sits outside them: code updates the belief, prices the scouting, weighs the five, and makes the call. One model role-playing five voices gives you five guesses from the same head, a different answer each time. Five independent evaluations, combined by a neutral chair — the <b>same answer every time</b>, and you can see exactly which one changed the call.</div>
+        <div class="wno-a">Because these aren't five opinions — they're five <b>different ways of judging, and three of them are pure math, not an AI</b>: <b>Probe</b> calculates whether a question is worth asking, <b>Hedge</b> calculates the worst case, <b>Trust</b> calculates who they most likely are. In the live run the five judges <em>reason</em> on Qwen — and the math still sits outside them: code tracks the evidence, prices the questions, weighs the five, and makes the call. One model role-playing five voices gives you five guesses from the same head, and a different answer each time. Five separate judges, weighed by a neutral chair, give the <b>same answer every time</b> — and you can see exactly which one changed the call.</div>
       </div>
       <div id="scene-council" class="scene-council">
         <div id="council-tableau" class="tableau"></div>
@@ -120,20 +124,20 @@
       <div class="kicker-row"><span class="idx">▶</span><span class="lbl">Watch the society live</span><span class="ln"></span></div>
       <h2 class="display sec-display">Watch the society <span class="serif-italic gold">decide.</span></h2>
       <div id="live-war" class="track-pane live-panel" data-track="war">
-        <h3 class="live-h">Five generals, each owns one strategic question — <span class="serif-italic gold">one fair chair makes the call.</span></h3>
+        <h3 class="live-h">The five judges, in uniform: five generals, one question each — <span class="serif-italic gold">and the chair makes the call.</span></h3>
         <p class="live-sub">Each general owns one strategic question and speaks only to it — <b>Patton</b>: where's the leverage now? <b>Sun Tzu</b>: is more information worth gathering? <b>Kutuzov</b>: what's the worst case? <b>Eisenhower</b>: what do they really want? <b>Zhukov</b>: what's the long game? — so take Sun Tzu away and nobody scouts, while a fair chair weighs all five against the situation and makes the call.</p>
         <div id="warroom-body" class="warroom">Convening the war council…</div>
 
         <div class="capability">
           <div class="cap-h"><b>Take a general away and watch what breaks.</b></div>
-          <p class="cap-cap">Every general sees the same situation, but each <b>evaluates it through a different decision procedure</b> — remove one and the council loses a judgment no other member can provide.</p>
+          <p class="cap-cap">Every general sees the same situation, but each <b>judges it in a different way</b> — remove one and the council loses a judgment no other member can make.</p>
           <p class="cap-sub">Click a general to remove them — the number is <b>how much of the 3,000 deal the council won</b>, the bars how well it read the bluff each round.</p>
           <div id="cap-demo" class="cap-demo">Loading…</div>
           <p class="cap-foot"><b>Sun Tzu is the one that matters against a bluffer</b> — remove him and no one scouts, so the council never exposes the fake threat and wins less; the others don't change <em>this</em> call but each writes their own part of the war plan below, and against a different opponent a different general is the one you'll need. <span class="hint">(So you keep all five — you don't know ahead of time which.)</span></p>
 
           <div class="switch-matrix-wrap">
             <div class="sm-h"><b>…and against a different opponent, a different general is the decisive one.</b></div>
-            <p class="sm-sub">The same test — remove each general — run across all three counterparty types. The one whose removal costs the most changes with who you're facing.</p>
+            <p class="sm-sub">The same test — remove each general — run against all three kinds of opponent. The one whose removal costs the most changes with who you're facing.</p>
             <div id="switch-matrix" class="switch-matrix">Loading…</div>
           </div>
         </div>
@@ -143,24 +147,24 @@
     <!-- ====== §03 · THE PROCEEDINGS (interactive) ====== -->
     <section id="proceedings" class="section-pad section-alt proceedings-feature track-pane hidden" data-track="nego"><div class="wrap">
       <h3 class="live-h"><b>Same architecture, different domain</b> — the identical council, closing a business <span class="serif-italic gold">deal.</span></h3>
-      <p class="live-sub">Money is real here — pick a counterparty and convene the council, or <b>⚙ compose</b> your own and watch the five lenses respond to a situation nobody pre-wrote.</p>
+      <p class="live-sub">Money is real here — pick an opponent and convene the council, or <b>⚙ compose</b> your own and watch the five judges respond to a situation nobody pre-wrote.</p>
       <div class="cast">
         <span class="cast-lbl">THE TABLE</span>
-        <span class="cast-grp"><b>5 lenses</b> <span class="cast-sub">the framework, bare</span>
+        <span class="cast-grp"><b>5 judges</b> <span class="cast-sub">the same five, no costumes</span>
           <span class="cast-chip" style="border-color:var(--empathy)">Trust</span><span class="cast-chip" style="border-color:var(--battle)">Pressure</span><span class="cast-chip" style="border-color:var(--war)">Frame</span><span class="cast-chip" style="border-color:var(--probe)">Probe</span><span class="cast-chip" style="border-color:var(--risk)">Hedge</span></span>
         <span class="cast-op">+</span>
         <span class="cast-grp"><b>1 chair</b> <span class="cast-chip chair" title="Takes no side — reads the situation and makes the call">neutral chair</span></span>
         <span class="cast-op">vs</span>
-        <span class="cast-grp"><b>1 counterparty</b> <span class="cast-sub">hides what they'll take</span></span>
+        <span class="cast-grp"><b>1 opponent</b> <span class="cast-sub">hides what they'll take</span></span>
       </div>
 
       <div id="fit-lab" class="fit-lab">Mapping framings to personalities…</div>
 
       <div class="convene-bar">
-        <span class="cb-label">Select counterparty</span>
-        <select id="scenario-select" aria-label="Counterparty"></select>
+        <span class="cb-label">Pick the opponent</span>
+        <select id="scenario-select" aria-label="Opponent"></select>
         <button id="run-btn">Convene the council</button>
-        <button id="compose-btn" class="ghost-btn" title="Build your own counterparty">⚙ compose</button>
+        <button id="compose-btn" class="ghost-btn" title="Build your own opponent">⚙ compose</button>
         <button id="speed-btn" class="ghost-btn" title="Stream pacing">1×</button>
         <button id="guide-btn" class="ghost-btn" title="What everything means">GUIDE</button>
         <span class="hint" id="truth-hint"></span>
@@ -179,7 +183,7 @@
 
       <!-- Composer: dial a counterparty nobody pre-authored; runs on the deterministic engine, free. -->
       <div id="composer" class="composer hidden">
-        <span class="cmp-lbl">BUILD YOUR COUNTERPARTY <span class="hint">— watch the five lenses respond to a situation you set · runs locally, free</span></span>
+        <span class="cmp-lbl">BUILD YOUR OWN OPPONENT <span class="hint">— watch the five judges respond to a situation you set · runs locally, free</span></span>
         <div class="cmp-dials">
           <label class="cmp-dial">true ceiling <output id="cmp-res-out">11,500</output>
             <input id="cmp-res" type="range" min="6500" max="14000" step="250" value="11500" /></label>
@@ -188,7 +192,7 @@
           <label class="cmp-dial">patience <output id="cmp-pat-out">4 rounds</output>
             <input id="cmp-pat" type="range" min="2" max="6" step="1" value="4" /></label>
           <label class="cmp-check"><input id="cmp-comp" type="checkbox" /> has a real competing quote</label>
-          <button id="cmp-run">Convene on this counterparty</button>
+          <button id="cmp-run">Convene on this opponent</button>
         </div>
       </div>
 
@@ -202,7 +206,7 @@
           <span class="hud-stake">on the table <b id="hud-surplus">0</b><span id="hud-delta" class="hud-delta"></span></span>
         </div>
         <div class="hud-range">
-          <span class="hud-cap worst" title="walk away — nothing captured">WALK<br/>0</span>
+          <span class="hud-cap worst" title="walk away — nothing won">WALK<br/>0</span>
           <div class="hud-track"><div class="hud-fill" id="hud-fill"></div></div>
           <span class="hud-cap best" title="best possible close at our full $12,000 ask — their real ceiling is hidden, so the needle may top out below this">FULL ASK<br/>+4,000</span>
         </div>
@@ -219,12 +223,12 @@
         <section class="column trajectory">
           <h2 class="sec-head"><span class="sec-no">02</span> Trajectory</h2>
           <div class="panel">
-            <h3>Lens weights by round <span class="hint">how influence shifts as belief firms up</span> <span class="iicon" data-tip="How much influence each lens had that round. The shift between rounds is the Bayesian belief update made visible: as the council gets surer who it's facing, the chair re-weights the lenses. ↑pp badges mark the lens that gained the most weight versus the round before.">i</span></h3>
+            <h3>Who the chair listens to, round by round <span class="iicon" data-tip="How much say each judge had that round. As the council gets surer who it's facing, the chair shifts the weight — ↑pp marks the judge who gained the most since the round before.">i</span></h3>
             <div id="weight-trajectory" class="traj"></div>
             <div id="legend" class="legend"></div>
           </div>
           <div class="panel">
-            <h3>Belief over hidden type <span class="iicon" data-tip="The Council&apos;s running probability estimate of which counterparty type it faces: Relationship-oriented (walks if bullied), Soft-floor (firm real reservation), or Deceptive (hides claimed leverage + real need). Updates each round from the GM&apos;s visible signals.">i</span></h3>
+            <h3>Its running guess about them <span class="iicon" data-tip="The council's running guess at which kind of opponent it faces — values the relationship, has a firm hidden limit, or is bluffing — updated every round from what they DO, never what they say.">i</span></h3>
             <div id="belief-trajectory" class="traj"></div>
           </div>
           <div id="terminal-panel" class="panel terminal hidden">
@@ -243,7 +247,7 @@
       <div class="ev-headline">
         <span class="ev-hl-k">If you read one thing</span>
         <span class="tw">Against a bluff, a lone commander restarts the war; the council holds the armistice — <b>all 10 runs</b>. Across every opponent it captures <b>66% more</b> than one agent alone. The exhibits below are the receipts.</span>
-        <span class="tn">Against a bluffer, a lone agent is fooled into walking with <b>$0</b>; the council closes <b>$3,000</b> — all 10 runs. Across every counterparty: <b>$8,968 vs $5,406</b>, same seeds. The exhibits below are the receipts.</span>
+        <span class="tn">Against a bluffer, a lone agent is fooled into walking with <b>$0</b>; the council closes <b>$3,000</b> — all 10 runs. Across every opponent: <b>$8,968 vs $5,406</b>, same seeds. The exhibits below are the receipts.</span>
       </div>
       <div class="repro-card">
         <div class="repro-left">
@@ -254,40 +258,40 @@
       </div>
       <p class="ev-frame">
         <span class="tw">⚔ War-room view — a lone commander vs the council, against three kinds of opponent. Stakes shown as units. <b>Same runs as the negotiation table</b>, just in war terms.</span>
-        <span class="tn">🤝 Negotiation view — one negotiator vs the council, against three kinds of counterparty. Real dollars. <b>Same runs as the war room</b>, just in deal terms.</span>
+        <span class="tn">🤝 Negotiation view — one negotiator vs the council, against three kinds of opponent. Real dollars. <b>Same runs as the war room</b>, just in deal terms.</span>
       </p>
 
       <div class="exhibit" id="exhibit-a">
         <div class="brief-label">Exhibit A — does a council beat one agent alone?</div>
-        <p class="ex-q">Same opponent, 10 runs each — one strong agent alone vs the five-member council. Taller bar = more captured.</p>
+        <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The solo baseline is built to win, not to lose: same engine, same moves, same games — only the council removed. One head instead of five.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Yes — and the bluffer is where it shows:</b> the solo agent is fooled and walks with nothing while the council checks the claim and <span class="tw">holds the line</span><span class="tn">closes the deal</span>, all 10 runs. <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent: one values the relationship, one has a hidden hard limit, one is bluffing. The “±” is how much the result wobbled run-to-run — smaller is steadier.</details></p>
       </div>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Yes — except one, on purpose: cutting the check-the-claim step costs $1,606, the biggest single loss; cutting the argument step costs $0 — by design, so no one can talk the system into a bad call.</span></summary>
+        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Yes — except one, on purpose: cutting the check-the-claim step costs $1,606, the biggest single loss; cutting the argument step costs $0 — by design, so no one can talk the system into a bad call. And the chair itself earns its seat: swap it for one-judge-one-vote and the council loses $1,113.</span></summary>
         <p class="ex-q">Re-run the same 10, switching off one part each time. A big drop = that part was doing real work.</p>
         <div id="ablation-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>The “check the claim first” step matters most — −1,606,</b> the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this the hard way, twice. In the deterministic engine, removing the argument changes the result by <b>$0</b>. Then we ran the <b>controlled live version</b>: matched pairs inside real Qwen councils — the referee scores the same judges' positions with the same weights before the debate and after it, so only the debate differs. Result: <span id="debate-live-n">in 12 recorded trials</span>, <b>no judge was ever argued off their position, and the final call never changed</b>. That is the design working, not a gap: each judge is the <em>only</em> voice for its one question, so there is no one to be talked around — persuasion is simply not a channel here, which is what makes the system immune to a well-argued bad idea. Disagreement gets resolved by the referee weighing the situation instead — and <b>that</b> is causal and measured: flatten the referee's weighting and the council loses <b>$1,123</b> (row above). <span class="hint">(full trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
+        <p class="ab-a"><b>The “check the claim first” step matters most — −1,606,</b> the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this the hard way, twice. In the deterministic engine, removing the argument changes the result by <b>$0</b>. Then we ran the <b>controlled live version</b>: matched pairs inside real Qwen councils — the chair scores the same judges' positions with the same weights before the argument and after it, so only the argument differs. Result: <span id="debate-live-n">in 12 recorded trials</span>, <b>no judge was ever argued off their position, and the final call never changed</b>. That is the design working, not a gap: each judge is the <em>only</em> voice for its one question, so there is no one to be talked around — persuasion is simply not a channel here, which is what makes the system immune to a well-argued bad idea. Disagreement gets resolved by the chair weighing the situation instead — and <b>that</b> is causal and measured: flatten the chair's weighting and the council loses <b>$1,123</b> (row above). <span class="hint">(full trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
       </details>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit C — why keep five, not just the best one? <span class="hint">— expand</span><span class="ex-take">Because you can't know in advance which one the situation will reward — every lens fails badly in at least one test world; the full council never does.</span></summary>
+        <summary class="brief-label">Exhibit C — why keep five, not just the best one? <span class="hint">— expand</span><span class="ex-take">Because you can't know in advance which one the situation will reward — every judge fails badly in at least one test world; the full council never does.</span></summary>
         <p class="ex-q">Five worlds written by a different model (Claude) to stress the council. Greener = better; red = wiped out.</p>
         <div id="holdout-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Every single lens goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model than the one under test (Qwen), so the system didn't write its own exam — a partial guard against tuning to your own tests. <b>Honest limit:</b> the 10 runs measure how steady a result is <em>within</em> a world, not whether it holds <em>across</em> the space of real worlds — and five worlds from one author (Claude) is a small, correlated sample. So read the numbers as “stable in these worlds,” not “proven in general.” Widening this needs worlds from a third source or real transcripts.</details></p>
+        <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model than the one under test (Qwen), so the system didn't write its own exam — a partial guard against tuning to your own tests. <b>Honest limit:</b> the 10 runs measure how steady a result is <em>within</em> a world, not whether it holds <em>across</em> the space of real worlds — and five worlds from one author (Claude) is a small, correlated sample. So read the numbers as “stable in these worlds,” not “proven in general.” Widening this needs worlds from a third source or real transcripts.</details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span><span class="ex-take">One good general matches the council most of the time — the council's real edge is never needing to know in advance which general that is.</span></summary>
-        <p class="ex-q">The same 10 runs, but decided by <b>one general's fixed temperament</b> each time, vs the full society (the chair adapts). Longer bar = more captured.</p>
+        <p class="ex-q">The same 10 games, but decided by <b>one judge alone</b> each time, vs the full council (the chair adapts). Longer bar = more won.</p>
         <div id="general-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>The society beats four of five generals and ties the fifth (the probe-heavy one)</b> — matching the best general <em>without knowing in advance which one fits</em>, and that probe-heavy worldview is exactly the one Exhibit C breaks on a hold-out world. <details class="ex-more"><summary>the honest tie</summary>On this tuned set a probe-leaning general can match the council; the society's real edge is robustness — it never craters across the hold-out worlds, where any single fixed temperament eventually does.</details></p>
       </details>
 
       <details class="exhibit">
         <summary class="brief-label">Exhibit E — does the adaptive policy earn its place? <span class="hint">— expand</span><span class="ex-take">Yes: letting the judges adjust to the situation instead of using fixed settings is worth $1,584 on this test.</span></summary>
-        <p class="ex-q">Each lens exposes bounded parameters (Hedge's risk-aversion λ, Probe's info threshold, Pressure's discount) that the situation fills and the engine clamps and applies — compared here to a <b>fixed, situation-blind clamp</b>, same seeds.</p>
+        <p class="ex-q">Each judge has a few dials — how cautious Hedge is, how eager Probe is to ask, how far ahead Pressure looks. The situation sets them, within hard limits — compared here to <b>leaving the dials fixed</b>, same tests.</p>
         <div id="adaptive-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Adaptive beats the fixed clamp by 1,584</b> (8,968 vs 7,384) — the per-situation policy selection isn't decoration, it captures more. <details class="ex-more"><summary>why this is a real delta</summary>The reasoning layer fills bounded parameter slots per situation; the engine validates, clamps, and applies them deterministically. This measures what that <em>adaptivity</em> buys over a static parameter set — a genuine component, not a relabel.</details></p>
       </details>

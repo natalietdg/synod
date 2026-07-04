@@ -1412,6 +1412,19 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .result-cta:hover { background: var(--panel-2); border-color: var(--gold); }
 .result-cta:hover .rc-arr { transform: translateX(4px); }
 
+.hook-line { font-family: var(--serif); font-size: 1.45rem; line-height: 1.45; color: var(--muted); margin: 0.2rem 0 1.4rem; }
+.hook-line b { color: var(--gold); }
+
+/* Receipt match — live-and-deterministic, proven in one panel */
+.rcpt-match { display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.9rem; padding: 0.7rem 0.9rem;
+  background: var(--panel); border: 1px solid var(--good, #3fb950); border-radius: 3px; font-family: var(--mono); }
+.rcpt-match.bad { border-color: var(--risk); }
+.rm-k { font-size: 0.56rem; font-weight: 700; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 0.2rem; }
+.rm-row { font-size: 0.74rem; color: var(--muted); } .rm-row b { color: var(--ink); margin-left: 0.4rem; }
+.rm-verdict { font-size: 0.74rem; font-weight: 700; color: var(--good, #3fb950); margin-top: 0.25rem; }
+.rcpt-match.bad .rm-verdict { color: var(--risk); }
+.rm-note { font-size: 0.6rem; color: var(--muted); margin-top: 0.15rem; }
+
 /* section scaffold */
 section { position: relative; z-index: 1; }
 .section-pad { padding: 84px 0; }

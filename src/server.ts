@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
 import { execSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -61,6 +61,29 @@ const BUILD_COMMIT = (() => {
 })();
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
+
+/** Hash a run's receipt chain — the DECISION bytes only (timestamp and its signature
+ *  necessarily differ per run; every other field is deterministic and must match). */
+const hashReceipts = (result: Awaited<ReturnType<typeof runNegotiation>>): string => {
+  const decisions = result.rounds.map((r) => {
+    const { timestamp, signature, ...decision } = r.receipt as unknown as Record<string, unknown>;
+    return decision;
+  });
+  const hex = createHash("sha256").update(JSON.stringify(decisions)).digest("hex");
+  return `#${hex.slice(0, 4)}…${hex.slice(-4)}`;
+};
+
+/** The FILED hash per preset game: computed once from a fresh mock run of the same seeds —
+ *  by determinism, every honest replay of that game must land on exactly these bytes. */
+const filedHashes = new Map<string, string>();
+async function filedReceiptHash(scenarioId: string): Promise<string> {
+  if (!filedHashes.has(scenarioId)) {
+    const entry = getEntry(scenarioId)!;
+    const run = await runNegotiation(new MockAgents(), new GameMaster(entry.type, entry.seed, new TemplateSpeaker()), entry.id, entry.type);
+    filedHashes.set(scenarioId, hashReceipts(run));
+  }
+  return filedHashes.get(scenarioId)!;
+}
 
 /** Per-event pacing so the deliberation reads as a live negotiation in the UI. */
 const EVENT_DELAY: Partial<Record<DeliberationEvent["type"], number>> = {
@@ -267,8 +290,22 @@ app.get("/api/negotiate", async (req, res) => {
       : mode === "human" ? new HumanGM(entry.type, (p) => waitForHuman(p))
       : customProfile ? new GameMaster(entry.type, entry.seed, speaker, customProfile)
       : new GameMaster(entry.type, entry.seed, speaker);
+    // RECEIPT MATCH — the "live AND deterministic" beat, only where it is honestly true:
+    // the mock engine on a preset game. This run's receipt chain is hashed and compared to
+    // the filed exhibit's hash for the same game; identical bytes = nothing up our sleeve.
+    // (Live-Qwen and custom/human runs vary by design, so no match is claimed for them.)
+    // Emitted just BEFORE the loop's own "done" event — the client closes the stream on done.
+    const matchable = agents.kind === "mock" && mode === "deterministic" && !customProfile && req.query.ablate == null;
     await runNegotiation(negotiationAgents, gm, scenarioId, entry.type, {
       sink: async (event) => {
+        if (event.type === "done" && matchable) {
+          send({
+            type: "receipt-hash",
+            thisRun: hashReceipts(event.result),
+            filed: await filedReceiptHash(entry.id),
+            commit: BUILD_COMMIT,
+          });
+        }
         send(event);
         await sleep((EVENT_DELAY[event.type] ?? 0) / speed);
       },
@@ -451,6 +488,7 @@ app.get("/api/warroom-live", async (req, res) => {
     const payload = {
       ...live,
       plan,
+      ranAt: new Date().toISOString(), // when this configuration ACTUALLY ran on Qwen
       move: warMove,
       scenario: scenarioId,
       scenarioLabel: WAR_MOVES[scenarioId]!.label,
