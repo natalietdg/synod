@@ -314,9 +314,9 @@ app.get("/api/canonical", async (_req, res) => {
   const ctx = r1.ctx;
   const why = dissenter
     ? `<b>${LENSES[dissenter as keyof typeof LENSES].cogFunction}</b> pushed for ${ACTION_LABELS[votes[dissenter]!]}. ` +
-      `But belief is unresolved (${Math.round(ctx.infoConfidence * 100)}%) and exposure is high ` +
-      `(${Math.round(ctx.exposure * 100)}%), so the Arbiter sided with <b>${ACTION_LABELS[rec]}</b>. ` +
-      `The decision changed <em>because</em> they disagreed.`
+      `But the council is only ${Math.round(ctx.infoConfidence * 100)}% sure who it's facing, with ` +
+      `${Math.round(ctx.exposure * 100)}% of the money riding on this round — so the chair sided with ` +
+      `<b>${ACTION_LABELS[rec]}</b>. The decision changed <em>because</em> they disagreed.`
     : "";
   canonicalCache = {
     message: r1.counterpartyMove.message,
