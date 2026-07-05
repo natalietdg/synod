@@ -1403,6 +1403,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .who-bleeds { margin-top: 1rem; max-width: 76ch; font-family: var(--sans); font-size: 0.96rem; line-height: 1.6; color: var(--muted);
   padding: 0.8rem 1rem; background: var(--panel); border-left: 2px solid var(--gold-dim); border-radius: 2px; }
 .who-bleeds b { color: var(--ink); }
+.who-bleeds a { color: var(--gold); text-decoration: none; }
 /* End-of-result transition: same engine, other domain */
 .result-cta { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; margin-top: 1.2rem;
   font-family: var(--sans); font-size: 0.98rem; color: var(--ink); text-decoration: none;
