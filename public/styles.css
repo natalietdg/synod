@@ -1463,6 +1463,14 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .ex-group { margin-top: 1.2rem; }
 .ex-group > .exhibit { margin-left: 0.6rem; }
 
+/* The global anchor — one sentence, reused verbatim under every section kicker */
+.anchor-line { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; color: var(--faint, #6f6552); text-transform: uppercase; margin: 0.4rem 0 1rem; }
+.domain-note { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 82ch; margin: -0.4rem 0 1.4rem; }
+.domain-note b { color: var(--ink); }
+.ev-takeaway { margin: 2rem 0 0; max-width: 80ch; font-family: var(--serif); font-size: 1.15rem; line-height: 1.6; color: var(--muted);
+  padding-left: 1rem; border-left: 3px solid var(--gold); }
+.ev-takeaway b { color: var(--ink); }
+
 /* section scaffold */
 section { position: relative; z-index: 1; }
 .section-pad { padding: 84px 0; }
