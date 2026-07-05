@@ -78,7 +78,6 @@
             <p class="hero-pair">Against a bluffer it wins <b>66% more</b> than one agent alone. Against honest opponents it roughly ties. <b>Once, it lost.</b> We show you that too.</p>
             <p class="hero-base">Baseline = the same engine, same moves, same game — just the council removed. One head instead of five.</p>
           </div>
-          <div class="hero-c-art council" data-council aria-hidden="true"></div>
         </div>
       </div>
     </section>
@@ -90,6 +89,9 @@
       <p>A neutral chair resolves their disagreement — with deterministic code.</p>
       <p>The winning judgment becomes the action.</p>
     </div></div>
+
+    <!-- ====== THE COUNCIL — a wordless breather before the numbers ====== -->
+    <div class="council-gap" aria-hidden="true"><div class="council" data-council></div></div>
 
     <!-- ====== §01 · THE RESULT ====== -->
     <section id="claim" class="section-pad"><div class="wrap">
@@ -425,15 +427,19 @@
       </ul>
       <p class="arch-q">After the chair commits, <b>the judge that owned the winning question drafts that part of the operational plan</b> — Probe writes the reconnaissance, Trust the back-channel, Hedge the fallback.</p>
 
-      <h3 class="mp-h">How the math comes into play</h3>
-      <p class="arch-q"><b>Three deterministic components sit outside the models:</b></p>
+      <h3 class="mp-h">Why use math?</h3>
+      <p class="arch-q">Because judgment you can't audit is just a vibe. Arithmetic gives three things a model can't: the same answer every time, immunity to rhetoric, and a visible trail — you can see exactly which judge, at what weight, decided. <b>The models reason. The arithmetic decides.</b></p>
+
+      <h3 class="mp-h">Each judge's math</h3>
       <ul class="arch-b">
-        <li><b>Belief</b> — updates who-are-they probabilities from the opponent's <em>actions</em>. Talk can't move it.</li>
-        <li><b>Expected Value of Information</b> — computes whether asking is worth a turn, before the council asks.</li>
-        <li><b>Chair</b> — turns the situation into weights, multiplies each judge's score, picks the winner.</li>
-        <li><b>Safety gates</b> — walk away when nothing believable beats leaving; take the sure win on the last round.</li>
+        <li><b style="color:var(--empathy)">Trust</b> — <b>Bayes' rule.</b> Every move the opponent makes updates the odds of who they are — actions only, talk doesn't count. Trust plays what fits the most likely opponent.</li>
+        <li><b style="color:var(--probe)">Probe</b> — <b>Expected Value of Information.</b> What would knowing more be worth, minus what asking costs? Ask only when it pays.</li>
+        <li><b style="color:var(--battle)">Pressure</b> — <b>immediate payoff</b>, with a discount on the future. How much is on the table right now?</li>
+        <li><b style="color:var(--risk)">Hedge</b> — <b>the minimax blend:</b> part worst case, part expected value. How bad does it get if we're wrong?</li>
+        <li><b style="color:var(--war)">Frame</b> — <b>long-horizon value</b>, priced against the risk of blowing up the deal.</li>
+        <li><b>The chair</b> — turns the situation into weights, multiplies each judge's score, and <b>the highest total wins</b>.</li>
       </ul>
-      <p class="arch-q">Then the receipt is signed.</p>
+      <p class="arch-q">Two safety gates guard the edges — walk away when nothing believable beats leaving, and take the sure win on the last round. Then the receipt is signed.</p>
 
       <div class="mcp-panel">
         <div class="mcp-h">Any AI can consult the council through <b>seven MCP tools</b>.</div>

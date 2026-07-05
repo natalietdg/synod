@@ -1475,7 +1475,12 @@ section { position: relative; z-index: 1; }
 
 /* hero C — copy + animated council graphic */
 .hero-c { position: relative; padding: 72px 0 64px; border-bottom: 1px solid var(--line); overflow: hidden; }
-.hero-c-grid { display: grid; grid-template-columns: 1.04fr 0.96fr; gap: 52px; align-items: center; }
+.hero-c-grid { display: flex; justify-content: center; }
+.hero-c-copy { max-width: 720px; text-align: center; }
+.hero-c-copy .btn-row { justify-content: center; }
+/* The council orb as a full-width breather between the creed and The Result */
+.council-gap { display: flex; justify-content: center; padding: 3rem 1.5rem 3.5rem; border-bottom: 1px solid var(--line-soft); }
+.council-gap .council { position: relative; width: min(540px, 88vw); height: min(540px, 88vw); }
 .hero-c-copy .eyebrow { margin-bottom: 18px; }
 .hero-c-h1 { font-size: clamp(42px, 6vw, 84px); margin: 8px 0 22px; line-height: 1.0; }
 .hero-c-copy .lede { margin: 0 0 30px; max-width: 46ch; }
