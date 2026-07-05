@@ -1,0 +1,25 @@
+{
+  "source": "CraigslistBargain (He, Chen, Balachandran, Liang 2018) — stanfordnlp/craigslist_bargains",
+  "note": "real human-human negotiations over real Craigslist listings (MTurk workers with assigned private targets)",
+  "method": "Agreement analysis on every dialogue where a REAL seller accepted a buyer's offer: replay the buyer's offers through Synod's deterministic engine and split the humans' outcomes by whether Synod would also have said yes. No counterfactual claims — the humans' own prices are the only outcomes used.",
+  "mapping": "buyer offer p on listing L → 8000 + 4000·((p/L − 0.5)/0.5), clamped [6500, 13000]",
+  "dialoguesTotal": 4277,
+  "sellerAcceptCases": 2151,
+  "agree": {
+    "n": 1447,
+    "meanPctOfListing": 90.4
+  },
+  "dissent": {
+    "n": 704,
+    "meanPctOfListing": 88.6,
+    "actions": {
+      "hold": 537,
+      "concede_term": 130,
+      "counter_soft": 7,
+      "probe": 7,
+      "walk": 13,
+      "counter_hard": 10
+    }
+  },
+  "deltaPoints": 1.8
+}

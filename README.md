@@ -387,6 +387,20 @@ entrants** from the [anl-agents](https://github.com/autoneg/anl-agents) package:
 | Aspiration (conceder) | NegMAS library | 3/3 closed @ $11,887 | $3,887 |
 | NaiveTitForTat | NegMAS library | 0/3 | $0 — honest null: mirror strategy vs a firm seller deadlocks with ~nothing on the table |
 
+### Rung 3: read against real humans
+
+**Exhibit G** replays Synod against the **CraigslistBargain corpus** (He et al. 2018) —
+4,277 real human-human negotiations over real Craigslist listings, with recorded
+outcomes. The honest design: no counterfactuals (changing one move changes the whole
+conversation). Instead, an **agreement analysis** over every deal where a real seller
+accepted a buyer's offer (n=2,151): replay the buyer's offers through the deterministic
+engine and split the humans' own outcomes by Synod's stance. Result: sellers who accepted
+when Synod would also have said yes got **90.4% of asking**; sellers who accepted
+**against Synod's dissent** got **88.6%** — a small but consistent gap in the predicted
+direction. Synod's dissent flags the worse deals, on real humans. Reproduce:
+`npx tsx src/harness/transcripts.ts` (data: `data/craigslist-slim.json`, extraction:
+`scripts/extract-transcripts.py`).
+
 Against the **winner of the actual competition**, Synod closes every session and keeps
 $3,300 of the $4,000 range. Every recorded game also carries the council's
 **round-by-round reasoning** — composed from the real decision state (belief, engine

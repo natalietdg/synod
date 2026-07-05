@@ -45,11 +45,11 @@
       <div class="wrap">
         <div class="hero-c-grid">
           <div class="hero-c-copy">
-            <p class="eyebrow">Agent Society</p>
+            <p class="eyebrow">Agent Society · <b>a decision system, not a chatbot system</b></p>
             <div class="track-pane" data-track="war">
               <h1 class="display hero-c-h1">A society that<br /><span class="serif-italic gold">prevents a war.</span></h1>
               <p class="lede">
-                <strong>Synod is five specialist AI judges and one neutral chair.</strong> Every decision is decomposed into five judgment tasks. The judges disagree. The chair resolves the conflict and commits.
+                <strong>Synod is five specialist AI judges and one neutral chair.</strong> Every decision is decomposed into five judgment tasks. The judges disagree. A deterministic chair resolves the disagreement into one decision — and commits.
                 <br/><br/>
                 <strong>One decider gets fooled. Five independent checks don't.</strong>
               </p>
@@ -62,7 +62,7 @@
                 Five AI judges each check one thing. A neutral chair weighs them and commits. It reads what the other side <em>does</em>, not what they say.
               </p>
             </div>
-            <div class="hero-flow" aria-label="How it decides, in one line">
+            <div class="hero-flow" aria-label="How it decides, in one line"><b class="hf-lbl">DECISION PIPELINE</b>
               <span>Situation</span><i>→</i>
               <span>Five specialist judges</span><i>→</i>
               <span>Disagreement</span><i>→</i>
@@ -320,6 +320,12 @@
         <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model (Claude), not from Qwen. So the system didn't write its own exam. <b>Honest limit:</b> the 10 games show a result is steady <em>within</em> a world. They don't prove it holds across all real worlds. And five worlds from one author is a small sample. Read the numbers as “stable in these worlds.” Not “proven in general.” Widening this needs a third source, or real transcripts.</details></p>
       </details>
 
+      <div class="exhibit" id="exhibit-g">
+        <div class="brief-label">Exhibit G — read against real humans<span class="ex-take">4,277 real Craigslist negotiations (Stanford's CraigslistBargain corpus). Where a real seller said yes against Synod's dissent, they got less. Its dissent flags the worse deals — on real humans, not our worlds.</span></div>
+        <div id="transcripts-panel" class="chart-box">loading the recorded analysis…</div>
+        <p class="ab-a"><details class="ex-more"><summary>what this can and can't claim</summary>A replay can't claim Synod would have won more — change one move and the whole conversation changes. So no counterfactuals. We only use the humans' own outcomes: every deal where a real seller accepted a buyer's offer, split by whether Synod — replaying the same buyer's offers — would also have accepted. The gap between those groups is the finding. Prices map into Synod's native band by a fixed, disclosed rule. Reading real humans is rung three; running inside live human deals is the step that remains.</details></p>
+      </div>
+
       <details class="ex-group">
         <summary class="brief-label">Three more checks — one judge alone · the adaptive dials · opponents from the literature <span class="hint">— expand</span></summary>
 <details class="exhibit">
@@ -378,7 +384,7 @@
         <div class="vp-lane"><b>One brain, any table.</b> The same council holds a ceasefire and closes a sales deal. Only the story changes.</div>
       </div>
 
-      <p class="vp-honest"><b>Where the proof ends, honestly:</b> Synod has beaten test worlds, textbook opponents, and real competition negotiators. It hasn't yet faced transcripts of real human deals. That's the next step. It needs real data, not more code.</p>
+      <p class="vp-honest"><b>Where the proof ends, honestly:</b> Synod has beaten test worlds, textbook opponents, and real competition negotiators — and its judgment has now been read against <b>4,277 real human negotiations</b> (its dissent flags the worse deals; Exhibit G). What remains: running it <em>inside</em> live human deals. That needs a deployment, not more code.</p>
     </div></section>
 
     <!-- ====== §06 · ARCHITECTURE ====== -->
@@ -451,8 +457,8 @@
       <div class="validity-note">
         <span class="vn-lbl">THE HONEST BOUNDARY</span>
         <p class="vn-claim">The engine is proven. The environment is the remaining assumption.</p>
-        <p class="vn-detail">We test it hard in made-up worlds — whether those match real negotiations is still an open question.</p>
-        <p class="vn-detail">So the honest claim is small: <b>in these worlds the council beats one agent</b> — not "proven in the real world," which would need real data.</p>
+        <p class="vn-detail">We test it hard in made-up worlds, against textbook opponents, against real competition agents — and against 4,277 real human negotiations, where its dissent flags the worse deals (Exhibit G).</p>
+        <p class="vn-detail">So the honest claim: <b>the council beats one agent in every environment we can test</b> — reading real humans included. Deciding <em>inside</em> live human deals is the one claim still unearned.</p>
       </div>
 
       <p class="prior-art">Standing on named prior art — <b>ANAC / BOA</b> negotiation agents, <b>Bayesian opponent modeling</b>, and <b>multi-agent debate</b> (Du et al.) — with the exact delta from each stated in the <a href="https://github.com/natalietdg/synod#prior-art--and-the-exact-delta" target="_blank" rel="noopener">README</a>: many decision procedures + auditable aggregation, situation-driven weighting, and anti-groupthink by design.</p>

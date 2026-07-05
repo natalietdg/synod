@@ -1385,6 +1385,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
 
 /* type primitives */
+.eyebrow b { color: var(--gold); font-weight: 600; }
 .eyebrow { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase; color: var(--gold); display: block; }
 .display { font-family: var(--serif); font-weight: 400; line-height: 1.04; letter-spacing: -0.01em; color: var(--fg); margin: 0; }
 .serif-italic { font-family: var(--serif); font-style: italic; }
@@ -1397,6 +1398,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .hero-flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 0.4rem; margin: 1rem 0 0.4rem; }
 .hero-flow span { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
   padding: 0.3rem 0.55rem; border: 1px solid var(--line); border-radius: 3px; background: var(--panel); }
+.hero-flow .hf-lbl { flex-basis: 100%; font-family: var(--mono); font-size: 0.54rem; font-weight: 700; letter-spacing: 0.18em; color: var(--gold-dim); border: none; background: none; padding: 0; margin-bottom: 0.1rem; }
 .hero-flow span em { display: block; font-style: normal; text-transform: none; font-size: 0.54rem; color: var(--gold-dim); margin-top: 1px; }
 .hero-flow i { font-style: normal; color: var(--gold-dim); font-size: 0.7rem; }
 .hero-flow .hf-end { color: var(--ink); border-color: var(--gold-dim); font-weight: 700; }
@@ -2106,6 +2108,18 @@ body[data-track="nego"] .tw { display: none; }
 .cap-vs { display: flex; align-items: center; font-family: var(--mono); font-size: 0.7rem; color: var(--line-strong); }
 .cap-foot { font-family: var(--sans); font-size: 0.98rem; line-height: 1.55; color: var(--muted); margin: 1rem 0 0; max-width: 100ch; }
 .cap-foot b { color: var(--ink); } .cap-foot em { color: var(--ink); font-style: italic; }
+
+/* Exhibit G — the real-transcript rung */
+.tr-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; max-width: 720px; }
+@media (max-width: 640px) { .tr-cols { grid-template-columns: 1fr; } }
+.tr-col { padding: 1rem 1.1rem; border-radius: 3px; background: var(--panel); border: 1px solid var(--line); }
+.tr-col b:first-child { display: block; font-family: var(--serif); font-size: 2rem; line-height: 1.1; margin-bottom: 0.3rem; }
+.tr-col.win b:first-child { color: var(--good, #3fb950); }
+.tr-col.lose b:first-child { color: var(--risk); }
+.tr-col span { font-family: var(--sans); font-size: 0.85rem; line-height: 1.5; color: var(--muted); }
+.tr-col span b { color: var(--ink); }
+.tr-note { margin-top: 0.7rem; font-family: var(--mono); font-size: 0.62rem; line-height: 1.6; color: var(--muted); max-width: 86ch; }
+.tr-note code { color: var(--gold-dim); }
 
 /* Exhibit F — literature opponents (ANAC baselines) */
 .anac-grid { display: flex; flex-direction: column; gap: 0.4rem; }

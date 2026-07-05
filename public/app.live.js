@@ -59,6 +59,7 @@ async function init() {
   loadAnac();
   loadValueAnl();
   loadDebateAblation();
+  loadTranscripts();
   loadCapability();
   loadSwitchMatrix();
   loadWarRoom();

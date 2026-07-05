@@ -407,6 +407,23 @@ async function loadAnac() {
   box.innerHTML = `<div class="anac-grid">${rows}</div>`;
 }
 
+/* Exhibit G — the real-transcript rung: agreement analysis over the CraigslistBargain
+   corpus (real human-human deals). Renders from the recorded JSON; reproduce with
+   `npx tsx src/harness/transcripts.ts` (deterministic, token-free). */
+async function loadTranscripts() {
+  const box = $("#transcripts-panel");
+  if (!box) return;
+  let d;
+  try { d = await (await fetch("/transcripts.json")).json(); }
+  catch { box.innerHTML = `<span class="hint">no recorded analysis — run <code>npx tsx src/harness/transcripts.ts</code></span>`; return; }
+  box.innerHTML =
+    `<div class="tr-cols">` +
+      `<div class="tr-col win"><b>${d.agree.meanPctOfListing}%</b><span>of asking price — the ${d.agree.n.toLocaleString()} deals where Synod <b>agreed</b> with the seller's yes</span></div>` +
+      `<div class="tr-col lose"><b>${d.dissent.meanPctOfListing}%</b><span>of asking price — the ${d.dissent.n.toLocaleString()} deals sellers took <b>against Synod's dissent</b></span></div>` +
+    `</div>` +
+    `<div class="tr-note">${d.sellerAcceptCases.toLocaleString()} real seller decisions from ${d.dialoguesTotal.toLocaleString()} human negotiations · ${d.source.split("—")[0].trim()} · no counterfactuals — only the humans' own outcomes, split by Synod's stance · reproduce: <code>npx tsx src/harness/transcripts.ts</code></div>`;
+}
+
 /* The controlled live debate ablation — keep the on-page trial count synced to the
    recorded JSON so the copy can never drift from the data. */
 async function loadDebateAblation() {
