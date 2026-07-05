@@ -80,12 +80,12 @@ function doctrineScores(
       // Win this round: immediate gain, discounted view of the future (Pressure owns γ).
       // γ=1 → pure capture-now; lower γ lets the longer-horizon payoff back in.
       for (const a of ACTIONS) raw[a] = policy.pressure.futureDiscount * capture[a] + (1 - policy.pressure.futureDiscount) * ev[a];
-      return { scores: normalizeToUnit(raw), rationale: "There's ground to take right now — press for it. Hesitation leaves it on the table.", confidence: 0.6 };
+      return { scores: normalizeToUnit(raw), rationale: "There's ground to take. Press now.", confidence: 0.6 };
 
     case "war":
       // Win the relationship: protect against the walk, accept modest capture.
       for (const a of ACTIONS) raw[a] = 0.3 * capture[a] - 900 * walk[a];
-      return { scores: normalizeToUnit(raw), rationale: "Don't torch the deal for one round's margin — hold the position, play the long game.", confidence: 0.55 };
+      return { scores: normalizeToUnit(raw), rationale: "Don't torch the deal for one round. Play the long game.", confidence: 0.55 };
 
     case "risk": {
       // Hedge's algorithm: score = λ·worst_case + (1−λ)·expected_value (Hedge owns λ).
@@ -100,13 +100,13 @@ function doctrineScores(
       }
       raw.accept -= (300 + 600 * lambda) * ctx.exposure; // committing under exposure scales with aversion
       raw.walk -= 400 * lambda; // walking is irreversible too
-      return { scores: normalizeToUnit(raw), rationale: "If we're wrong here it's irreversible — keep the deal alive and our options open.", confidence: 0.5 + 0.3 * ctx.infoConfidence };
+      return { scores: normalizeToUnit(raw), rationale: "If we're wrong, it's irreversible. Keep options open.", confidence: 0.5 + 0.3 * ctx.infoConfidence };
     }
 
     case "empathy":
       // Model the counterparty: favour what is actually best for the believed type.
       for (const a of ACTIONS) raw[a] = payoff(a, mlt, buyerOffer);
-      return { scores: normalizeToUnit(raw), rationale: `I read them as ${mlt.replace("_", " ")} — play what actually fits that, not what flatters us.`, confidence: 0.5 + 0.4 * ctx.infoConfidence };
+      return { scores: normalizeToUnit(raw), rationale: `I read them as ${mlt.replace("_", " ")}. Play what fits that.`, confidence: 0.5 + 0.4 * ctx.infoConfidence };
 
     case "probe": {
       // Probe's score IS the decision rule "probe iff EVI > cost" (spec §5): a
@@ -120,8 +120,8 @@ function doctrineScores(
       return {
         scores: normalizeToUnit(raw),
         rationale: worth
-          ? `We're deciding blind — information is worth ~${Math.round(eviValue)}, more than the probe costs. Buy it before we commit.`
-          : `Information's only worth ~${Math.round(eviValue)} here — not worth spending a probe.`,
+          ? `We're deciding blind. Verify first — it's worth ~${Math.round(eviValue)}.`
+          : `Not worth a probe (~${Math.round(eviValue)}). Decide.`,
         confidence: 0.5 + 0.4 * ctx.infoConfidence,
       };
     }
@@ -250,7 +250,7 @@ export class MockAgents implements DeliberationAgents {
     const m = LENSES[myDoctrine];
     const actionLabel = ACTION_LABELS[contestedAction];
     if (role === "challenger") {
-      return { text: `"${actionLabel}" favours the wrong horizon right now — ${m.coreBelief.toLowerCase()}.` };
+      return { text: `"${actionLabel}"? Wrong horizon. ${m.coreBelief}` };
     }
     // Causal concession rule (deterministic, auditable): the defender concedes only
     // when the challenger holds an epistemic edge — concession is proportional to the
@@ -262,10 +262,10 @@ export class MockAgents implements DeliberationAgents {
     const concession = gap * edge;
     const revisedScore = stakes.myScore + concession;
     if (Math.abs(concession) < 0.01) {
-      return { text: `The situation is exactly why "${actionLabel}" is correct — ${m.coreBelief.toLowerCase()}.` };
+      return { text: `No — "${actionLabel}" stands. ${m.coreBelief}` };
     }
     return {
-      text: `The situation still favours "${actionLabel}" — ${m.coreBelief.toLowerCase()} — though the objection has weight.`,
+      text: `The objection lands. "${actionLabel}" still holds — barely.`,
       revisedScore,
     };
   }

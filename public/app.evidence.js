@@ -248,7 +248,7 @@ async function renderCast() {
       `</div>` +
       `<div class="range-cap best"><span class="range-tag">BEST</span>CLOSE · ${money(BEST)}</div>` +
     `</div>` +
-    `<div class="cq-foot">the needle starts near <b class="col-amber">WALK</b> — contested, ${Math.round((c.infoConfidence ?? 0.39) * 100)}% confident, so the council probes rather than commit. The probe exposes the bluff (<b>the claimed leverage was air</b>) and the needle slides to <b class="col-green">CLOSE</b>. A single agent never probes; its needle stays pinned at 0.</div>`;
+    `<div class="cq-foot"><b>The council begins uncertain, so it probes instead of committing.</b> The probe exposes the bluff. The needle shifts from <b class="col-amber">WALK</b> to <b class="col-green">CLOSE</b>. A single agent never checks.</div>`;
 
   applyTrackToTableau(document.body.dataset.track || "war");
 }

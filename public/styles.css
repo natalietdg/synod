@@ -1838,6 +1838,8 @@ section { position: relative; z-index: 1; }
 .wr-facing .hint { font-size: 0.66rem; }
 
 /* Remove a general, then convene live — the switch-off made causal on a real Qwen run */
+.live-map { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.02em; color: var(--muted); margin: -0.4rem 0 1rem; }
+
 /* Removal panel — a distinct, obviously-interactive callout so it's clear you CAN remove one */
 .wr-remove { flex-basis: 100%; padding: 0.7rem 0.85rem; margin-bottom: 0.3rem;
   background: var(--panel); border: 1px dashed var(--risk); border-radius: 4px; }

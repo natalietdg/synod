@@ -9,11 +9,11 @@ const WR = { data: null };
 /* Each general OWNS a decision procedure, not just a personality — naming the computation
    in the live view is what keeps it "five procedures," not "five personas" (Option B). */
 const WR_PROC = {
-  battle: "immediate advantage",
-  war: "the long game",
-  empathy: "who they most likely are",
-  probe: "the value of scouting — EVI",
-  risk: "the worst case — minimax",
+  battle: "Leverage.",
+  war: "Long-term position.",
+  empathy: "Opponent intent.",
+  probe: "Value of information.",
+  risk: "Worst-case loss.",
 };
 
 /* The recon-capability artifact: two belief traces — with vs without the Probe lens. The
@@ -164,7 +164,7 @@ async function loadWarRoom() {
       step(4, "The chair decides", wrArbiterHTML(data)) +
       conn("so what actually happens?") +
       step(5, "The range of outcomes", wrOutcomeHTML(data) + `<div class="wr-wargame" id="wr-wargame"></div>`) +
-      conn("now the plan — each general writes their own part") +
+      conn("now the plan — five parts, one owner each") +
       step(6, "The war plan", wrPlanHTML(data)) +
     `</div>`;
 
@@ -386,8 +386,7 @@ function wrTimelineHTML(data) {
   ).join("");
   return `<div class="wr-timeline">` +
     `<div class="wr-tl-chain">${cells}</div>` +
-    `<div class="wr-tl-thesis"><b>The big idea: don't commit while you're unsure — check first.</b> ` +
-      `The council wasn't sure the threat was real, so it tested it before giving anything up.</div>` +
+    `<div class="wr-tl-thesis"><b>Don't commit while uncertainty is high. Verify first.</b></div>` +
   `</div>`;
 }
 
@@ -418,7 +417,7 @@ function wrSplitHTML(data) {
       return `<div class="wr-gcard" style="border-left-color:${lc}">` +
         `<div class="wr-gc-head"><b class="wr-gc-name">${g.name}</b>` +
           `<span class="wr-gc-tag" style="color:${lc}">▤ ${g.lead}</span></div>` +
-        `<div class="wr-gc-proc">computes ${WR_PROC[g.leadLens] || "its own read"}</div>` +
+        `<div class="wr-gc-proc">${WR_PROC[g.leadLens] || ""}</div>` +
         `<div class="wr-gc-say">“${g.doctrine}”</div></div>`;
     }).join("");
     return `<div class="wr-group${win ? " win" : ""}">` +

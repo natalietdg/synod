@@ -350,10 +350,10 @@ app.get("/api/canonical", async (_req, res) => {
     .sort((a, b) => (w[b as keyof typeof w] ?? 0) - (w[a as keyof typeof w] ?? 0))[0];
   const ctx = r1.ctx;
   const why = dissenter
-    ? `<b>${LENSES[dissenter as keyof typeof LENSES].cogFunction}</b> pushed for ${ACTION_LABELS[votes[dissenter]!]}. ` +
-      `But the council is only ${Math.round(ctx.infoConfidence * 100)}% sure who it's facing, with ` +
-      `${Math.round(ctx.exposure * 100)}% of the money riding on this round — so the chair sided with ` +
-      `<b>${ACTION_LABELS[rec]}</b>. The decision changed <em>because</em> they disagreed.`
+    ? `<b>The room split.</b> ${LENSES[dissenter as keyof typeof LENSES].cogFunction} wanted ${ACTION_LABELS[votes[dissenter]!]}. ` +
+      `The chair saw high uncertainty (${100 - Math.round(ctx.infoConfidence * 100)}%) and high exposure ` +
+      `(${Math.round(ctx.exposure * 100)}%) — so it chose <b>${ACTION_LABELS[rec]}</b>. ` +
+      `The decision changed <em>because</em> they disagreed.`
     : "";
   canonicalCache = {
     message: r1.counterpartyMove.message,

@@ -52,8 +52,8 @@
                 The other side says: <em>“back off, or else.”</em> <br/><br/>
                 Real, or a bluff? Guess wrong and you pay.
 <br/><br/>
-                <strong>Synod is five AI judges and one neutral chair.</strong> Each judge checks one thing. Is this worth verifying? What's the worst case? What do they actually want? The chair weighs the disagreement. <strong>Then it commits.</strong>
-                One decider gets fooled. Five checks don't.
+                <strong>Synod is five specialist AI judges and one neutral chair.</strong> Each judge owns one question. The chair resolves their disagreement and commits.
+                <strong>One decider gets fooled. Five independent checks don't.</strong>
               </p>
             </div>
             <div class="track-pane hidden" data-track="nego">
@@ -96,7 +96,7 @@
           <a class="row" href="#evidence"><div class="stat s-close">PEACE</div><div class="desc"><b>The council, same opponent.</b> It checks the claim. The bluff collapses. Peace holds, every time.</div></a>
           <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe, the judge that checks claims. The council misreads the bluff. The war comes back.</div></a>
         </div>
-        <p class="impact-line">One bluff restarts a war that didn't need to happen. The council's fix is simple: <b>check before you commit</b>. <span class="hint">(no money on a war table — the stakes are abstract)</span></p>
+        <p class="impact-line"><b>Without Probe, nobody verifies the claim. The bluff succeeds. The war returns.</b> <span class="hint">(no money on a war table — the stakes are abstract)</span></p>
         <a class="result-cta" data-goto="nego">See how Synod applies the <b>same engine</b> to real <b>negotiations &amp; M&amp;A</b> <span class="rc-arr">→</span></a>
       </div>
 
@@ -108,7 +108,7 @@
           <a class="row" href="#evidence"><div class="stat s-close">$3,000</div><div class="desc"><b>Synod, the same opponent.</b> It checks the claim. The bluff breaks. The deal closes, every time.</div></a>
           <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">Remove Probe, the judge that checks claims. Same game. The win turns into nothing.</div></a>
         </div>
-        <p class="impact-line">One bluff turns a winning deal into <b class="walk-c">$0</b>. Synod removes that cost. <span class="hint">(real $ on this deal — same result every time)</span></p>
+        <p class="impact-line"><b>Without Probe, the bluff stands. A $3,000 win becomes <span class="walk-c">$0</span>.</b> <span class="hint">(real $ on this deal — same result every time)</span></p>
         <p class="who-bleeds">Buyers, sales desks, recruiters and founders pay for this every day. <a href="#value">See who, and what it's worth →</a></p>
         <a class="result-cta" data-goto="war">See the <b>same engine</b> hold a ceasefire in the <b>war room</b> <span class="rc-arr">→</span></a>
       </div>
@@ -122,11 +122,11 @@
 
       <div class="q5-wrap">
         <div class="q5">
-          <div class="q5-i" style="--c:var(--empathy)"><b>Trust</b><span>Who are we really dealing with?</span></div>
-          <div class="q5-i" style="--c:var(--battle)"><b>Pressure</b><span>Where is our leverage?</span></div>
-          <div class="q5-i" style="--c:var(--probe)"><b>Probe</b><span>Should we gather more information first?</span></div>
-          <div class="q5-i" style="--c:var(--war)"><b>Frame</b><span>What wins the long game?</span></div>
-          <div class="q5-i" style="--c:var(--risk)"><b>Hedge</b><span>What if we're wrong?</span></div>
+          <div class="q5-i" style="--c:var(--empathy)"><b>Trust</b><span>Infer incentives</span></div>
+          <div class="q5-i" style="--c:var(--battle)"><b>Pressure</b><span>Exploit leverage</span></div>
+          <div class="q5-i" style="--c:var(--probe)"><b>Probe</b><span>Buy information</span></div>
+          <div class="q5-i" style="--c:var(--war)"><b>Frame</b><span>Protect position</span></div>
+          <div class="q5-i" style="--c:var(--risk)"><b>Hedge</b><span>Limit downside</span></div>
         </div>
         <div class="flow5">
           <span>Threat received</span><i>↓</i>
@@ -140,7 +140,7 @@
 
       <details class="wno-details">
         <summary>“Why not just ask one model to weigh five perspectives?” <span class="hint">— expand</span></summary>
-        <div class="wno-a">Because these aren't five opinions. They're five <b>different ways of judging</b>. Three are pure math, not an AI. <b>Probe</b> calculates whether a question is worth asking. <b>Hedge</b> calculates the worst case. <b>Trust</b> calculates who they most likely are. In the live run, the five judges reason on Qwen. The math stays outside them, in code. Code tracks the evidence. Code weighs the five. Code makes the call. One model playing five voices gives five guesses from the same head. And a different answer every time. Synod gives the <b>same answer every time</b> — and shows you which judge changed it.</div>
+        <div class="wno-a"><b>These aren't five opinions. They're five specialized decision functions.</b> The models reason. Code tracks evidence, computes probabilities, values information, weighs the judges, and commits. One model playing five voices still shares one set of biases. <b>Synod doesn't.</b></div>
       </details>
       <div id="scene-council" class="scene-council">
         <div id="council-tableau" class="tableau"></div>
@@ -154,7 +154,8 @@
       <h2 class="display sec-display">Watch the society <span class="serif-italic gold">decide.</span></h2>
       <div id="live-war" class="track-pane live-panel" data-track="war">
         <h3 class="live-h">The five judges, in uniform: five generals, one question each — <span class="serif-italic gold">and the chair makes the call.</span></h3>
-        <p class="live-sub"><b>The council decomposes every decision into five judgment tasks</b> — one per general. Patton holds leverage, Sun Tzu scouts, Kutuzov guards the downside, Eisenhower reads intent, Zhukov plays the long game. Take Sun Tzu away, and nobody scouts. The chair weighs all five. Then it decides.</p>
+        <p class="live-sub"><b>Five judges. Five judgment tasks. One chair.</b> Take Sun Tzu away, and nobody scouts.</p>
+        <p class="live-map">Patton → Pressure · Sun Tzu → Probe · Eisenhower → Trust · Zhukov → Frame · Kutuzov → Hedge</p>
         <div id="warroom-body" class="warroom">Convening the war council…</div>
 
         <div class="capability">
@@ -403,7 +404,7 @@
       </div>
 
       <h3 class="mp-h">How they discuss and debate</h3>
-      <p class="arch-q">Each judge reads the same move <b>independently</b>, in parallel, so no judge anchors another. They debate to expose disagreement — not to persuade. The chair ignores rhetoric and resolves it from the recorded evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
+      <p class="arch-q">Each judge evaluates independently, in parallel. Debate exposes disagreement — not persuasion. The chair ignores rhetoric and resolves it from the evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
       <p class="arch-triad">Persuasion is not a channel.<br/>The debate exposes disagreement.<br/>The chair resolves it.</p>
 
       <h3 class="mp-h">What tasks they do</h3>
@@ -411,7 +412,7 @@
       <ul class="arch-b">
         <li><b style="color:var(--empathy)">Trust</b> — infer the opponent's incentives.</li>
         <li><b style="color:var(--battle)">Pressure</b> — find the immediate leverage.</li>
-        <li><b style="color:var(--probe)">Probe</b> — decide whether more information is worth buying.</li>
+        <li><b style="color:var(--probe)">Probe</b> — maximize the value of information before committing.</li>
         <li><b style="color:var(--war)">Frame</b> — protect the long-term position.</li>
         <li><b style="color:var(--risk)">Hedge</b> — minimise the irreversible downside.</li>
       </ul>
@@ -421,7 +422,7 @@
       <p class="arch-q"><b>Three deterministic components sit outside the models:</b></p>
       <ul class="arch-b">
         <li><b>Belief</b> — updates who-are-they probabilities from the opponent's <em>actions</em>. Talk can't move it.</li>
-        <li><b>Question price</b> — computes whether asking is worth a turn, before the council asks.</li>
+        <li><b>Expected Value of Information</b> — computes whether asking is worth a turn, before the council asks.</li>
         <li><b>Chair</b> — turns the situation into weights, multiplies each judge's score, picks the winner.</li>
         <li><b>Safety gates</b> — walk away when nothing believable beats leaving; take the sure win on the last round.</li>
       </ul>
