@@ -1408,6 +1408,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .hero-pair b { color: var(--gold); }
 .hero-base { margin: 0.15rem auto 0.4rem; max-width: 640px; font-family: var(--mono); font-size: 0.62rem; color: var(--faint, #6f6552); letter-spacing: 0.02em; }
 /* One honest sentence per exhibit, visible WITHOUT expanding */
+.ex-take::before { content: "TAKEAWAY — "; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.09em; color: var(--gold); }
 .ex-take { display: block; margin-top: 0.35rem; font-family: var(--sans); font-size: 0.9rem; font-weight: 400; line-height: 1.55;
   color: var(--muted); text-transform: none; letter-spacing: 0; max-width: 92ch; }
 .who-bleeds { margin-top: 1rem; max-width: 76ch; font-family: var(--sans); font-size: 0.96rem; line-height: 1.6; color: var(--muted);
@@ -1469,6 +1470,13 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .domain-note b { color: var(--ink); }
 .env-lede { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); margin: 0 0 1.2rem; }
 .env-lede b { color: var(--gold); }
+.vp-fix { margin-top: 0.6rem; }
+.vp-take { font-family: var(--sans); font-size: 0.95rem; color: var(--ink); margin: 0.9rem 0 0; }
+.vp-take::before { content: "→ "; color: var(--gold); }
+.arch-flow { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); margin: 0 0 0.5rem; }
+.arch-flow i { color: var(--gold); font-style: normal; }
+.arch-flow b { color: var(--ink); }
+.arch-key { font-family: var(--sans); font-size: 0.95rem; color: var(--muted); margin: 0 0 1.6rem; }
 .ev-takeaway { margin: 2rem 0 0; max-width: 80ch; font-family: var(--serif); font-size: 1.15rem; line-height: 1.6; color: var(--muted);
   padding-left: 1rem; border-left: 3px solid var(--gold); }
 .ev-takeaway b { color: var(--ink); }

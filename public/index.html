@@ -307,7 +307,7 @@
       </p>
 
       <div class="exhibit" id="exhibit-a">
-        <div class="brief-label">Exhibit A — does a council beat one agent alone?</div>
+        <div class="brief-label">Exhibit A — does a council beat one agent alone?<span class="ex-take">Yes — the gap opens where the opponent lies. The solo agent walks with $0 on the bluff; the council closes all 10 games.</span></div>
         <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The baseline is built to win, not to lose — the same engine with the council removed.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Yes. The bluffer is where it shows.</b> The solo agent is fooled and walks with nothing. The council checks the claim and <span class="tw">holds the line</span><span class="tn">closes the deal</span> — all 10 games. <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent. One values the relationship. One has a hidden hard limit. One is bluffing. The “±” is how much the result wobbled between games. Smaller is steadier.</details></p>
@@ -367,8 +367,10 @@
       <h2 class="display sec-display">Why this is <span class="serif-italic gold">worth money.</span></h2>
       <p class="lede">When the other side hides their real number, one decider gets played. Five judges arguing it out don't.</p>
 
+      <h3 class="vp-h">The problem — and what Synod changes</h3>
       <div class="vp-problem">
-        <p>One decider makes the same two mistakes in every hard negotiation: it <b>believes what the other side says</b>, and it <b>wants the deal too much to walk away</b>. So it pays for fake threats, and gives up on winnable deals. The council fixes both. One judge's whole job is to say <em>"prove it."</em> Another's is to say <em>"what if we're wrong?"</em> The chair decides who's right — this time.</p>
+        <p>One decider makes the same two mistakes in every hard negotiation: it <b>believes what the other side says</b>, and it <b>wants the deal too much to walk away</b>. So it pays for fake threats, and gives up on winnable deals.</p>
+        <p class="vp-fix">The council fixes both. One judge's whole job is to say <em>"prove it."</em> Another's is to say <em>"what if we're wrong?"</em> The chair decides who's right — this time.</p>
       </div>
 
       <h3 class="vp-h">Who loses this money today</h3>
@@ -381,11 +383,13 @@
         <div class="vp-card"><div class="vp-ind">Insurance payouts</div><p>Every claim is a negotiation with someone who knows more than you. Small overpayments add up, thousands of times over.</p></div>
         <div class="vp-card"><div class="vp-ind">Ceasefires &amp; standoffs</div><p>The war room isn't just a story. "Back off or else" is the same bluff-or-real call. Just with the highest stakes there are.</p></div>
       </div>
+      <p class="vp-take">The value: fewer believed bluffs, fewer abandoned wins — at every table above.</p>
 
       <h3 class="vp-h">We put it up against real competition negotiators</h3>
       <p class="vp-sub">There's an international contest where negotiation programs play each other (<b>ANAC</b>). We took <b>real entrants — including its winner</b>. Synod negotiated against them for real. We didn't write these opponents. Nobody knew anyone's limits.</p>
       <div class="vp-setup">The setup: Synod is selling. <b>$4,000 of profit is on the table.</b> The negotiation decides who keeps it.</div>
       <div id="vp-anl" class="vp-anl">loading recorded results…</div>
+      <p class="vp-take">The takeaway: it closed real deals against real entrants — including the league winner.</p>
 
       <h3 class="vp-h">How you'd actually use it</h3>
       <div class="vp-adopt">
@@ -403,30 +407,8 @@
       <p class="anchor-line">Synod is a decision arbitration system — structured disagreement, resolved into one committed action.</p>
       <h2 class="display sec-display">The society decides; <span class="serif-italic">the human keeps the gavel.</span></h2>
 
-      <!-- The system, in one picture: the load-bearing boundary is models ⟷ code. -->
-      <div class="arch-d">
-        <div class="ad-row ad-top"><b>THE PAGE YOU'RE ON</b><span>plain JavaScript · each round streams in live</span></div>
-        <div class="ad-arr">↕ JSON + live stream</div>
-        <div class="ad-row ad-mid"><b>THE BACKEND</b><span>Node + TypeScript</span></div>
-        <div class="ad-split">
-          <div class="ad-box ad-code">
-            <b>THE ENGINE — pure code, never a model</b>
-            <span>tracks the belief · prices the questions · weighs the judges · picks the winner · signs the receipt</span>
-            <i>same inputs, same bytes, every time</i>
-          </div>
-          <div class="ad-bound">models<br/>reason<br/>·<br/>code<br/>decides</div>
-          <div class="ad-box ad-qwen">
-            <b>QWEN CLOUD — the reasoning</b>
-            <span>five judges read &amp; argue (qwen-turbo) · judgment calls &amp; the war plan (qwen-max)</span>
-            <i>structured tool-calls, schema-checked</i>
-          </div>
-        </div>
-        <div class="ad-feet">
-          <div class="ad-foot"><b>RECORDS</b><span>no database, on purpose — fixed seeds + signed JSON anyone can regenerate</span></div>
-          <div class="ad-foot"><b>MCP DOOR</b><span>7 tools · any AI can consult the council</span></div>
-          <div class="ad-foot"><b>NegMAS DOOR</b><span>Synod sits inside the ANAC competition platform</span></div>
-        </div>
-      </div>
+      <p class="arch-flow">situation <i>→</i> five judges, in parallel <i>→</i> disagreement, on record <i>→</i> deterministic chair <i>→</i> <b>one committed decision</b></p>
+      <p class="arch-key">The key idea: no single reasoning trace to trust — five independent judgments, resolved by arithmetic into one decision.</p>
 
       <h3 class="mp-h">How they discuss and debate</h3>
       <p class="arch-q">Each judge evaluates independently, in parallel. Debate exposes disagreement — not persuasion. The chair ignores rhetoric and resolves it from the evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
@@ -456,6 +438,32 @@
         <li><b>The chair</b> — turns the situation into weights, multiplies each judge's score, and <b>the highest total wins</b>.</li>
       </ul>
       <p class="arch-q">Two safety gates guard the edges — walk away when nothing believable beats leaving, and take the sure win on the last round. Then the receipt is signed.</p>
+
+      <h3 class="mp-h">Where it runs</h3>
+      <!-- The system, in one picture: the load-bearing boundary is models ⟷ code. -->
+      <div class="arch-d">
+        <div class="ad-row ad-top"><b>THE PAGE YOU'RE ON</b><span>plain JavaScript · each round streams in live</span></div>
+        <div class="ad-arr">↕ JSON + live stream</div>
+        <div class="ad-row ad-mid"><b>THE BACKEND</b><span>Node + TypeScript</span></div>
+        <div class="ad-split">
+          <div class="ad-box ad-code">
+            <b>THE ENGINE — pure code, never a model</b>
+            <span>tracks the belief · prices the questions · weighs the judges · picks the winner · signs the receipt</span>
+            <i>same inputs, same bytes, every time</i>
+          </div>
+          <div class="ad-bound">models<br/>reason<br/>·<br/>code<br/>decides</div>
+          <div class="ad-box ad-qwen">
+            <b>QWEN CLOUD — the reasoning</b>
+            <span>five judges read &amp; argue (qwen-turbo) · judgment calls &amp; the war plan (qwen-max)</span>
+            <i>structured tool-calls, schema-checked</i>
+          </div>
+        </div>
+        <div class="ad-feet">
+          <div class="ad-foot"><b>RECORDS</b><span>no database, on purpose — fixed seeds + signed JSON anyone can regenerate</span></div>
+          <div class="ad-foot"><b>MCP DOOR</b><span>7 tools · any AI can consult the council</span></div>
+          <div class="ad-foot"><b>NegMAS DOOR</b><span>Synod sits inside the ANAC competition platform</span></div>
+        </div>
+      </div>
 
       <div class="mcp-panel">
         <div class="mcp-h">Any AI can consult the council through <b>seven MCP tools</b>.</div>
