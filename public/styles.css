@@ -1393,6 +1393,14 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .lede strong, .lede b { color: var(--fg); font-weight: 600; }
 .impact-line { font-size: 1.22rem; line-height: 1.6; }
 .cap-line { font-family: var(--mono); font-size: 0.8rem; color: var(--faint); letter-spacing: 0.06em; }
+/* The 15-second flow — the mental model, above the fold */
+.hero-flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 0.4rem; margin: 1rem 0 0.4rem; }
+.hero-flow span { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+  padding: 0.3rem 0.55rem; border: 1px solid var(--line); border-radius: 3px; background: var(--panel); }
+.hero-flow span em { display: block; font-style: normal; text-transform: none; font-size: 0.54rem; color: var(--gold-dim); margin-top: 1px; }
+.hero-flow i { font-style: normal; color: var(--gold-dim); font-size: 0.7rem; }
+.hero-flow .hf-end { color: var(--ink); border-color: var(--gold-dim); font-weight: 700; }
+
 /* The paired win/loss line — the credibility sentence, above the fold */
 .hero-pair { margin: 0.9rem auto 0.5rem; max-width: 640px; font-family: var(--sans); font-size: 0.95rem; line-height: 1.55; color: var(--muted); }
 .hero-pair b { color: var(--gold); }
