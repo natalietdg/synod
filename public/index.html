@@ -347,19 +347,39 @@
       <div class="kicker-row"><span class="idx">§06</span><span class="lbl">Architecture</span><span class="ln"></span></div>
       <h2 class="display sec-display">The society decides; <span class="serif-italic">the human keeps the gavel.</span></h2>
 
-      <div class="workflow">
-        <span class="wf-lbl">HOW A DECISION DESK USES IT</span>
-        <div class="wf-flow">
-          <span class="wf-step">their move · hidden leverage</span>
-          <span class="wf-arr">→</span>
-          <span class="wf-step wf-core">Synod <em>— five agents argue it out, a fair chair decides</em></span>
-          <span class="wf-arr">→</span>
-          <span class="wf-step">the call <em>+ the dissent on record + a signed, replayable receipt</em></span>
-          <span class="wf-arr">→</span>
-          <span class="wf-step">a human approves &amp; commits</span>
+      <!-- The system, in one picture: the load-bearing boundary is models ⟷ code. -->
+      <div class="arch-d">
+        <div class="ad-row ad-top"><b>THE PAGE YOU'RE ON</b><span>plain JavaScript · each round streams in live</span></div>
+        <div class="ad-arr">↕ JSON + live stream</div>
+        <div class="ad-row ad-mid"><b>THE BACKEND</b><span>Node + TypeScript</span></div>
+        <div class="ad-split">
+          <div class="ad-box ad-code">
+            <b>THE ENGINE — pure code, never a model</b>
+            <span>tracks the belief · prices the questions · weighs the judges · picks the winner · signs the receipt</span>
+            <i>same inputs, same bytes, every time</i>
+          </div>
+          <div class="ad-bound">models<br/>reason<br/>·<br/>code<br/>decides</div>
+          <div class="ad-box ad-qwen">
+            <b>QWEN CLOUD — the reasoning</b>
+            <span>five judges read &amp; argue (qwen-turbo) · judgment calls &amp; the war plan (qwen-max)</span>
+            <i>structured tool-calls, schema-checked</i>
+          </div>
         </div>
-        <span class="wf-note"><b>One call to plug in</b>, five agents behind it — for any high-stakes deal where the other side hides what they hold.</span>
+        <div class="ad-feet">
+          <div class="ad-foot"><b>RECORDS</b><span>no database, on purpose — fixed seeds + signed JSON anyone can regenerate</span></div>
+          <div class="ad-foot"><b>MCP DOOR</b><span>7 tools · any AI can consult the council</span></div>
+          <div class="ad-foot"><b>NegMAS DOOR</b><span>Synod sits inside the ANAC competition platform</span></div>
+        </div>
       </div>
+
+      <h3 class="mp-h">How they discuss and debate</h3>
+      <p class="arch-q">Each judge reads the move <b>alone</b> — in parallel, so nobody anchors anybody. Then they argue, round by round, and the disagreement goes on the record. Here's the twist: <b>the argument can't change the math</b> (we measured it — 0/12 live trials). Its job is to surface the disagreement the chair weighs. Persuasion is not a channel. That's what makes a well-argued bad idea harmless.</p>
+
+      <h3 class="mp-h">What tasks they do</h3>
+      <p class="arch-q">Each judge owns one question: <b>Probe</b> — is this worth checking first? <b>Trust</b> — who are we really dealing with? <b>Pressure</b> — where's the leverage now? <b>Hedge</b> — what if we're wrong? <b>Frame</b> — what's the long game? And after the chair commits, each drafts their part of the plan — Probe writes the reconnaissance, Trust the back-channel, Pressure the leverage, Hedge the fallback, Frame the end-state. <b>The judge who argued the question executes its answer.</b></p>
+
+      <h3 class="mp-h">How the math comes into play</h3>
+      <p class="arch-q">Three moments, all pure code. <b>The belief:</b> every move the opponent makes updates a running probability of who they are — Bayes' rule, on actions only, so talk can't move it. <b>The question price:</b> before the council asks anything, code computes whether the answer is worth a turn. <b>The decision:</b> the chair turns the situation into weights, multiplies each judge's score by their weight, and the highest total wins. Two backstops guard the edges — walk away when no believable price beats leaving, and take the sure win on the last round. Then the receipt is signed.</p>
 
       <div class="mcp-panel">
         <div class="mcp-h">Any AI can call Synod as a <b>tool</b>.</div>
@@ -367,30 +387,6 @@
         <div id="mcp-tools" class="mcp-tools">loading the tool catalog…</div>
         <div id="mcp-io" class="mcp-io"></div>
         <div id="mcp-agent" class="mcp-agent"></div>
-      </div>
-
-      <h3 class="mp-h">How it decides — one real decision, in four beats</h3>
-      <div class="trace">
-        <div class="trace-step"><span class="trace-k">1 · the move</span><span class="trace-v">The other side claims <em>“reserves we haven't shown you — pull back, or the ceasefire ends.”</em> Bluff, or real?</span></div>
-        <div class="trace-step"><span class="trace-k">2 · the split</span><span class="trace-v"><b>Probe</b> wants to verify it <b>(+0.90)</b>. <b>Pressure</b> wants to push instead <b>(+0.80)</b>. The room divides.</span></div>
-        <div class="trace-step"><span class="trace-k">3 · the chair</span><span class="trace-v">0% sure who they are, much at stake → it weights <b>Probe to 0.30</b>, holds <b>Pressure down to 0.11</b>.</span></div>
-        <div class="trace-hero">
-          <span class="th-opt win">verify first<br><b>0.41</b></span>
-          <span class="th-vs">beats</span>
-          <span class="th-opt">push hard<br><b>0.00</b></span>
-        </div>
-        <div class="trace-foot"><b>4 · the call:</b> verify wins — because the <em>situation</em> made the careful judges count, not because anyone shouted; same inputs give the same answer every time. <span class="hint">(run <code>npm run reproduce</code> to replay it)</span></div>
-      </div>
-
-      <h3 class="mp-h">Why each piece is there <span class="hint">— tap any one to open</span></h3>
-      <div class="whyparts">
-        <details class="wp-item"><summary>A running guess at who you're facing</summary><p>The other side is hidden, so the council keeps a running guess from what they <em>do</em>, not what they say — and it can't be talked out of the truth.</p></details>
-        <details class="wp-item"><summary>Scout only when it's worth the turn</summary><p>Asking a question costs a turn, so the council only asks when what it'd learn is worth it — the line between finding out and stalling.</p></details>
-        <details class="wp-item"><summary>Plain code makes the final pick</summary><p>Simple arithmetic decides, not a model's whim — so it's the same every time, and you can see exactly which judge and weight produced it.</p></details>
-        <details class="wp-item"><summary>A fair chair settles the disagreement</summary><p>The judges disagree; the chair settles it by weighing them against the situation — not a vote, not the loudest — and takes no side of its own.</p></details>
-        <details class="wp-item"><summary>A signed record of every decision</summary><p>Every decision is signed — the call, the weights, the confidence — so no one can quietly change the record afterward.</p></details>
-        <details class="wp-item"><summary>Fixed starting points, so anyone can re-run it</summary><p>Fixed starting points mean anyone can re-run the exact tests and get the exact numbers (<code>npm run reproduce</code>) — "trust us" becomes "run it yourself."</p></details>
-        <details class="wp-item"><summary>Test worlds written by a different AI</summary><p>The hardest test worlds were written by a <em>different</em> AI (Claude, not the Qwen it runs on) — so it didn't grade its own homework.</p></details>
       </div>
 
       <div class="validity-note">

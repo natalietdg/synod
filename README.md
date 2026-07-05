@@ -113,6 +113,38 @@ aversion, Probe's information threshold, Pressure's discount); the situation fil
 *within validated bounds* and the engine clamps and logs the choice — adaptive, yet still
 replayable.
 
+## The architecture, in one picture
+
+```mermaid
+flowchart TB
+  B["Browser — static page, vanilla JS<br/>each round streams in live (SSE)"]
+  S["Backend — Node + TypeScript (Express)"]
+  E["THE ENGINE — pure code, never a model<br/>belief update → question pricing → chair weighting →<br/>argmax → walk/deadline backstops → signed receipt<br/><i>same inputs, same bytes, every time</i>"]
+  Q["QWEN CLOUD (DashScope, OpenAI-compatible)<br/>five judges read & argue — qwen-turbo<br/>judgment calls & the war plan — qwen-max<br/><i>structured tool-calls, zod-checked</i>"]
+  R[("RECORDS — no database, on purpose<br/>fixed seeds + signed JSON:<br/>receipts · recorded ANAC games · MCP transcript")]
+  M["MCP server — 7 tools<br/>stdio + HTTP bridge"]
+  N["NegMAS bridge (Python)<br/>real ANAC league agents"]
+  A["any AI assistant"]
+  B <-->|"JSON / SSE"| S
+  S -->|"decisions"| E
+  S <-->|"reasoning"| Q
+  E --> R
+  A -->|"tools/call"| M --> S
+  N -->|"POST /api/bridge/decide"| S
+```
+
+One boundary explains the whole system: **models reason; code decides.** The frontend is a
+static page talking to a TypeScript backend over JSON and Server-Sent Events. The backend
+has two halves. The deterministic engine is pure code — the Bayesian belief update, the
+question pricing (EVI), the chair's situation-weighting, the argmax, the walk-away and
+deadline backstops, and the receipt signing. No model call sits on that path. Qwen Cloud
+does the reasoning around it: the five judges read the move and argue (qwen-turbo), and
+the judgment-tier calls and war-plan drafting run on qwen-max — all through structured,
+schema-validated tool calls. There is no database, on purpose: state is fixed seeds plus
+signed JSON records anyone can regenerate. Two doors let other systems in — the MCP server
+(any AI can consult the council) and the NegMAS bridge (Synod sits inside the ANAC
+competition platform as a negotiator).
+
 See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for the system map and the determinism
 boundary. [`synod-v2.md`](./synod-v2.md) is the build spec; [`synod-prd.md`](./synod-prd.md) the PRD.
 
