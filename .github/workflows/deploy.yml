@@ -1,0 +1,27 @@
+# Auto-deploy to the Alibaba Cloud ECS box on every push to master.
+# Requires two repo secrets (Settings → Secrets and variables → Actions):
+#   ECS_HOST     — the instance's public IP
+#   ECS_SSH_KEY  — the PRIVATE half of the deploy keypair (the public half
+#                  lives in /root/.ssh/authorized_keys on the server)
+name: deploy
+on:
+  push:
+    branches: [master]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull and restart on ECS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.ECS_HOST }}
+          username: root
+          key: ${{ secrets.ECS_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/synod
+            git pull --ff-only origin master
+            npm install --no-audit --no-fund
+            pm2 restart synod --update-env
+            sleep 3
+            curl -sf localhost:4173/api/meta > /dev/null && echo "DEPLOY OK" || (pm2 logs synod --lines 30 --nostream; exit 1)
