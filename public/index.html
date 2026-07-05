@@ -76,6 +76,14 @@
       </div>
     </section>
 
+    <!-- ====== THE CREED — the whole idea in four lines ====== -->
+    <div class="creed"><div class="wrap">
+      <p class="creed-head">Most agent societies divide <em>work</em>. <b>Synod divides judgment.</b></p>
+      <p>Five specialists independently evaluate the same decision.</p>
+      <p>A neutral chair resolves their disagreement — with deterministic code.</p>
+      <p>The winning judgment becomes the action.</p>
+    </div></div>
+
     <!-- ====== §01 · THE RESULT ====== -->
     <section id="claim" class="section-pad"><div class="wrap">
       <div class="kicker-row"><span class="idx">§01</span><span class="lbl">The Result</span><span class="ln"></span></div>
@@ -111,10 +119,29 @@
       <div class="kicker-row"><span class="idx">§02</span><span class="lbl">How it decides</span><span class="ln"></span></div>
       <h2 class="display sec-display">It decides by <span class="serif-italic">disagreement.</span></h2>
       <p class="lede">Five judges look at the same move. They often disagree. A neutral chair weighs them and makes the call.</p>
-      <div class="why-not-one">
-        <div class="wno-q">“Why not just ask one model to weigh five perspectives?”</div>
-        <div class="wno-a">Because these aren't five opinions. They're five <b>different ways of judging</b>. Three are pure math, not an AI. <b>Probe</b> calculates whether a question is worth asking. <b>Hedge</b> calculates the worst case. <b>Trust</b> calculates who they most likely are. In the live run, the five judges reason on Qwen. The math stays outside them, in code. Code tracks the evidence. Code weighs the five. Code makes the call. One model playing five voices gives five guesses from the same head. And a different answer every time. Synod gives the <b>same answer every time</b> — and shows you which judge changed it.</div>
+
+      <div class="q5-wrap">
+        <div class="q5">
+          <div class="q5-i" style="--c:var(--empathy)"><b>Trust</b><span>Who are we really dealing with?</span></div>
+          <div class="q5-i" style="--c:var(--battle)"><b>Pressure</b><span>Where is our leverage?</span></div>
+          <div class="q5-i" style="--c:var(--probe)"><b>Probe</b><span>Should we gather more information first?</span></div>
+          <div class="q5-i" style="--c:var(--war)"><b>Frame</b><span>What wins the long game?</span></div>
+          <div class="q5-i" style="--c:var(--risk)"><b>Hedge</b><span>What if we're wrong?</span></div>
+        </div>
+        <div class="flow5">
+          <span>Threat received</span><i>↓</i>
+          <span>Five independent judgments<em class="flow5-names"><b style="color:var(--empathy)">Trust</b> <b style="color:var(--battle)">Pressure</b> <b style="color:var(--probe)">Probe</b> <b style="color:var(--war)">Frame</b> <b style="color:var(--risk)">Hedge</b></em></span><i>↓</i>
+          <span>Disagreement</span><i>↓</i>
+          <span>Neutral chair — deterministic weights</span><i>↓</i>
+          <span class="flow5-end">Decision</span><i>↓</i>
+          <span>Operational plan — each judge drafts their part</span>
+        </div>
       </div>
+
+      <details class="wno-details">
+        <summary>“Why not just ask one model to weigh five perspectives?” <span class="hint">— expand</span></summary>
+        <div class="wno-a">Because these aren't five opinions. They're five <b>different ways of judging</b>. Three are pure math, not an AI. <b>Probe</b> calculates whether a question is worth asking. <b>Hedge</b> calculates the worst case. <b>Trust</b> calculates who they most likely are. In the live run, the five judges reason on Qwen. The math stays outside them, in code. Code tracks the evidence. Code weighs the five. Code makes the call. One model playing five voices gives five guesses from the same head. And a different answer every time. Synod gives the <b>same answer every time</b> — and shows you which judge changed it.</div>
+      </details>
       <div id="scene-council" class="scene-council">
         <div id="council-tableau" class="tableau"></div>
         <div id="consequence" class="consequence"></div>
@@ -284,7 +311,9 @@
         <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model (Claude), not from Qwen. So the system didn't write its own exam. <b>Honest limit:</b> the 10 games show a result is steady <em>within</em> a world. They don't prove it holds across all real worlds. And five worlds from one author is a small sample. Read the numbers as “stable in these worlds.” Not “proven in general.” Widening this needs a third source, or real transcripts.</details></p>
       </details>
 
-      <details class="exhibit">
+      <details class="ex-group">
+        <summary class="brief-label">Three more checks — one judge alone · the adaptive dials · opponents from the literature <span class="hint">— expand</span></summary>
+<details class="exhibit">
         <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span><span class="ex-take">One good general matches the council most days. But you'd have to pick him in advance. The council never has to.</span></summary>
         <p class="ex-q">The same 10 games, but decided by <b>one judge alone</b> each time, vs the full council (the chair adapts). Longer bar = more won.</p>
         <div id="general-bench" class="chart-box">Computing…</div>
@@ -303,6 +332,7 @@
         <p class="ex-q">Three classic negotiators from the research field (Faratin 1998 — the standard ANAC baselines). They concede on a clock. They hide nothing. We didn't write them.</p>
         <div id="anac-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Roughly a tie — the honest, expected result.</b> These opponents hide nothing. So there's no bluff to expose, and checking buys little. Synod beats the stubborn one. It ties the eager one. It loses a little to the steady one — it scouted an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
+      </details>
       </details>
     </div></section>
 
@@ -373,17 +403,33 @@
       </div>
 
       <h3 class="mp-h">How they discuss and debate</h3>
-      <p class="arch-q">Each judge reads the move <b>alone</b> — in parallel, so nobody anchors anybody. Then they argue, round by round, and the disagreement goes on the record. Here's the twist: <b>the argument can't change the math</b> (we measured it — 0/12 live trials). Its job is to surface the disagreement the chair weighs. Persuasion is not a channel. That's what makes a well-argued bad idea harmless.</p>
+      <p class="arch-q">Each judge reads the same move <b>independently</b>, in parallel, so no judge anchors another. They debate to expose disagreement — not to persuade. The chair ignores rhetoric and resolves it from the recorded evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
+      <p class="arch-triad">Persuasion is not a channel.<br/>The debate exposes disagreement.<br/>The chair resolves it.</p>
 
       <h3 class="mp-h">What tasks they do</h3>
-      <p class="arch-q">Each judge owns one question: <b>Probe</b> — is this worth checking first? <b>Trust</b> — who are we really dealing with? <b>Pressure</b> — where's the leverage now? <b>Hedge</b> — what if we're wrong? <b>Frame</b> — what's the long game? And after the chair commits, each drafts their part of the plan — Probe writes the reconnaissance, Trust the back-channel, Pressure the leverage, Hedge the fallback, Frame the end-state. <b>The judge who argued the question executes its answer.</b></p>
+      <p class="arch-q"><b>The council decomposes every decision into five judgment tasks:</b></p>
+      <ul class="arch-b">
+        <li><b style="color:var(--empathy)">Trust</b> — infer the opponent's incentives.</li>
+        <li><b style="color:var(--battle)">Pressure</b> — find the immediate leverage.</li>
+        <li><b style="color:var(--probe)">Probe</b> — decide whether more information is worth buying.</li>
+        <li><b style="color:var(--war)">Frame</b> — protect the long-term position.</li>
+        <li><b style="color:var(--risk)">Hedge</b> — minimise the irreversible downside.</li>
+      </ul>
+      <p class="arch-q">After the chair commits, <b>the judge that owned the winning question drafts that part of the operational plan</b> — Probe writes the reconnaissance, Trust the back-channel, Hedge the fallback.</p>
 
       <h3 class="mp-h">How the math comes into play</h3>
-      <p class="arch-q">Three moments, all pure code. <b>The belief:</b> every move the opponent makes updates a running probability of who they are — Bayes' rule, on actions only, so talk can't move it. <b>The question price:</b> before the council asks anything, code computes whether the answer is worth a turn. <b>The decision:</b> the chair turns the situation into weights, multiplies each judge's score by their weight, and the highest total wins. Two backstops guard the edges — walk away when no believable price beats leaving, and take the sure win on the last round. Then the receipt is signed.</p>
+      <p class="arch-q"><b>Three deterministic components sit outside the models:</b></p>
+      <ul class="arch-b">
+        <li><b>Belief</b> — updates who-are-they probabilities from the opponent's <em>actions</em>. Talk can't move it.</li>
+        <li><b>Question price</b> — computes whether asking is worth a turn, before the council asks.</li>
+        <li><b>Chair</b> — turns the situation into weights, multiplies each judge's score, picks the winner.</li>
+        <li><b>Safety gates</b> — walk away when nothing believable beats leaving; take the sure win on the last round.</li>
+      </ul>
+      <p class="arch-q">Then the receipt is signed.</p>
 
       <div class="mcp-panel">
-        <div class="mcp-h">Any AI can call Synod as a <b>tool</b>.</div>
-        <p class="mcp-sub">Seven real tools — click a <b>▶ live</b> one to run it now and see exactly what another AI would get back.</p>
+        <div class="mcp-h">Any AI can consult the council through <b>seven MCP tools</b>.</div>
+        <p class="mcp-sub">Click a <b>▶ live</b> one to run it now.</p>
         <div id="mcp-tools" class="mcp-tools">loading the tool catalog…</div>
         <div id="mcp-io" class="mcp-io"></div>
         <div id="mcp-agent" class="mcp-agent"></div>

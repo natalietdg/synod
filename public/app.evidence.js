@@ -48,7 +48,7 @@ async function loadMcpAgentTranscript() {
     return step("AGENT DECIDES", esc(m.content), "decide");
   }).join("");
   host.innerHTML =
-    `<div class="ma-head">A real agent consulting the council <span class="hint">— recorded run (${new Date(t.recorded).toLocaleDateString("en-GB")}) · outer agent: ${esc(t.outerAgent)} · nothing told it what to conclude</span></div>` +
+    `<div class="ma-head">An independent Qwen agent consulted Synod before making its decision. <span class="hint">recorded ${new Date(t.recorded).toLocaleDateString("en-GB")} · nothing told it what to conclude</span></div>` +
     parts;
 }
 const meanStd = (s) => `${evMoney(s.surplusMean)} <span class="hint">±${evMoney(s.surplusStd)}</span>`;
