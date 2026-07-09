@@ -151,7 +151,7 @@
 
       <details class="wno-details">
         <summary>“Why not just ask one model to weigh five perspectives?” <span class="hint">— expand</span></summary>
-        <div class="wno-a"><b>These aren't five opinions. They're five specialized decision functions.</b> The models reason. Code tracks evidence, computes probabilities, values information, weighs the judges, and commits. One model playing five voices still shares one set of biases. <b>Synod doesn't.</b></div>
+        <div class="wno-a"><b>These aren't five opinions — they're five decision procedures.</b> The models reason; code tracks the evidence, weighs the judges, and commits. One model playing five voices shares one set of biases. <b>Synod doesn't.</b></div>
       </details>
       <div id="scene-council" class="scene-council">
         <div id="council-tableau" class="tableau"></div>
@@ -310,7 +310,7 @@
         <div class="brief-label">Exhibit A — does a council beat one agent alone?<span class="ex-take">Yes — the gap opens where the opponent lies. The solo agent walks with $0 on the bluff; the council closes all 10 games.</span></div>
         <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The baseline is built to win, not to lose — the same engine with the council removed.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Yes. The bluffer is where it shows.</b> The solo agent is fooled and walks with nothing. The council checks the claim and <span class="tw">holds the line</span><span class="tn">closes the deal</span> — all 10 games. <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent. One values the relationship. One has a hidden hard limit. One is bluffing. The “±” is how much the result wobbled between games. Smaller is steadier.</details></p>
+        <p class="ab-a"><b>Yes. The bluffer is where it shows.</b> <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent. One values the relationship. One has a hidden hard limit. One is bluffing. The “±” is how much the result wobbled between games. Smaller is steadier.</details></p>
       </div>
 
       <details class="exhibit">
@@ -339,7 +339,7 @@
         <summary class="brief-label">Exhibit D — why not just one general? <span class="hint">— expand</span><span class="ex-take">One good general matches the council most days. But you'd have to pick him in advance. The council never has to.</span></summary>
         <p class="ex-q">The same 10 games, but decided by <b>one judge alone</b> each time, vs the full council (the chair adapts). Longer bar = more won.</p>
         <div id="general-bench" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>The council beats four of five generals. It ties the fifth.</b> And it never had to guess which general to bet on. The one that ties here is exactly the one Exhibit C breaks. <details class="ex-more"><summary>the honest tie</summary>On this tuned set, a probe-leaning general can match the council. The council's real edge is robustness. It never craters across the hold-out worlds. Every single general eventually does.</details></p>
+        <p class="ab-a"><b>The council beats four of five generals and ties the fifth</b> — without ever guessing which one to bet on. <details class="ex-more"><summary>the honest tie</summary>The general that ties here is exactly the one Exhibit C breaks. On this tuned set, a probe-leaning general can match the council. The council's real edge is robustness. It never craters across the hold-out worlds. Every single general eventually does.</details></p>
       </details>
 
       <details class="exhibit">
@@ -353,7 +353,7 @@
         <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Three classic bots from negotiation research. We win one, tie one, lose one. The loss is real, and shown. Synod's edge only appears when the opponent hides something. That's the problem it was built for.</span></summary>
         <p class="ex-q">Three classic negotiators from the research field (Faratin 1998 — the standard ANAC baselines). They concede on a clock. They hide nothing. We didn't write them.</p>
         <div id="anac-bench" class="chart-box">Computing…</div>
-        <p class="ab-a"><b>Roughly a tie — the honest, expected result.</b> These opponents hide nothing. So there's no bluff to expose, and checking buys little. Synod beats the stubborn one. It ties the eager one. It loses a little to the steady one — it scouted an opponent with no secret. <details class="ex-more"><summary>what this test found — and fixed</summary>This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
+        <p class="ab-a"><b>Roughly a tie — the honest, expected result:</b> these opponents hide nothing, so checking buys little. <details class="ex-more"><summary>what this test found — and fixed</summary>Synod beats the stubborn one, ties the eager one, and loses a little to the steady one — it scouted an opponent with no secret. This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
       </details>
       </details>
 
