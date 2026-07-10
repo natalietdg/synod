@@ -708,7 +708,8 @@ main > .column { min-width: 0; }
 .drop-delta { color: var(--muted); margin-left: 0.3rem; }
 .drop-delta.lose { color: var(--bad); }
 
-/* Exhibit C — heatmap */
+/* Exhibit C — heatmap (scrolls inside its box on narrow screens instead of stretching the page) */
+@media (max-width: 620px){ .chart-box { overflow-x: auto; } .heatmap { min-width: 480px; } }
 .heatmap { display: grid; gap: 3px; font-family: var(--mono); }
 .hm-h, .hm-total {
   font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
