@@ -1262,6 +1262,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
   .beam, .disp-stamp, .case-stamp, .disposition, .redacted::after,
   body.running #pipeline-rail:not(.complete) .rail-edge { animation: none !important; }
   .redacted::after { transform: scaleX(0); }
+  * { animation-iteration-count: 1 !important; }
 }
 
 /* ====== INTERACTIVE TOUR — moving spotlight + terse coachmarks ====== */
@@ -1272,7 +1273,8 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
      spread, so any radius here becomes a giant black curve across the page. */
   border-radius: 0;
   box-shadow: 0 0 0 100vmax rgba(6, 8, 11, 0.72);
-  transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: top 0.45s cubic-bezier(0.4, 0, 0.2, 1), left 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    width 0.45s cubic-bezier(0.4, 0, 0.2, 1), height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tour-card {
   position: absolute; z-index: 96; width: 330px;
@@ -1346,7 +1348,12 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
   animation: hdr-pulse 2.4s ease-in-out infinite;
 }
 @keyframes hdr-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
-@media (max-width: 720px){ .site-header nav a[data-jump]{ display:none; } }
+@media (max-width: 1080px){ .site-header nav a[data-jump]{ display:none; } }
+@media (max-width: 620px){
+  .site-header .bar { flex-wrap: wrap; row-gap: 2px; }
+  .site-header .tag:not(.live){ display:none; }
+  .site-header nav { gap: 14px; }
+}
 
 /* ---- hero council backdrop graphic + legibility vignette ---- */
 .hero .hero-art {
@@ -2345,3 +2352,6 @@ body[data-track="nego"] .tw { display: none; }
 .wr-benched { font-family: var(--sans); font-size: 0.95rem; line-height: 1.55; color: var(--muted); margin: 0 0 1rem; padding: 0.7rem 0.9rem; background: var(--panel-2); border: 1px solid var(--gold-dim); border-radius: 4px; }
 .wr-benched b { color: var(--ink); }
 .wr-bench-x { color: var(--muted); } .wr-bench-x i { color: var(--gold-dim); font-style: normal; }
+
+/* press feedback — the interface confirms it heard you */
+button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transform: scale(0.97); }
