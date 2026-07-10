@@ -1872,8 +1872,9 @@ section { position: relative; z-index: 1; }
 .wr-play-primary:hover { filter: brightness(1.06); box-shadow: 0 0 0 1px var(--gold), 0 8px 26px -8px var(--gold); }
 
 /* Facing — pick the kind of opponent the live council convenes against */
-.wr-facing { flex-basis: 100%; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
+.wr-facing { flex-basis: 100%; min-width: 0; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.2rem; }
 .wr-facing-lbl { font-family: var(--mono); font-size: 0.56rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold); }
+.wr-facing select { flex: 1 1 auto; max-width: 100%; min-width: 0; width: auto; }
 #wr-scenario { font-family: var(--mono); font-size: 0.72rem; color: var(--ink); background: var(--panel);
   border: 1px solid var(--line-strong); border-radius: 3px; padding: 0.35rem 0.5rem; max-width: 100%; }
 .wr-facing .hint { font-size: 0.66rem; }
@@ -2084,7 +2085,7 @@ body[data-track="nego"] .tw { display: none; }
 .repro-left { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
 .repro-run { cursor: pointer; font-family: var(--mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.02em; color: var(--gold); background: transparent; border: 1px solid var(--gold-dim); border-radius: 3px; padding: 0.3rem 0.6rem; }
 .repro-run:hover { background: var(--gold-wash); }
-.repro-badge { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; color: var(--muted); padding: 0.35rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 4px; white-space: nowrap; }
+.repro-badge { font-family: var(--mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; color: var(--muted); padding: 0.35rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 4px; }
 .repro-badge.ok { color: #14120e; background: var(--probe); border-color: var(--probe); }
 .repro-badge.bad { color: #14120e; background: var(--hedge); border-color: var(--hedge); }
 .repro-note { flex: 1; min-width: 16rem; font-size: 0.98rem; line-height: 1.55; color: var(--muted); margin: 0; }
