@@ -23,5 +23,6 @@ jobs:
             git pull --ff-only origin master
             npm install --no-audit --no-fund
             pm2 restart synod --update-env
-            sleep 3
-            curl -sf localhost:4173/api/meta > /dev/null && echo "DEPLOY OK" || (pm2 logs synod --lines 30 --nostream; exit 1)
+            ok=0
+            for i in $(seq 1 12); do sleep 3; curl -sf localhost:4173/api/meta > /dev/null && ok=1 && break; done
+            [ "$ok" = 1 ] && echo "DEPLOY OK" || (pm2 logs synod --lines 30 --nostream; exit 1)
