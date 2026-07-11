@@ -1485,7 +1485,7 @@ body.running #pipeline-rail:not(.complete) .rail-edge {
 .arch-flow i { color: var(--gold); font-style: normal; }
 .arch-flow b { color: var(--ink); }
 .arch-key { font-family: var(--sans); font-size: 0.95rem; color: var(--muted); margin: 0 0 1.6rem; }
-.ev-takeaway { margin: 2rem 0 0; max-width: 80ch; font-family: var(--serif); font-size: 1.15rem; line-height: 1.6; color: var(--muted);
+.ev-takeaway { margin: 2rem 0 0; max-width: 100ch; font-family: var(--serif); font-size: 1.15rem; line-height: 1.6; color: var(--muted);
   padding-left: 1rem; border-left: 3px solid var(--gold); }
 .ev-takeaway b { color: var(--ink); }
 
@@ -2164,7 +2164,7 @@ body[data-track="nego"] .tw { display: none; }
 .switch-matrix-wrap { margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--line); }
 .sm-h { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); margin-bottom: 0.3rem; }
 .sm-h b { color: var(--ink); }
-.sm-sub { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); margin: 0 0 0.9rem; max-width: 80ch; }
+.sm-sub { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); margin: 0 0 0.9rem; max-width: 100ch; }
 .sm-grid { overflow-x: auto; }
 .sm-row { display: grid; grid-template-columns: 160px repeat(5, 1fr); gap: 4px; min-width: 560px; margin-bottom: 4px; }
 .sm-op { display: flex; flex-direction: column; justify-content: center; font-family: var(--mono); font-size: 0.68rem; color: var(--ink); padding: 0.3rem 0.4rem; }
@@ -2222,7 +2222,7 @@ body[data-track="nego"] .tw { display: none; }
 .ma-body pre { font-family: var(--mono); font-size: 0.62rem; line-height: 1.45; color: var(--muted); background: #0e0c08; border: 1px solid var(--line); border-radius: 4px; padding: 0.6rem 0.7rem; margin: 0.4rem 0 0; overflow-x: auto; max-height: 260px; overflow-y: auto; white-space: pre-wrap; }
 .ma-body summary { cursor: pointer; font-family: var(--mono); font-size: 0.66rem; color: var(--muted); }
 
-.prior-art { max-width: 80ch; margin: 1.6rem 0 1rem; font-family: var(--sans); font-size: 0.88rem; line-height: 1.6; color: var(--muted);
+.prior-art { max-width: 100ch; margin: 1.6rem 0 1rem; font-family: var(--sans); font-size: 0.88rem; line-height: 1.6; color: var(--muted);
   padding: 0.7rem 0.9rem; background: var(--panel); border-left: 2px solid var(--muted); border-radius: 2px; }
 .prior-art b { color: var(--ink); }
 .prior-art a { color: var(--gold); text-decoration: none; }
@@ -2252,7 +2252,7 @@ body[data-track="nego"] .tw { display: none; }
   font-family: var(--sans); font-size: 0.88rem; line-height: 1.55; color: var(--muted); }
 .vp-lane b { display: block; color: var(--ink); margin-bottom: 0.25rem; }
 .vp-lane a { color: var(--gold); text-decoration: none; }
-.vp-honest { margin: 1.8rem 0 0; max-width: 80ch; font-family: var(--sans); font-size: 0.9rem; line-height: 1.6; color: var(--muted);
+.vp-honest { margin: 1.8rem 0 0; max-width: 100ch; font-family: var(--sans); font-size: 0.9rem; line-height: 1.6; color: var(--muted);
   padding: 0.8rem 1rem; border: 1px dashed var(--line-strong); border-radius: 3px; }
 .vp-honest b { color: var(--ink); }
 /* ANL / NegMAS recorded results */
@@ -2454,3 +2454,5 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
   details[open] > *:not(summary) { animation: det-in 200ms var(--ease-strong); }
   @keyframes det-in { from { opacity: 0; transform: translateY(4px); } }
 }
+
+.run-sub { font-family: var(--serif); font-size: 1.2rem; color: var(--muted); margin: -0.6rem 0 1.4rem; }

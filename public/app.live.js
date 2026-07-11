@@ -6,7 +6,7 @@ async function init() {
   // (ran live / fell back), so the badge can never contradict what actually executed.
   $("#provider-badge").textContent =
     state.meta.provider === "qwen"
-      ? "LIVE QWEN READY · CONVENE TO RUN"
+      ? "LIVE QWEN READY · RUN A DECISION"
       : "RUNS LOCALLY · SAME ANSWER EVERY TIME";
   // Mode select: watch the council, deceive it yourself, or duel it on the same seed
   const GM_LABELS = {

@@ -149,7 +149,7 @@ async function loadWarRoom() {
       `</div>` +
       `<button class="wr-play wr-play-primary" id="wr-live">` +
         `<span class="wr-play-ico">▶</span>` +
-        `<span class="wr-play-txt"><span class="wr-play-main">Convene the war council</span>` +
+        `<span class="wr-play-txt"><span class="wr-play-main">▶ Run a live decision — convene the war council</span>` +
         `<span class="wr-play-sub" id="wr-live-tag">watch 5 generals reason &amp; argue it out — live on Qwen</span></span>` +
       `</button>` +
       `<span class="wr-live-status" id="wr-live-status"></span>` +
