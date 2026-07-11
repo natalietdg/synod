@@ -40,6 +40,19 @@
       </div>
     </div>
 
+    <!-- ====== THE OPENING — two beats, staged by scroll ====== -->
+    <section class="hero-stage" id="hero-stage" aria-label="Thesis">
+      <div class="hs-track">
+        <div class="hs-pin">
+          <h1 class="hs-h1">
+            <span class="hs-line hs-l1">Agent societies argue<br/>to agreement.</span>
+            <span class="hs-line hs-l2 serif-italic gold">Synod bets<br/>that&rsquo;s the flaw.</span>
+          </h1>
+          <div class="hs-cue" aria-hidden="true"><span>scroll</span><i>↓</i></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ====== HERO (interactive-first) ====== -->
     <section class="hero-c">
       <div class="wrap">
@@ -47,7 +60,7 @@
           <div class="hero-c-copy">
             <p class="eyebrow">Agent Society · <b>a decision system, not a chatbot system</b></p>
             <div class="track-pane" data-track="war">
-              <h1 class="display hero-c-h1">Agent societies argue to agreement. <span class="serif-italic gold">Synod bets that&rsquo;s the flaw.</span></h1>
+              
               <p class="lede">
                 The debate line proved agents sharpen answers by persuading each other <span class="cite">(Du&nbsp;&rsquo;23 · Irving&nbsp;&rsquo;18 · Khan&nbsp;&rsquo;24)</span>.
                 <strong>Synod bets the same channel is how a decider gets played.</strong>
@@ -57,7 +70,7 @@
               </p>
             </div>
             <div class="track-pane hidden" data-track="nego">
-              <h1 class="display hero-c-h1">Agent societies argue to agreement. <span class="serif-italic gold">Synod bets that&rsquo;s the flaw.</span></h1>
+              
               <p class="lede">
                 They say: <em>“we have a better offer — match it or we walk.”</em> Real, or a bluff?
                 <strong>Synod tells you which — and what to do about it.</strong>
@@ -528,6 +541,7 @@
 
     <script src="/synod-council.js" defer></script>
     <!-- UI split by concern; classic scripts share scope, loaded in order. init() runs in the last. -->
+    <script src="/app.hero.js"></script>
     <script src="/app.core.js"></script>
     <script src="/app.live.js"></script>
     <script src="/app.evidence.js"></script>

@@ -2383,3 +2383,22 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 @media (max-width: 620px){ .vn-cols { grid-template-columns: 1fr; } }
 
 #evidence .prov-details { margin-top: 2rem; }
+
+/* ---- the staged opening ---- */
+.hero-stage .hs-pin { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 4.5rem 24px 3rem; position: relative; }
+.hs-h1 { margin: 0; }
+.hs-line { display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 6vw, 4.4rem);
+  line-height: 1.12; color: var(--fg); letter-spacing: -0.01em; }
+.hs-l2 { margin-top: 0.4em; color: var(--gold); }
+.hs-cue { position: absolute; top: calc(50% + 6.5rem + 7vh); left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted); }
+.hs-cue i { font-style: normal; animation: hs-bob 2s ease-in-out infinite; color: var(--gold); }
+@keyframes hs-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+/* staged mode (JS + motion allowed): pin the viewport, beats crossfade by scroll */
+.hero-stage.hs-active .hs-track { height: 230vh; }
+.hero-stage.hs-active .hs-pin { position: sticky; top: 0; height: 100vh; }
+.hero-stage.hs-active .hs-line { position: absolute; left: 24px; right: 24px; top: 50%; translate: 0 -50%; will-change: transform, opacity; }
+.hero-stage.hs-active .hs-l2 { opacity: 0; margin-top: 0; }
