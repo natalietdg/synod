@@ -14,7 +14,9 @@ strategic decision, not instead of it.**
 shows agents persuading each other can sharpen *answers*. Synod tests the complementary
 hypothesis: for committed *decisions* under deception, persuasion is the attack surface —
 so judgments stay independent until a deterministic chair resolves them. Every measurement
-in this repo tests that bet (see the debate ablation: 0/12 live decisions changed, by design).
+in this repo tests that bet. Dialogue still bites — a landed challenge can move the defender's
+own score within a clamp (±0.1, receipted) — but it cannot stampede the chair: in 12 live
+matched-pair trials, no decision flipped.
 
 **The value, in one number: the expected value of decisions made with structured dissent
 minus decisions made without it.** A single-perspective agent systematically overpays in
