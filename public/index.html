@@ -111,7 +111,6 @@
     <section id="claim" class="section-pad"><div class="wrap">
       <div class="kicker-row"><span class="idx">§01</span><span class="lbl">First proof — disagreement changes the decision</span><span class="ln"></span></div>
       <p class="anchor-line">Preserving disagreement only matters if it changes outcomes.</p>
-      <p class="domain-note">One engine, two stress environments: <b>war</b> tests it under deception and irreversible stakes; <b>the business deal</b> tests it under hidden prices and negotiation pressure.</p>
 
       <div class="track-pane" data-track="war">
         <h2 class="display sec-display">Same opponent. Same scenario. <span class="serif-italic gold">One restarts a war.</span></h2>
@@ -121,7 +120,6 @@
           <a class="row" href="#evidence"><div class="stat s-close">PEACE</div><div class="desc"><b>The council, same opponent.</b> It checks the claim. The bluff collapses. Peace holds, every time.</div></a>
           <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The war comes back.</div></a>
         </div>
-        <p class="impact-line"><b>Without Probe, nobody verifies the claim. The bluff succeeds. The war returns.</b> <span class="hint">(no money on a war table — the stakes are abstract)</span></p>
         <p class="proof-payoff">The difference wasn't a smarter model — it was preserving disagreement long enough to verify the claim.</p>
         <a class="result-cta" data-goto="nego">Stress environment №2: <b>the business deal</b> <span class="rc-arr">→</span></a>
       </div>
@@ -134,7 +132,6 @@
           <a class="row" href="#evidence"><div class="stat s-close">$3,000</div><div class="desc"><b>Synod, the same opponent.</b> It checks the claim. The bluff breaks. The deal closes, every time.</div></a>
           <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The win turns into nothing.</div></a>
         </div>
-        <p class="impact-line"><b>Without Probe, the bluff stands. A $3,000 win becomes <span class="walk-c">$0</span>.</b> <span class="hint">(real $ on this deal — same result every time)</span></p>
         <p class="proof-payoff">The difference wasn't a smarter model — it was preserving disagreement long enough to verify the claim.</p>
         <p class="who-bleeds">Buyers, sales desks, recruiters and founders pay for this every day. <a href="#value">See who, and what it's worth →</a></p>
         <a class="result-cta" data-goto="war">Stress environment №1: <b>the war room</b> <span class="rc-arr">→</span></a>
@@ -177,7 +174,7 @@
         </div>
         <div class="flow5" data-reveal>
           <span>The situation</span><i>↓</i>
-          <span>Five independent judgments<em class="flow5-names"><b style="color:var(--empathy)">Trust</b> <b style="color:var(--battle)">Pressure</b> <b style="color:var(--probe)">Probe</b> <b style="color:var(--war)">Frame</b> <b style="color:var(--risk)">Hedge</b></em></span><i>↓</i>
+          <span>Five independent judgments</span><i>↓</i>
           <span>Debate — disagreement on the record</span><i>↓</i>
           <span>Belief update · value of information · adaptive weights</span><i>↓</i>
           <span>Neutral chair</span><i>↓</i>
@@ -231,7 +228,7 @@
     <section id="proceedings" class="section-pad section-alt proceedings-feature track-pane hidden" data-track="nego"><div class="wrap">
       <p class="env-lede"><b>Stress environment №2 — the deal.</b> Hidden prices, negotiation pressure, a counterparty who bluffs.</p>
       <h3 class="live-h">The identical council, closing a business <span class="serif-italic gold">deal.</span></h3>
-      <p class="live-sub">Money is real here. Pick an opponent and run a decision. Or <b>⚙ compose</b> your own — a situation nobody pre-wrote.</p>
+      <p class="live-sub">Money is real here. Pick an opponent and run a decision.</p>
       <div class="cast">
         <span class="cast-lbl">THE TABLE</span>
         <span class="cast-grp"><b>5 judges</b> <span class="cast-sub">the same five, no costumes</span>
@@ -384,7 +381,7 @@
       </details>
       </details>
 
-      <p class="ev-external" data-reveal>The ladder ends outside our control: negotiators from the literature, a real league — and 4,277 real humans.</p>
+      <p class="ev-external" data-reveal>The ladder ends outside our control: the literature's negotiators, the real league — and finally, 4,277 real humans.</p>
 
 <details class="exhibit">
         <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Three classic bots from negotiation research. We win one, tie one, lose one. The loss is real, and shown. Synod's edge only appears when the opponent hides something. That's the problem it was built for.</span></summary>
@@ -392,6 +389,12 @@
         <div id="anac-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Roughly a tie — the honest, expected result:</b> these opponents hide nothing, so checking buys little. <details class="ex-more"><summary>what this test found — and fixed</summary>Synod beats the stubborn one, ties the eager one, and loses a little to the steady one — it scouted an opponent with no secret. This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
 </details>
+
+      <div class="exhibit" id="exhibit-league" data-reveal>
+        <div class="brief-label">The real league — ANAC entrants, including the champion<span class="ex-take">Synod negotiated against real competition entrants — nobody knew anyone's limits. It closed against the league winner, $3,300 of the $4,000 on the table, every game.</span></div>
+        <p class="ex-q">ANAC is the international contest where negotiation programs play each other. Synod is selling; <b>$4,000 of profit is on the table</b>.</p>
+        <div id="vp-anl" class="vp-anl">loading recorded results…</div>
+      </div>
 
       <div class="exhibit ex-climax" id="exhibit-g" data-reveal>
         <div class="brief-label">Exhibit G — the final rung: 4,277 real human negotiations<span class="ex-take">Real Craigslist negotiations (Stanford's CraigslistBargain corpus). Where a real seller said yes against Synod's dissent, they got less. Its dissent flags the worse deals — on real humans, not our worlds.</span></div>
@@ -433,20 +436,12 @@
       </div>
       <p class="vp-take">The value: fewer believed bluffs, fewer abandoned wins — and a full deal committee for the price of one query.</p>
 
-      <h3 class="vp-h">We put it up against real competition negotiators</h3>
-      <p class="vp-sub">There's an international contest where negotiation programs play each other (<b>ANAC</b>). We took <b>real entrants — including its winner</b>. Synod negotiated against them for real. We didn't write these opponents. Nobody knew anyone's limits.</p>
-      <div class="vp-setup">The setup: Synod is selling. <b>$4,000 of profit is on the table.</b> The negotiation decides who keeps it.</div>
-      <div id="vp-anl" class="vp-anl">loading recorded results…</div>
-      <p class="vp-take">The takeaway: it closed real deals against real entrants — including the league winner.</p>
-
       <h3 class="vp-h">How you'd actually use it</h3>
       <div class="vp-adopt">
         <div class="vp-lane"><b>Your AI asks it for advice.</b> Any AI assistant can call Synod as a tool. We recorded one doing exactly that, unprompted. <a href="#architecture">See the transcript ↓</a></div>
-        <div class="vp-lane"><b>You check its homework.</b> One command re-creates every number on this page, digit for digit. You don't have to trust us.</div>
         <div class="vp-lane"><b>One engine, any domain.</b> The war room and the deal above are the same council under two stress environments.</div>
       </div>
 
-      <p class="vp-honest"><b>Where the proof ends, honestly:</b> Synod has beaten test worlds, textbook opponents, and real competition negotiators — and its judgment has now been read against <b>4,277 real human negotiations</b> (its dissent flags the worse deals; Exhibit G). What remains: running it <em>inside</em> live human deals. That needs a deployment, not more code.</p>
     </div></section>
 
     <!-- ====== §06 · ARCHITECTURE ====== -->

@@ -244,7 +244,7 @@ function handle(ev) {
     case "your-move": return renderYourMove(ev);
     case "duel-result": return renderDuelResult(ev);
     case "error": return renderStreamError(ev.message);
-    case "done": return finish();
+    case "done": document.getElementById("proceedings")?.classList.add("has-run"); return finish();
   }
 }
 

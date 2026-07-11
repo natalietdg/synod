@@ -2470,3 +2470,10 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .ex-climax { border-left: 3px solid var(--gold); padding-left: 1rem; }
 .ex-climax .ex-take { font-size: 1rem; color: var(--ink); }
 .ma-fold { margin-top: 0.5rem; }
+
+/* deal pane: the lab controls appear after the first run */
+#proceedings:not(.has-run) #fit-lab,
+#proceedings:not(.has-run) #compose-btn,
+#proceedings:not(.has-run) #speed-btn,
+#proceedings:not(.has-run) #guide-btn { display: none; }
+#exhibit-league .vp-anl { margin-top: 0.6rem; }
