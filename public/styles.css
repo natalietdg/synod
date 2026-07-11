@@ -2357,3 +2357,6 @@ body[data-track="nego"] .tw { display: none; }
 
 /* press feedback — the interface confirms it heard you */
 button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transform: scale(0.97); }
+
+/* hero citation — quiet, scholarly */
+.lede .cite { font-family: var(--mono); font-size: 0.72rem; color: var(--faint, #6f6552); letter-spacing: 0.02em; white-space: nowrap; }

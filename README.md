@@ -9,6 +9,13 @@ strategic decision, not instead of it.**
 > Everyone else uses multiple agents to divide work.
 > Synod uses them to make a better strategic decision *before* the work is divided.
 
+**The thesis, placed in the literature.** The debate line — [Du et al. 2023](https://arxiv.org/abs/2305.14325),
+[Irving et al. 2018](https://arxiv.org/abs/1805.00899), [Khan et al. 2024](https://arxiv.org/abs/2402.06782) —
+shows agents persuading each other can sharpen *answers*. Synod tests the complementary
+hypothesis: for committed *decisions* under deception, persuasion is the attack surface —
+so judgments stay independent until a deterministic chair resolves them. Every measurement
+in this repo tests that bet (see the debate ablation: 0/12 live decisions changed, by design).
+
 **The value, in one number: the expected value of decisions made with structured dissent
 minus decisions made without it.** A single-perspective agent systematically overpays in
 adversarial deals — it takes the other side's story at face value and is biased toward
@@ -158,7 +165,7 @@ math. Named plainly so the delta is auditable, not implied:
   procedures** — not one bidding strategy — and a neutral chair aggregates them, with the
   information decision (probe iff EVI > cost) made explicit and deterministic. *Delta:
   many procedures + auditable aggregation, not a single tuned negotiator.*
-- **vs multi-agent debate** (Du et al., 2023 — LLM instances debate to a consensus):
+- **vs multi-agent debate** ([Du et al. 2023](https://arxiv.org/abs/2305.14325); the debate-as-oversight line of [Irving et al. 2018](https://arxiv.org/abs/1805.00899) and [Khan et al. 2024](https://arxiv.org/abs/2402.06782) — LLM instances argue to a consensus, and persuasiveness is rewarded):
   debate-to-consensus rewards persuasion and courts groupthink. Synod deliberately does
   **not** let persuasion drive the aggregate — the chair decides on the *situation*; the
   debate is recorded dissent + a stress-test of the leading option. *Delta: this is why
