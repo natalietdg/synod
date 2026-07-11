@@ -2482,3 +2482,5 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 /* the page suggests the next experiment, one at a time */
 .run-next { display: none; font-family: var(--sans); font-size: 0.92rem; color: var(--gold); margin: 0.8rem 0 0; }
 #live-war.has-run .run-next, #proceedings.has-run .run-next { display: block; }
+
+.vp-null { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); margin: 0.4rem 0 0; }
