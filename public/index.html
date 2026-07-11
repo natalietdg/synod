@@ -161,7 +161,7 @@
         </div>
       </div>
       <p class="hc-proof">Measured, not asserted: remove Synod’s argument step — <b>$0</b> changes. Flatten the chair — <b>−$1,123</b>. The chair is causal. Rhetoric isn’t.</p>
-      <p class="hc-general">And persuasion is just one way to fail. The general flaw is <b>collapsing independent judgments into one belief before the information is in</b> — debate, voting, averaging: same collapse, different clothes. Swap the chair for a majority vote and the council loses <b>$1,113</b> (Exhibit B).</p>
+      <p class="hc-general">The general flaw is <b>collapsing independent judgments into one belief before the information is in</b> — by debate, vote, or average. Swap the chair for a majority vote: the council loses <b>$1,113</b> (Exhibit B).</p>
 
       <h3 class="mp-h">Part two — how Synod coordinates instead</h3>
       <div class="q5-wrap">
@@ -187,10 +187,13 @@
         <summary>“Why not just ask one model to weigh five perspectives?” <span class="hint">— expand</span></summary>
         <div class="wno-a"><b>These aren't five opinions — they're five decision procedures.</b> The models reason; code tracks the evidence, weighs the judges, and commits. One model playing five voices shares one set of biases. <b>Synod doesn't.</b></div>
       </details>
+      <details class="ex-group scene-fold">
+        <summary class="brief-label">Walk one recorded decision, step by step <span class="hint">— expand</span></summary>
       <div id="scene-council" class="scene-council">
         <div id="council-tableau" class="tableau"></div>
         <div id="consequence" class="consequence"></div>
       </div>
+      </details>
     </div></section>
 
     <!-- ====== §02·b · THE WAR ROOM (agent society — tune the judgment) ====== -->
@@ -203,7 +206,6 @@
       <p class="env-lede">This isn’t a scripted demo. You’re watching five judgments stay independent until the chair commits.</p>
       <div id="live-war" class="track-pane live-panel" data-track="war">
         <h3 class="live-h">The five judges, in uniform: five generals, one question each — <span class="serif-italic gold">and the chair makes the call.</span></h3>
-        <p class="live-map">Patton → Pressure · Sun Tzu → Probe · Eisenhower → Trust · Zhukov → Frame · Kutuzov → Hedge</p>
         <div id="warroom-body" class="warroom">Convening the war council…</div>
         <p class="run-next">Next — <b>take a judge away</b> below, and run it again. Then pick a different opponent.</p>
 
@@ -353,7 +355,7 @@
       </div>
 
       <details class="exhibit">
-        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Cut the check-the-claim step: −$1,606, the biggest loss. Cut the argument step: $0 — on purpose, so nobody can talk the system into a bad call. Swap the chair for simple voting: −$1,113. Every part earns its seat.</span></summary>
+        <summary class="brief-label">Exhibit B — is every part pulling its weight? <span class="hint">— expand</span><span class="ex-take">Cut the check-the-claim step: −$1,606, the biggest loss. Cut the argument: $0, by design. Swap the chair for voting: −$1,113.</span></summary>
         <p class="ex-q">Re-run the same 10, switching off one part each time. A big drop = that part was doing real work.</p>
         <div id="ablation-table" class="chart-box">Computing…</div>
         <p class="ab-a"><b>The “check the claim first” step matters most: −1,606.</b> That's the call that turns a win into a walk. <details class="ex-more"><summary>why the “argue it out” step shows −0 — measured in the engine AND live</summary>We tested this twice. In the engine, removing the argument changes the result by <b>$0</b>. Then we tested it live, as matched pairs. The chair scored the same judges before the argument and after it. Same weights. Only the argument differed. Result, <span id="debate-live-n">in 12 recorded trials</span>: <b>no judge ever moved. The final call never changed.</b> That's the design, not a gap. Each judge is the only voice for its question. So there is nobody to talk around. A well-argued bad idea has no way in. Disagreement is settled by the chair instead. And the chair's weighing IS causal: flatten it and the council loses <b>$1,123</b> (row above). <span class="hint">(trial log: <code>debate-ablation.json</code> · reproduce: <code>npx tsx src/harness/debateAblation.ts</code>)</span></details></p>
@@ -386,7 +388,7 @@
       <p class="ev-external" data-reveal>The ladder ends outside our control: the literature's negotiators, the real league — and finally, 4,277 real humans.</p>
 
 <details class="exhibit">
-        <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Three classic bots from negotiation research. We win one, tie one, lose one. The loss is real, and shown. Synod's edge only appears when the opponent hides something. That's the problem it was built for.</span></summary>
+        <summary class="brief-label">Exhibit F — opponents we didn't write (from the literature) <span class="hint">— expand</span><span class="ex-take">Three classic bots from the literature: we win one, tie one, lose one — the loss shown. Synod's edge appears only when the opponent hides something.</span></summary>
         <p class="ex-q">Three classic negotiators from the research field (Faratin 1998 — the standard ANAC baselines). They concede on a clock. They hide nothing. We didn't write them.</p>
         <div id="anac-bench" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Roughly a tie — the honest, expected result:</b> these opponents hide nothing, so checking buys little. <details class="ex-more"><summary>what this test found — and fixed</summary>Synod beats the stubborn one, ties the eager one, and loses a little to the steady one — it scouted an opponent with no secret. This test exposed a real flaw. The council used to hold past the final round. Live offers died on the table. We added a <b>deadline rule</b>: on the last round, take any offer that beats walking. Then we re-ran everything. Every existing exhibit came back byte-identical. Outside opponents finding a real bug is exactly what outside tests are for.</details></p>
@@ -399,7 +401,7 @@
       </div>
 
       <div class="exhibit ex-climax" id="exhibit-g" data-reveal>
-        <div class="brief-label">Exhibit G — the final rung: 4,277 real human negotiations<span class="ex-take">Real Craigslist negotiations (Stanford's CraigslistBargain corpus). Where a real seller said yes against Synod's dissent, they got less. Its dissent flags the worse deals — on real humans, not our worlds.</span></div>
+        <div class="brief-label">Exhibit G — the final rung: 4,277 real human negotiations<span class="ex-take">The last question: does the judgment hold against real humans? Where a real seller accepted against Synod's dissent, they got less — its dissent flags the worse deals, on real humans, not our worlds. <i>(Stanford's CraigslistBargain corpus)</i></span></div>
         <div id="transcripts-panel" class="chart-box">loading the recorded analysis…</div>
         <p class="ab-a"><details class="ex-more"><summary>what this can and can't claim</summary>A replay can't claim Synod would have won more — change one move and the whole conversation changes. So no counterfactuals. We only use the humans' own outcomes: every deal where a real seller accepted a buyer's offer, split by whether Synod — replaying the same buyer's offers — would also have accepted. The gap between those groups is the finding. Prices map into Synod's native band by a fixed, disclosed rule. Reading real humans is rung three; running inside live human deals is the step that remains.</details></p>
       </div>
@@ -441,7 +443,6 @@
       <h3 class="vp-h">How you'd actually use it</h3>
       <div class="vp-adopt">
         <div class="vp-lane"><b>Your AI asks it for advice.</b> Any AI assistant can call Synod as a tool. We recorded one doing exactly that, unprompted. <a href="#architecture">See the transcript ↓</a></div>
-        <div class="vp-lane"><b>One engine, any domain.</b> The war room and the deal above are the same council under two stress environments.</div>
       </div>
 
     </div></section>
@@ -471,6 +472,7 @@
       <p class="arch-q">If disagreement is preserved — therefore something rhetoric-proof must resolve it. Arithmetic gives three things a model can't: the same answer every time, immunity to rhetoric, and a visible trail — you can see exactly which judge, at what weight, decided. <b>The models reason. The arithmetic decides.</b></p>
 
       <h3 class="mp-h">Each judge's math</h3>
+      <p class="arch-q">If each judge owns one question — therefore each owns one formula:</p>
       <ul class="arch-b">
         <li><b style="color:var(--empathy)">Trust</b> — <b>Bayes' rule.</b> Every move the opponent makes updates the odds of who they are — actions only, talk doesn't count. Trust plays what fits the most likely opponent.</li>
         <li><b style="color:var(--probe)">Probe</b> — <b>Expected Value of Information.</b> What would knowing more be worth, minus what asking costs? Ask only when it pays.</li>
@@ -531,7 +533,7 @@
         <p class="vn-claim">The honest claim: <b>the council beats one agent in every environment we can test.</b></p>
       </div>
 
-      <p class="prior-art">Standing on named prior art — <b>ANAC / BOA</b> negotiation agents, <b>Bayesian opponent modeling</b>, and the <b>debate line</b>: <a href="https://arxiv.org/abs/2305.14325" target="_blank" rel="noopener">Du et al. 2023</a>, <a href="https://arxiv.org/abs/1805.00899" target="_blank" rel="noopener">Irving et al. 2018</a>, <a href="https://arxiv.org/abs/2402.06782" target="_blank" rel="noopener">Khan et al. 2024</a>. That work shows persuasion can sharpen <em>answers</em>. Synod tests the complementary case — committed <em>decisions</em> under deception, where persuasion is the attack surface. Exact deltas in the <a href="https://github.com/natalietdg/synod#prior-art--and-the-exact-delta" target="_blank" rel="noopener">README</a>.</p>
+      <p class="prior-art">Standing on named prior art — <b>ANAC / BOA</b> negotiation agents, <b>Bayesian opponent modeling</b>, and the <b>debate line</b>: <a href="https://arxiv.org/abs/2305.14325" target="_blank" rel="noopener">Du et al. 2023</a>, <a href="https://arxiv.org/abs/1805.00899" target="_blank" rel="noopener">Irving et al. 2018</a>, <a href="https://arxiv.org/abs/2402.06782" target="_blank" rel="noopener">Khan et al. 2024</a> — exact deltas in the <a href="https://github.com/natalietdg/synod#prior-art--and-the-exact-delta" target="_blank" rel="noopener">README</a>.</p>
 
     </div></section>
 

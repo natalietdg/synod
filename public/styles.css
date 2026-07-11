@@ -2465,7 +2465,8 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .arch-chain b { color: var(--ink); }
 
 /* removal experiment appears after the first run */
-#live-war:not(.has-run) #wr-remove, #live-war:not(.has-run) .cap-fold { display: none; }
+#live-war:not(.has-run) #wr-remove { display: none; }
+#live-war:not(.has-run2) .cap-fold { display: none; }
 /* the final rung reads like the climax it is */
 .ex-climax { border-left: 3px solid var(--gold); padding-left: 1rem; }
 .ex-climax .ex-take { font-size: 1rem; color: var(--ink); }
@@ -2473,7 +2474,7 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 
 /* deal pane: the lab controls appear after the first run */
 #proceedings:not(.has-run) #fit-lab,
-#proceedings:not(.has-run) #compose-btn,
+#proceedings:not(.has-run2) #compose-btn,
 #proceedings:not(.has-run) #speed-btn,
 #proceedings:not(.has-run) #guide-btn { display: none; }
 #exhibit-league .vp-anl { margin-top: 0.6rem; }

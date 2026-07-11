@@ -201,13 +201,32 @@ function wrFallback(why) {
   // The mock proceedings (steps 1–5) were built at load and sit hidden — reveal them so the
   // demo still walks a full decision. (The operational order is live-only, so step 6 stays a prompt.)
   $("#wr-proceedings")?.classList.remove("hidden");
-  $("#live-war")?.classList.add("has-run");
+  wrAdvanceStage(0, document.querySelector("#wr-scenario")?.value || "type-c-deceptive");
   wrPlay();
 }
 
 /* On-demand: each of the five generals reasons LIVE on Qwen (their own five-lens read).
    Replaces the mock split/voices with genuinely model-generated ones, and flags it LIVE.
    The default stays mock (free, reproducible); this proves the personas are real agents. */
+
+/* Progressive disclosure: after each run, suggest exactly ONE next experiment. */
+function wrAdvanceStage(offCount, scenario) {
+  const wrap = $("#live-war"); if (!wrap) return;
+  wrap.classList.add("has-run");
+  const st = (WR.stage ??= { removed: false, scenarios: new Set() });
+  if (offCount) st.removed = true;
+  st.scenarios.add(scenario);
+  const nudge = wrap.querySelector(".run-next"); if (!nudge) return;
+  if (!st.removed) {
+    nudge.innerHTML = "Next — <b>take a judge away</b> below, and run it again.";
+  } else if (st.scenarios.size < 2) {
+    wrap.classList.add("has-run2"); // the removal lab unlocks once removal is understood
+    nudge.innerHTML = "Next — <b>pick a different opponent</b> above. A different judge becomes decisive.";
+  } else {
+    nudge.innerHTML = "Now switch to <b>🤝 the business deal</b> up top — and ⚙ compose an opponent nobody pre-wrote.";
+  }
+}
+
 async function wrRunLive() {
   const btn = $("#wr-live"), status = $("#wr-live-status");
   if (!btn || WR.liveRunning) return;
@@ -283,7 +302,7 @@ async function wrRunLive() {
     const badge = document.querySelector("#provider-badge");
     if (badge) badge.textContent = fresh ? "⚡ RAN LIVE ON QWEN" : "⚡ LIVE RUN · RECORDED";
     $("#wr-proceedings")?.classList.remove("hidden");
-  $("#live-war")?.classList.add("has-run");
+    wrAdvanceStage(off.length, scenario);
     wrPlay();
     wrRenderWargame(WR.data.wargame);
   } catch (err) {

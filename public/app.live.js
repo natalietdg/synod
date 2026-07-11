@@ -244,7 +244,7 @@ function handle(ev) {
     case "your-move": return renderYourMove(ev);
     case "duel-result": return renderDuelResult(ev);
     case "error": return renderStreamError(ev.message);
-    case "done": document.getElementById("proceedings")?.classList.add("has-run"); return finish();
+    case "done": negoStage(); return finish();
   }
 }
 
@@ -1194,3 +1194,18 @@ function addTrajRow(sel, round, segs, dominantLabel, stackTooltip) {
   $(sel).appendChild(row);
 }
 
+
+/* Progressive disclosure for the deal pane: opponent second, compose last. */
+function negoStage() {
+  const sec = document.getElementById("proceedings"); if (!sec) return;
+  const st = (negoStage.s ??= { scenarios: new Set() });
+  st.scenarios.add(document.getElementById("scenario-select")?.value);
+  sec.classList.add("has-run");
+  const nudge = sec.querySelector(".run-next"); if (!nudge) return;
+  if (st.scenarios.size < 2) {
+    nudge.innerHTML = "Next — <b>try another opponent</b>.";
+  } else {
+    sec.classList.add("has-run2");
+    nudge.innerHTML = "Now <b>⚙ compose</b> an opponent nobody pre-wrote — or describe one in English.";
+  }
+}
