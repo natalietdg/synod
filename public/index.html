@@ -64,7 +64,6 @@
               <p class="lede">
                 The debate line proved agents sharpen answers by persuading each other <span class="cite">(Du&nbsp;&rsquo;23 · Irving&nbsp;&rsquo;18 · Khan&nbsp;&rsquo;24)</span>.
                 <strong>Synod bets the same channel is how a decider gets played.</strong>
-                So its five judges never argue each other round. They stay independent until a deterministic chair resolves their disagreement — and commits.
                 <br/><br/>
                 <strong>Every number on this page tests that bet.</strong>
               </p>
@@ -84,6 +83,7 @@
               <span>Deterministic chair</span><i>→</i>
               <span class="hf-end">Committed decision</span>
             </div>
+            <p class="hf-cap">Judges never converge. Only the chair commits.</p>
             <div class="btn-row">
               <a class="btn btn-primary" href="#warroom">Run the council live ▾</a>
               <a class="btn" href="#evidence">See the evidence</a>
@@ -122,6 +122,7 @@
           <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The war comes back.</div></a>
         </div>
         <p class="impact-line"><b>Without Probe, nobody verifies the claim. The bluff succeeds. The war returns.</b> <span class="hint">(no money on a war table — the stakes are abstract)</span></p>
+        <p class="proof-payoff">The difference wasn't a smarter model — it was preserving disagreement long enough to verify the claim.</p>
         <a class="result-cta" data-goto="nego">Stress environment №2: <b>the business deal</b> <span class="rc-arr">→</span></a>
       </div>
 
@@ -134,6 +135,7 @@
           <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The win turns into nothing.</div></a>
         </div>
         <p class="impact-line"><b>Without Probe, the bluff stands. A $3,000 win becomes <span class="walk-c">$0</span>.</b> <span class="hint">(real $ on this deal — same result every time)</span></p>
+        <p class="proof-payoff">The difference wasn't a smarter model — it was preserving disagreement long enough to verify the claim.</p>
         <p class="who-bleeds">Buyers, sales desks, recruiters and founders pay for this every day. <a href="#value">See who, and what it's worth →</a></p>
         <a class="result-cta" data-goto="war">Stress environment №1: <b>the war room</b> <span class="rc-arr">→</span></a>
       </div>
@@ -323,7 +325,7 @@
       <div class="kicker-row"><span class="idx">§04</span><span class="lbl">Testing the hypothesis</span><span class="ln"></span></div>
       <p class="anchor-line">Synod is a decision arbitration system — structured disagreement, resolved into one committed action.</p>
       <h2 class="display sec-display">Filed, sealed, <span class="serif-italic">repeatable.</span></h2>
-      <p class="lede">The hypothesis: preserved disagreement beats persuasion. Seven tests below — hit <b>re-run</b> and every number recomputes in front of you.</p>
+      <p class="lede">Seven tests, one question: <b>what happens when independent judgment disappears?</b> Hit <b>re-run</b> — every number recomputes in front of you.</p>
       <div class="ev-headline" data-reveal>
         <span class="ev-hl-k">If you read one thing</span>
         <span class="tw">Against a bluff, a lone commander restarts the war. The council keeps the peace — <b>all 10 games</b>. Across every opponent it wins <b>66% more</b>. The exhibits below are the receipts.</span>
@@ -334,7 +336,7 @@
           <span class="repro-badge" id="repro-badge">checking the engine…</span>
           <button class="repro-run" id="repro-run">↻ Re-run the check</button>
         </div>
-        <p class="repro-note">The whole suite is re-made from scratch, twice — the two results match to the digit. <span class="hint">(same check as <code>npm run reproduce</code>)</span></p>
+        <p class="repro-note"><b>Every figure on this page can be regenerated.</b> The suite is re-made from scratch, twice — the results match to the digit. <span class="hint">(same check as <code>npm run reproduce</code>)</span></p>
       </div>
       <p class="ev-frame">
         <span class="tw">⚔ War view — the same runs, stakes in units.</span>
@@ -342,7 +344,7 @@
       </p>
 
       <div class="exhibit" id="exhibit-a" data-reveal>
-        <div class="brief-label">Exhibit A — does a council beat one agent alone?<span class="ex-take">Yes — the gap opens where the opponent lies. The solo agent walks with $0 on the bluff; the council closes all 10 games.</span></div>
+        <div class="brief-label">Exhibit A — does preserving disagreement beat one agent alone?<span class="ex-take">Yes — the gap opens where the opponent lies. The solo agent walks with $0 on the bluff; the council closes all 10 games.</span></div>
         <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The baseline is built to win, not to lose — the same engine with the council removed.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
         <p class="ab-a"><b>Yes. The bluffer is where it shows.</b> <details class="ex-more"><summary>how to read it</summary>Three kinds of opponent. One values the relationship. One has a hidden hard limit. One is bluffing. The “±” is how much the result wobbled between games. Smaller is steadier.</details></p>
@@ -452,9 +454,15 @@
 
       <p class="arch-flow">situation <i>→</i> five judges, in parallel <i>→</i> disagreement, on record <i>→</i> deterministic chair <i>→</i> <b>one committed decision</b></p>
       <p class="arch-key">The key idea: the bet, built as structure — no persuasion channel exists. Five independent judgments, resolved by arithmetic into one decision.</p>
+      <ul class="arch-chain">
+        <li>If persuasion can't be trusted — <b>therefore the chair is deterministic.</b></li>
+        <li>If judgments must stay independent — <b>therefore no judge shares another's belief.</b></li>
+        <li>If a model shouldn't decide — <b>therefore arithmetic commits.</b></li>
+        <li>If every call must be auditable — <b>therefore seeds are fixed and receipts are signed.</b></li>
+      </ul>
 
       <h3 class="mp-h">How they discuss and debate</h3>
-      <p class="arch-q">Because judgments must stay independent, debate exists to expose disagreement — never to persuade the chair. One exception, and it's bounded: the most-opposed pair exchange one round, and a landed objection may move the <em>defender's own score</em> on the contested action — clamped to ±0.1, on the receipt. So a challenge can flip a razor-thin round; it can never stampede the council. Measured: in <b>12</b> live matched-pair trials none was close enough to flip, and removing the chair costs <b>$1,123</b>.</p>
+      <p class="arch-q">Because judgments must stay independent, debate exists to expose disagreement — never to persuade the chair. One exception, and it's bounded: the most-opposed pair exchange one round, and a landed objection may move the <em>defender's own score</em> on the contested action — clamped to ±0.1, on the receipt. So a challenge can flip a razor-thin round; it can never stampede the council. Measured: in <b>12</b> live matched-pair trials none was close enough to flip, and removing the chair costs <b>$1,123</b>. <b>Persuasion isn't how Synod reaches agreement. Arbitration is.</b></p>
       <p class="arch-triad">Persuasion is not a channel.<br/>The debate exposes disagreement.<br/>The chair resolves it.</p>
 
       <h3 class="mp-h">What tasks they do</h3>
@@ -538,8 +546,7 @@
 
     <footer class="site-footer">
       <div class="ft">
-        <div class="ftmark">Most agent societies divide labor.<br>SYNOD divides judgment.</div>
-        <div class="ftcols">Independent judgment.<br>Deterministic commitment.<br>Every call signed &amp; repeatable.</div>
+        <div class="ftmark">Most agent societies divide labor.<br>SYNOD divides judgment — <br>and preserves it until commitment.</div>
         <div class="ftcols faint">Qwen Global AI Hackathon<br>Track 3 · MMXXVI<br><a href="https://github.com/natalietdg/synod" target="_blank" rel="noopener">github.com/natalietdg/synod</a></div>
       </div>
     </footer>

@@ -2456,3 +2456,10 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 }
 
 .run-sub { font-family: var(--serif); font-size: 1.2rem; color: var(--muted); margin: -0.6rem 0 1.4rem; }
+
+.hf-cap { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); margin: 0.5rem 0 0; }
+.proof-payoff { font-family: var(--serif); font-size: 1.15rem; color: var(--gold); margin: 1rem 0 0.4rem; }
+
+.arch-chain { list-style: none; margin: 0 0 1.8rem; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; max-width: 70ch; }
+.arch-chain li { font-family: var(--sans); font-size: 0.95rem; color: var(--muted); }
+.arch-chain b { color: var(--ink); }
