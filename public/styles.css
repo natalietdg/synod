@@ -2404,3 +2404,8 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .hero-stage.hs-active .hs-pin { position: sticky; top: 0; height: 100vh; }
 .hero-stage.hs-active .hs-line { position: absolute; left: 24px; right: 24px; top: 50%; translate: 0 -50%; will-change: transform, opacity; }
 .hero-stage.hs-active .hs-l2 { opacity: 0; margin-top: 0; }
+
+.hero-close { margin-top: 1.4rem; font-family: var(--serif); font-size: 1.25rem; letter-spacing: 0.01em; color: var(--ink); }
+.hc-general { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 70ch; margin: -0.8rem 0 1.6rem; }
+.hc-general b { color: var(--ink); }
+.ev-external { font-family: var(--sans); font-size: 0.95rem; color: var(--ink); margin: 2rem 0 1rem; padding-left: 1rem; border-left: 3px solid var(--gold); }

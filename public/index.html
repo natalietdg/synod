@@ -90,6 +90,7 @@
             </div>
             <p class="hero-pair">Against a bluffer it wins <b>66% more</b> than one agent alone. Against honest opponents it roughly ties. <b>Once, it lost.</b> We show you that too.</p>
             <p class="hero-base">Baseline = the same engine, same moves, same game — just the council removed. One head instead of five.</p>
+            <p class="hero-close">Independent judgment. Deterministic commitment.</p>
           </div>
         </div>
       </div>
@@ -118,7 +119,7 @@
         <div class="ledger">
           <a class="row" href="#evidence"><div class="stat s-walk">WAR</div><div class="desc"><b>A lone commander</b> believes strength that was never there. He breaks off. The war reignites, for nothing.</div></a>
           <a class="row" href="#evidence"><div class="stat s-close">PEACE</div><div class="desc"><b>The council, same opponent.</b> It checks the claim. The bluff collapses. Peace holds, every time.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe, the judge that checks claims. The council misreads the bluff. The war comes back.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-loss">−probe</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The war comes back.</div></a>
         </div>
         <p class="impact-line"><b>Without Probe, nobody verifies the claim. The bluff succeeds. The war returns.</b> <span class="hint">(no money on a war table — the stakes are abstract)</span></p>
         <a class="result-cta" data-goto="nego">Stress environment №2: <b>the business deal</b> <span class="rc-arr">→</span></a>
@@ -130,7 +131,7 @@
         <div class="ledger">
           <a class="row" href="#evidence"><div class="stat s-walk">$0</div><div class="desc"><b>A single agent</b> faces a bluffed threat. It believes it. It walks away from a win.</div></a>
           <a class="row" href="#evidence"><div class="stat s-close">$3,000</div><div class="desc"><b>Synod, the same opponent.</b> It checks the claim. The bluff breaks. The deal closes, every time.</div></a>
-          <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">Remove Probe, the judge that checks claims. Same game. The win turns into nothing.</div></a>
+          <a class="row" href="#evidence"><div class="stat s-loss">&minus;$1,606</div><div class="desc">Remove Probe — the judge that buys information — and the council commits before checking. The win turns into nothing.</div></a>
         </div>
         <p class="impact-line"><b>Without Probe, the bluff stands. A $3,000 win becomes <span class="walk-c">$0</span>.</b> <span class="hint">(real $ on this deal — same result every time)</span></p>
         <p class="who-bleeds">Buyers, sales desks, recruiters and founders pay for this every day. <a href="#value">See who, and what it's worth →</a></p>
@@ -160,6 +161,7 @@
         </div>
       </div>
       <p class="hc-proof">Measured, not asserted: remove Synod’s argument step — <b>$0</b> changes. Flatten the chair — <b>−$1,123</b>. The chair is causal. Rhetoric isn’t.</p>
+      <p class="hc-general">And persuasion is just one way to fail. The general flaw is <b>collapsing independent judgments into one belief before the information is in</b> — debate, voting, averaging: same collapse, different clothes. Swap the chair for a majority vote and the council loses <b>$1,113</b> (Exhibit B).</p>
 
       <div class="q5-wrap">
         <div class="q5">
@@ -359,6 +361,8 @@
         <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model (Claude), not from Qwen. So the system didn't write its own exam. <b>Honest limit:</b> the 10 games show a result is steady <em>within</em> a world. They don't prove it holds across all real worlds. And five worlds from one author is a small sample. Read the numbers as “stable in these worlds.” Not “proven in general.” Widening this needs a third source, or real transcripts.</details></p>
       </details>
 
+      <p class="ev-external">From here down, we deliberately sought tests we <b>don’t control</b>: 4,277 real humans, a rival lab’s worlds, the literature’s negotiators, a real league.</p>
+
       <div class="exhibit" id="exhibit-g">
         <div class="brief-label">Exhibit G — read against real humans<span class="ex-take">4,277 real Craigslist negotiations (Stanford's CraigslistBargain corpus). Where a real seller said yes against Synod's dissent, they got less. Its dissent flags the worse deals — on real humans, not our worlds.</span></div>
         <div id="transcripts-panel" class="chart-box">loading the recorded analysis…</div>
@@ -449,7 +453,7 @@
       <p class="arch-key">The key idea: the bet, built as structure — no persuasion channel exists. Five independent judgments, resolved by arithmetic into one decision.</p>
 
       <h3 class="mp-h">How they discuss and debate</h3>
-      <p class="arch-q">Each judge evaluates independently, in parallel. Debate exposes disagreement — not persuasion. The chair ignores rhetoric and resolves it from the evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
+      <p class="arch-q">Because judgments must stay independent, debate exists only to expose disagreement — never to persuade. The chair ignores rhetoric and resolves it from the evidence. Measured: removing the debate changed <b>0/12</b> live decisions; removing the chair costs <b>$1,123</b>.</p>
       <p class="arch-triad">Persuasion is not a channel.<br/>The debate exposes disagreement.<br/>The chair resolves it.</p>
 
       <h3 class="mp-h">What tasks they do</h3>
@@ -464,7 +468,7 @@
       <p class="arch-q">After the chair commits, <b>the judge that owned the winning question drafts that part of the operational plan</b> — Probe writes the reconnaissance, Trust the back-channel, Hedge the fallback.</p>
 
       <h3 class="mp-h">Why use math?</h3>
-      <p class="arch-q">Because judgment you can't audit is just a vibe. Arithmetic gives three things a model can't: the same answer every time, immunity to rhetoric, and a visible trail — you can see exactly which judge, at what weight, decided. <b>The models reason. The arithmetic decides.</b></p>
+      <p class="arch-q">Because preserved disagreement needs a resolver nobody can sweet-talk. Arithmetic gives three things a model can't: the same answer every time, immunity to rhetoric, and a visible trail — you can see exactly which judge, at what weight, decided. <b>The models reason. The arithmetic decides.</b></p>
 
       <h3 class="mp-h">Each judge's math</h3>
       <ul class="arch-b">
