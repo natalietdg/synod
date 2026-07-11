@@ -1736,7 +1736,7 @@ section { position: relative; z-index: 1; }
 /* Fit explorer — emphasize the FIT (category), de-emphasize the dollar */
 .fit-headline { font-family: var(--sans); font-size: 1.15rem; color: var(--muted); margin-bottom: 0.9rem; line-height: 1.5; }
 .fit-headline b { color: var(--ink); }
-.fit-foot { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); margin-top: 0.9rem; line-height: 1.55; max-width: 70ch; }
+.fit-foot { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); margin-top: 0.9rem; line-height: 1.55; max-width: 100ch; }
 .fit-foot b { color: var(--gold); } .fit-foot em { color: var(--ink); font-style: italic; }
 .fit-fits { font-family: var(--mono); font-size: 0.8rem; font-weight: 700; color: var(--gold); }
 .fit-amt { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); opacity: 0.7; }
@@ -2362,7 +2362,7 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .lede .cite { font-family: var(--mono); font-size: 0.72rem; color: var(--faint, #6f6552); letter-spacing: 0.02em; white-space: nowrap; }
 
 /* §02 — the two ways a society can resolve disagreement */
-.hyp-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.2rem 0 0.5rem; max-width: 70ch; }
+.hyp-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 1.2rem 0 0.5rem; max-width: 100ch; }
 .hc-col { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; }
 .hc-col b { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
 .hc-col span { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); }
@@ -2370,7 +2370,7 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .hc-synod { border-color: var(--gold-dim, #8a6d1f); }
 .hc-synod b, .hc-synod i { color: var(--gold); }
 .hc-synod span { color: var(--ink); }
-.hc-proof { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 70ch; margin: 0 0 1.6rem; }
+.hc-proof { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 100ch; margin: 0 0 1.6rem; }
 .hc-proof b { color: var(--ink); }
 @media (max-width: 620px){ .hyp-cmp { grid-template-columns: 1fr; } }
 
@@ -2406,6 +2406,20 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .hero-stage.hs-active .hs-l2 { opacity: 0; margin-top: 0; }
 
 .hero-close { margin-top: 1.4rem; font-family: var(--serif); font-size: 1.25rem; letter-spacing: 0.01em; color: var(--ink); }
-.hc-general { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 70ch; margin: -0.8rem 0 1.6rem; }
+.hc-general { font-family: var(--sans); font-size: 0.92rem; color: var(--muted); max-width: 100ch; margin: -0.8rem 0 1.6rem; }
 .hc-general b { color: var(--ink); }
 .ev-external { font-family: var(--sans); font-size: 0.95rem; color: var(--ink); margin: 2rem 0 1rem; padding-left: 1rem; border-left: 3px solid var(--gold); }
+
+/* the creed, seated on the council itself */
+.creed-fused { position: relative; overflow: hidden; padding: 3rem 1.5rem; min-height: 640px;
+  display: flex; align-items: center; justify-content: center; }
+@media (max-width: 620px){
+  .creed-fused { min-height: 100vw; }
+  .creed-art .council { opacity: 0.3; }
+  .creed-fused .creed-copy { background: radial-gradient(ellipse 75% 80% at 50% 50%, rgba(20,18,14,0.95) 45%, rgba(20,18,14,0) 78%); }
+}
+.creed-art { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.creed-art .council { position: relative; width: min(560px, 92vw); height: min(560px, 92vw); opacity: 0.6; }
+.creed-fused .creed-copy { position: relative; z-index: 1;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(20,18,14,0.88) 38%, rgba(20,18,14,0) 72%);
+  padding: 3.5rem 1rem; }
