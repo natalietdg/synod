@@ -77,7 +77,7 @@
                 Five AI judges each check one thing. A neutral chair weighs them and commits. It reads what the other side <em>does</em>, not what they say.
               </p>
             </div>
-            <div class="hero-flow" aria-label="How it decides, in one line"><b class="hf-lbl">DECISION PIPELINE</b>
+            <div class="hero-flow" data-reveal-stagger aria-label="How it decides, in one line"><b class="hf-lbl">DECISION PIPELINE</b>
               <span>Situation</span><i>→</i>
               <span>Five independent judgments</span><i>→</i>
               <span>Disagreement, preserved</span><i>→</i>
@@ -90,7 +90,7 @@
             </div>
             <p class="hero-pair">Against a bluffer it wins <b>66% more</b> than one agent alone. Against honest opponents it roughly ties. <b>Once, it lost.</b> We show you that too.</p>
             <p class="hero-base">Baseline = the same engine, same moves, same game — just the council removed. One head instead of five.</p>
-            <p class="hero-close">Independent judgment. Deterministic commitment.</p>
+            <p class="hero-close" data-reveal>Independent judgment. Deterministic commitment.</p>
           </div>
         </div>
       </div>
@@ -99,7 +99,7 @@
     <!-- ====== THE CREED — the whole idea in four lines, over the council itself ====== -->
     <div class="creed creed-fused">
       <div class="creed-art" aria-hidden="true"><div class="council" data-council></div></div>
-      <div class="wrap creed-copy">
+      <div class="wrap creed-copy" data-reveal-stagger>
         <p class="creed-head">Most agent societies divide <em>work</em>. <b>Synod divides judgment.</b></p>
         <p>Five specialists independently evaluate the same decision.</p>
         <p>No one persuades anyone. A neutral chair resolves the disagreement — with deterministic code.</p>
@@ -146,7 +146,7 @@
       <h2 class="display sec-display">It decides by <span class="serif-italic">disagreement.</span></h2>
       <p class="lede">Every agent society must answer one question: <b>who wins when the agents disagree?</b> Most say: whoever argues best. Synod says: never the best arguer.</p>
 
-      <div class="hyp-cmp">
+      <div class="hyp-cmp" data-reveal-stagger>
         <div class="hc-col">
           <b>Debate societies</b>
           <span>agents persuade each other</span><i>↓</i>
@@ -164,14 +164,14 @@
       <p class="hc-general">And persuasion is just one way to fail. The general flaw is <b>collapsing independent judgments into one belief before the information is in</b> — debate, voting, averaging: same collapse, different clothes. Swap the chair for a majority vote and the council loses <b>$1,113</b> (Exhibit B).</p>
 
       <div class="q5-wrap">
-        <div class="q5">
+        <div class="q5" data-reveal-stagger>
           <div class="q5-i" style="--c:var(--empathy)"><b>Trust</b><span>Infer incentives</span></div>
           <div class="q5-i" style="--c:var(--battle)"><b>Pressure</b><span>Exploit leverage</span></div>
           <div class="q5-i" style="--c:var(--probe)"><b>Probe</b><span>Buy information</span></div>
           <div class="q5-i" style="--c:var(--war)"><b>Frame</b><span>Protect position</span></div>
           <div class="q5-i" style="--c:var(--risk)"><b>Hedge</b><span>Limit downside</span></div>
         </div>
-        <div class="flow5">
+        <div class="flow5" data-reveal>
           <span>The situation</span><i>↓</i>
           <span>Five independent judgments<em class="flow5-names"><b style="color:var(--empathy)">Trust</b> <b style="color:var(--battle)">Pressure</b> <b style="color:var(--probe)">Probe</b> <b style="color:var(--war)">Frame</b> <b style="color:var(--risk)">Hedge</b></em></span><i>↓</i>
           <span>Debate — disagreement on the record</span><i>↓</i>
@@ -323,7 +323,7 @@
       <p class="anchor-line">Synod is a decision arbitration system — structured disagreement, resolved into one committed action.</p>
       <h2 class="display sec-display">Filed, sealed, <span class="serif-italic">repeatable.</span></h2>
       <p class="lede">The hypothesis: preserved disagreement beats persuasion. Seven tests below — hit <b>re-run</b> and every number recomputes in front of you.</p>
-      <div class="ev-headline">
+      <div class="ev-headline" data-reveal>
         <span class="ev-hl-k">If you read one thing</span>
         <span class="tw">Against a bluff, a lone commander restarts the war. The council keeps the peace — <b>all 10 games</b>. Across every opponent it wins <b>66% more</b>. The exhibits below are the receipts.</span>
         <span class="tn">Against a bluffer, one agent walks with <b>$0</b>. The council closes <b>$3,000</b> — all 10 games. Across every opponent: <b>$8,968 vs $5,406</b>. The exhibits below are the receipts.</span>
@@ -340,7 +340,7 @@
         <span class="tn">🤝 Deal view — the same runs, real dollars.</span>
       </p>
 
-      <div class="exhibit" id="exhibit-a">
+      <div class="exhibit" id="exhibit-a" data-reveal>
         <div class="brief-label">Exhibit A — does a council beat one agent alone?<span class="ex-take">Yes — the gap opens where the opponent lies. The solo agent walks with $0 on the bluff; the council closes all 10 games.</span></div>
         <p class="ex-q">Same opponent, 10 games each — one strong agent alone vs the five-member council. Taller bar = more won. <span class="hint">The baseline is built to win, not to lose — the same engine with the council removed.</span></p>
         <div id="ab-table" class="chart-box">Computing…</div>
@@ -361,9 +361,9 @@
         <p class="ab-a"><b>Every single judge goes red in some world, but the council's row never does</b> — that's why you keep all five. <details class="ex-more"><summary>why this is fair — and where it stops</summary>The test worlds came from a different model (Claude), not from Qwen. So the system didn't write its own exam. <b>Honest limit:</b> the 10 games show a result is steady <em>within</em> a world. They don't prove it holds across all real worlds. And five worlds from one author is a small sample. Read the numbers as “stable in these worlds.” Not “proven in general.” Widening this needs a third source, or real transcripts.</details></p>
       </details>
 
-      <p class="ev-external">From here down, we deliberately sought tests we <b>don’t control</b>: 4,277 real humans, a rival lab’s worlds, the literature’s negotiators, a real league.</p>
+      <p class="ev-external" data-reveal>From here down, we deliberately sought tests we <b>don’t control</b>: 4,277 real humans, a rival lab’s worlds, the literature’s negotiators, a real league.</p>
 
-      <div class="exhibit" id="exhibit-g">
+      <div class="exhibit" id="exhibit-g" data-reveal>
         <div class="brief-label">Exhibit G — read against real humans<span class="ex-take">4,277 real Craigslist negotiations (Stanford's CraigslistBargain corpus). Where a real seller said yes against Synod's dissent, they got less. Its dissent flags the worse deals — on real humans, not our worlds.</span></div>
         <div id="transcripts-panel" class="chart-box">loading the recorded analysis…</div>
         <p class="ab-a"><details class="ex-more"><summary>what this can and can't claim</summary>A replay can't claim Synod would have won more — change one move and the whole conversation changes. So no counterfactuals. We only use the humans' own outcomes: every deal where a real seller accepted a buyer's offer, split by whether Synod — replaying the same buyer's offers — would also have accepted. The gap between those groups is the finding. Prices map into Synod's native band by a fixed, disclosed rule. Reading real humans is rung three; running inside live human deals is the step that remains.</details></p>
@@ -393,7 +393,7 @@
       </details>
       </details>
 
-      <p class="ev-takeaway"><b>The takeaway: the bet holds.</b> Synod's edge comes from preserving disagreement until resolution — five judgments held apart until the chair commits, instead of collapsed into one voice too early.</p>
+      <p class="ev-takeaway" data-reveal><b>The takeaway: the bet holds.</b> Synod's edge comes from preserving disagreement until resolution — five judgments held apart until the chair commits, instead of collapsed into one voice too early.</p>
 
       <details class="prov-details" open>
         <summary><span class="brief-label" style="margin:0;">Provenance <span class="hint">who authored each side · what's deterministic · what commit</span></span></summary>
@@ -417,7 +417,7 @@
 
       <h3 class="vp-h">Who loses this money today</h3>
       <p class="vp-sub">Anyone who negotiates, again and again, with someone who has a reason to lie. And decides alone.</p>
-      <div class="vp-grid">
+      <div class="vp-grid" data-reveal-stagger>
         <div class="vp-card"><div class="vp-ind">Buying for a company</div><p>"Best and final offer" usually isn't. The council works out what they'd actually accept — before you sign.</p></div>
         <div class="vp-card"><div class="vp-ind">Selling &amp; discounts</div><p>"We have a cheaper quote elsewhere." The oldest trick going. Test it before you cut your price.</p></div>
         <div class="vp-card"><div class="vp-ind">Recruiting &amp; job offers</div><p>Every counter-offer comes with hidden numbers. Is that "better offer" real? Or a bargaining move?</p></div>
@@ -483,7 +483,7 @@
 
       <h3 class="mp-h">Where it runs</h3>
       <!-- The system, in one picture: the load-bearing boundary is models ⟷ code. -->
-      <div class="arch-d">
+      <div class="arch-d" data-reveal>
         <div class="ad-row ad-top"><b>THE PAGE YOU'RE ON</b><span>plain JavaScript · each round streams in live</span></div>
         <div class="ad-arr">↕ JSON + live stream</div>
         <div class="ad-row ad-mid"><b>THE BACKEND</b><span>Node + TypeScript</span></div>

@@ -35,3 +35,14 @@
   addEventListener("resize", onScroll, { passive: true });
   render();
 })();
+
+// Scroll-earned reveals: one-time entrances for explanatory blocks.
+// Gated on motion preference; without JS nothing is ever hidden.
+(() => {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.classList.add("motion-ok");
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { e.target.classList.add("in-view"); io.unobserve(e.target); }
+  }, { rootMargin: "0px 0px -60px 0px", threshold: 0.12 });
+  document.querySelectorAll("[data-reveal], [data-reveal-stagger]").forEach((el) => io.observe(el));
+})();

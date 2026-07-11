@@ -2423,3 +2423,34 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .creed-fused .creed-copy { position: relative; z-index: 1;
   background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(20,18,14,0.88) 38%, rgba(20,18,14,0) 72%);
   padding: 3.5rem 1rem; }
+
+/* ---- earned motion (Emil pass) ---- */
+:root { --ease-strong: cubic-bezier(0.23, 1, 0.32, 1); }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* one-time entrances: opacity+transform only, ease-out, under 450ms */
+.motion-ok [data-reveal] { opacity: 0; transform: translateY(12px);
+  transition: opacity 0.45s var(--ease-strong), transform 0.45s var(--ease-strong); }
+.motion-ok [data-reveal].in-view { opacity: 1; transform: none; }
+.motion-ok [data-reveal-stagger] > * { opacity: 0; transform: translateY(10px);
+  transition: opacity 0.4s var(--ease-strong), transform 0.4s var(--ease-strong); }
+.motion-ok [data-reveal-stagger].in-view > * { opacity: 1; transform: none; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(2) { transition-delay: 50ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(3) { transition-delay: 100ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(4) { transition-delay: 150ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(5) { transition-delay: 200ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(6) { transition-delay: 250ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(7) { transition-delay: 300ms; }
+.motion-ok [data-reveal-stagger].in-view > *:nth-child(8) { transition-delay: 350ms; }
+
+/* war ⇄ deal swap: the incoming pane arrives, never jars (display toggle restarts this) */
+@media (prefers-reduced-motion: no-preference) {
+  .track-pane { animation: pane-in 220ms var(--ease-strong); }
+  @keyframes pane-in { from { opacity: 0; transform: translateY(6px); } }
+}
+
+/* details open: content settles in (block children only; 200ms) */
+@media (prefers-reduced-motion: no-preference) {
+  details[open] > *:not(summary) { animation: det-in 200ms var(--ease-strong); }
+  @keyframes det-in { from { opacity: 0; transform: translateY(4px); } }
+}
