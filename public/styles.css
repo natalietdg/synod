@@ -2391,6 +2391,8 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .hs-line { display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 6vw, 4.4rem);
   line-height: 1.12; color: var(--fg); letter-spacing: -0.01em; }
 .hs-l2 { margin-top: 0.4em; color: var(--gold); }
+.hs-cite { display: block; margin-top: 1.1rem; font-family: var(--mono); font-style: normal;
+  font-size: 0.68rem; letter-spacing: 0.14em; color: var(--muted); }
 .hs-cue { position: absolute; top: calc(50% + 6.5rem + 7vh); left: 50%; transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
   font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase;
