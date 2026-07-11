@@ -2477,3 +2477,7 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 #proceedings:not(.has-run) #speed-btn,
 #proceedings:not(.has-run) #guide-btn { display: none; }
 #exhibit-league .vp-anl { margin-top: 0.6rem; }
+
+/* the page suggests the next experiment, one at a time */
+.run-next { display: none; font-family: var(--sans); font-size: 0.92rem; color: var(--gold); margin: 0.8rem 0 0; }
+#live-war.has-run .run-next, #proceedings.has-run .run-next { display: block; }
