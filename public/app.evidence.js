@@ -49,7 +49,7 @@ async function loadMcpAgentTranscript() {
   }).join("");
   host.innerHTML =
     `<div class="ma-head">An independent Qwen agent consulted Synod before making its decision. <span class="hint">recorded ${new Date(t.recorded).toLocaleDateString("en-GB")} · nothing told it what to conclude</span></div>` +
-    parts;
+    `<details class="ma-fold"><summary class="hint">the full exchange — task, tool call, decision — expand</summary>${parts}</details>`;
 }
 const meanStd = (s) => `${evMoney(s.surplusMean)} <span class="hint">±${evMoney(s.surplusStd)}</span>`;
 

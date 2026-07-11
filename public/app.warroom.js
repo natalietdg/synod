@@ -201,6 +201,7 @@ function wrFallback(why) {
   // The mock proceedings (steps 1–5) were built at load and sit hidden — reveal them so the
   // demo still walks a full decision. (The operational order is live-only, so step 6 stays a prompt.)
   $("#wr-proceedings")?.classList.remove("hidden");
+  $("#live-war")?.classList.add("has-run");
   wrPlay();
 }
 
@@ -282,6 +283,7 @@ async function wrRunLive() {
     const badge = document.querySelector("#provider-badge");
     if (badge) badge.textContent = fresh ? "⚡ RAN LIVE ON QWEN" : "⚡ LIVE RUN · RECORDED";
     $("#wr-proceedings")?.classList.remove("hidden");
+  $("#live-war")?.classList.add("has-run");
     wrPlay();
     wrRenderWargame(WR.data.wargame);
   } catch (err) {

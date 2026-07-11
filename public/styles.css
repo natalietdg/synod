@@ -2463,3 +2463,10 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .arch-chain { list-style: none; margin: 0 0 1.8rem; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; max-width: 70ch; }
 .arch-chain li { font-family: var(--sans); font-size: 0.95rem; color: var(--muted); }
 .arch-chain b { color: var(--ink); }
+
+/* removal experiment appears after the first run */
+#live-war:not(.has-run) #wr-remove, #live-war:not(.has-run) .cap-fold { display: none; }
+/* the final rung reads like the climax it is */
+.ex-climax { border-left: 3px solid var(--gold); padding-left: 1rem; }
+.ex-climax .ex-take { font-size: 1rem; color: var(--ink); }
+.ma-fold { margin-top: 0.5rem; }
