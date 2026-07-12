@@ -1,120 +1,107 @@
-# Synod — 3-minute demo script (hook-first cut)
+# Synod — 3-minute demo script (trailer cut)
+
+The website is the paper. The video is the trailer. Its only job: make a
+judge think "I need five more minutes with this one."
 
 Record the live site (http://47.84.225.84) at 1440×900, cursor visible.
-VO is ~430 words ≈ 2:55 at a walking pace. Jump-cut all waiting.
-Rehearse the click path once off-camera so live results are cached
-(instant on camera, honestly labeled as recorded).
-
-Structure: moment → insight → live proof → evidence → limits → thesis.
-The judge decides in the first minute; the philosophy comes second.
+VO ≈ 400 words. Jump-cut all waiting. Rehearse the click path once
+off-camera so live results are cached (instant on camera, labeled
+honestly as recorded). Let the centerpiece breathe — fewer words there,
+more watching.
 
 ---
 
-## 1 · 0:00–0:15 · HOOK — the money
+## 1 · 0:00–0:20 · HOOK
 
 **SCREEN:** Cold open on §01's ledger. Cursor rests on $0, then $3,000.
+Slow. This is the hook — speak it slower than everything else.
 
 **VO:** One AI believes a bluff and walks away with zero. Five agents
 disagree, verify the claim, and close three thousand dollars. Same
 model. Same opponent. Ten out of ten runs. The only difference is how
 they make the decision.
 
-## 2 · 0:15–0:35 · THE INSIGHT
+## 2 · 0:20–0:40 · THE IDEA
 
-**SCREEN:** Jump to page top. The two beats: "Agent societies argue to
-agreement." → gold: "Synod bets that's the flaw." Then the pipeline
-chips, pausing on "Judges never converge. Only the chair commits."
+**SCREEN:** Page top. Beat 1 — "Agent societies argue to agreement." —
+crossfades to gold: "Synod bets that's the flaw." Then the pipeline,
+pausing on "Judges never converge. Only the chair commits."
 
-**VO:** Most agent societies use debate — argue until everyone agrees.
-Synod asks a different question: who decides when the agents *disagree*?
-Its five judges stay independent. Nobody persuades anybody. Only
-deterministic code commits. (The citations are on screen — don't read them.)
+**VO:** Most agent societies divide work — and argue until they agree.
+Synod divides *judgment*. Five judges stay independent. Nobody persuades
+anybody. A deterministic chair — code, not rhetoric — commits. Because
+every expensive negotiation fails the same way: committing before the
+uncertainty is resolved.
 
-## 3 · 0:35–1:15 · LIVE PROOF — the centerpiece, 40 seconds
+## 3 · 0:40–1:45 · THE LIVE COUNCIL — the movie (65 seconds)
 
-**SCREEN:** "Run the council." Click **▶ Run a live decision**. Jump-cut
-to the gold chair block: "The room argues. The chair reads the terrain.
-The decision commits." Linger on the split (2/5 Press) vs the chair's
-Hold, and the terrain factors. Open the argument fold for one beat.
+**SCREEN:** "Run the council." Click **▶ Run a live decision**. Jump-cut.
+Then walk it slowly, in order:
+1. the split — five voices, in character, 2/5 say Press (~0:50)
+2. the gold chair block — "The room argues. The chair reads the terrain.
+   The decision commits." — linger on the terrain factors (~1:05)
+3. the outcome — probe ordered, bluff exposed, war avoided (~1:20)
+4. open the argument fold: the recorded concession, one beat (~1:30)
 
-**VO:** This is live on Qwen — five real agents, in character. Watch:
-the room is split. The chair ignores who argued loudest. It reads only
-uncertainty, risk, and the value of learning more — then it commits.
-Against the plurality, this time. And the dialogue has exactly two
-edges: one judge can change its own mind after hearing a challenge —
-there's the receipt — but nobody can persuade the chair. The final
-decision is arithmetic. Signed, and replayable.
+**VO (sparse — let the screen act):** This is live on Qwen. Five judges
+read the same threat. The room splits. … Now the chair. It ignores who
+argued loudest. It reads uncertainty, exposure, and the value of
+learning more — and it overrules the room. … Probe ordered. The bluff
+collapses. The war never starts. … One more thing: a judge *can* change
+its own mind after a challenge — there's the receipt — but nobody can
+persuade the chair. The decision is arithmetic. Signed, and replayable.
 
-## 4 · 1:15–1:40 · WHY FIVE — removal breaks it
+## 4 · 1:45–2:10 · REMOVE A JUDGE
 
-**SCREEN:** The nudge appears. Click Sun Tzu off. Run again (jump-cut) —
-the number drops. Flash the switch-matrix in act two.
+**SCREEN:** The nudge appears. Click Sun Tzu off. Run again (jump-cut).
+The number drops. Two-second flash of the switch-matrix.
 
-**VO:** Remove the judge that buys information, and the council commits
-before checking — the win evaporates. Against a different opponent, a
-*different* judge is the one that matters. You can't know which in
-advance. That's why you keep all five.
+**VO:** These agents aren't decorative. Remove the one that buys
+information — the council commits before checking, and the win
+evaporates. A different opponent breaks a different judge. You can't
+know which in advance. So you keep all five.
 
-## 5 · 1:40–2:00 · ONE ENGINE, TWO WORLDS → THE LADDER
+## 5 · 2:10–2:40 · THE EVIDENCE LADDER — fast
 
-**SCREEN:** Click the track switcher: war ⇄ deal, two seconds each. Then
-§04, scrolling steadily — bars, heatmap, "the ladder ends outside our
-control," the league card.
+**SCREEN:** §04 at a steady scroll: A's bars (2s) → B's ablation (2s) →
+C's heatmap (2s) → "the ladder ends outside our control" → league card →
+STOP on Exhibit G. Hold the 90.4% vs 88.6% cards a full five seconds.
 
-**VO:** Ceasefire or contract renewal, the decision problem is
-identical: is the threat real, or a bluff? So we kept making the test
-harder. Our own worlds. Hold-out worlds written by a rival lab's model.
-Published negotiation agents. The real ANAC league — it closed against
-the champion.
-
-## 6 · 2:00–2:20 · THE FINAL RUNG — real humans
-
-**SCREEN:** Exhibit G, alone. The 90.4% vs 88.6% cards.
-
-**VO:** And finally: four thousand two hundred seventy-seven real human
+**VO:** Then we kept making the test harder. Our own worlds. Hold-out
+worlds a rival lab's model wrote. Published agents. The real ANAC
+league. And finally — four thousand two hundred seventy-seven real human
 negotiations. Sellers who accepted against Synod's dissent got less.
-Its dissent flags the worse deals — on real humans, not our worlds.
 
-## 7 · 2:20–2:38 · HOW IT'S BUILT
+## 6 · 2:40–3:00 · BUILT, BOUNDED, DONE
 
-**SCREEN:** §06 flow strip, then click **↻ re-run** in §04's card —
-badge flips to byte-identical. One beat on the MCP transcript line.
+**SCREEN:** §06 flow strip and the models-reason/code-decides diagram
+(3s) → the ✓/✗ boundary, linger on the ✗ (3s) → footer, hold on the
+GitHub URL.
 
-**VO:** Under all of it: models reason, code decides. Every figure on
-the page regenerates byte-identical. And the council is a tool — an
-independent Qwen agent, told nothing, chose to consult it over MCP
-before committing.
-
-## 8 · 2:38–2:48 · THE HONEST LIMIT
-
-**SCREEN:** The ✓/✗ boundary. Linger on the ✗.
-
-**VO:** One claim is still unearned: deciding inside live human deals.
-That needs a deployment, not more code.
-
-## 9 · 2:48–3:00 · THE THESIS
-
-**SCREEN:** Footer. Hold on the GitHub URL.
-
-**VO:** Most agent societies divide work. Synod divides judgment. Five
-independent minds. One deterministic commitment. That's the entire idea.
+**VO:** Built on Qwen: the models reason, pure code decides, every call
+is signed, every figure regenerates byte-identical — and any agent can
+consult the council over MCP. One claim is still unearned: live human
+deals. Most agent societies divide work. Synod divides judgment. That's
+the entire idea.
 
 ---
 
-## Rubric coverage (Track 3)
-- task division & roles → beat 2 (five judgments), beat 4 (removal)
-- dialogue & negotiation between agents → beat 3 (both edges, receipted)
-- conflict resolution → beat 3 (chair overrules the room — money shot)
-- measurable gain vs single agent → beats 1, 4
-- QwenCloud/MCP depth → beats 3 (live Qwen) and 7 (MCP consult)
-- reproducibility → beat 7 (byte-identical re-run)
+## What's deliberately NOT in the video
+- the debate literature (citations are on screen in beat 2 — never read)
+- §02's comparison and mechanics (beat 3 teaches it by showing)
+- exhibits D, E, F and the business section (one clause in beat 2)
+- the MCP transcript walkthrough (one clause in beat 6)
+The page carries all of it for the judge who comes back.
+
+## Rubric anchors (85% product / 15% presentation)
+- Innovation: beats 2–3 (the thesis, then the thesis running)
+- Technical depth on Qwen: beat 3 (live), beat 6 (MCP, determinism)
+- Problem value: beat 1 (the money), beat 2's closing sentence
+- Measurable gain + causality (Track 3's ask): beats 1, 4, 5
 
 ## Recording notes
-- The ablation numbers (−$1,606 / −$1,123 / $0-by-design) stay OFF the
-  voiceover — the visuals carry them; say numbers only when they're the
-  point ($0 vs $3,000; 90.4 vs 88.6).
-- The removal run is a real fresh Qwen call per removal set — budget one
-  rehearsal spend.
-- If Qwen hiccups on take day, the deterministic replay walks the same
-  steps and the badge stays honest — keep rolling.
-- Speak beat 1 slightly slower than everything else. It's the hook.
+- Numbers spoken: ONLY $0/$3,000 and 4,277 + "got less." Everything else
+  the visuals carry.
+- The removal run is a real fresh Qwen call — budget one rehearsal spend.
+- If Qwen hiccups, the deterministic replay walks the same steps and the
+  badge stays honest — keep rolling.
