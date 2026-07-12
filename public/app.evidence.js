@@ -416,11 +416,13 @@ async function loadTranscripts() {
   let d;
   try { d = await (await fetch("/transcripts.json")).json(); }
   catch { box.innerHTML = `<span class="hint">no recorded analysis — run <code>npx tsx src/harness/transcripts.ts</code></span>`; return; }
+  const gap = (d.agree.meanPctOfListing - d.dissent.meanPctOfListing).toFixed(1);
   box.innerHTML =
     `<div class="tr-cols">` +
-      `<div class="tr-col win"><b>${d.agree.meanPctOfListing}%</b><span>of asking price — the ${d.agree.n.toLocaleString()} deals where Synod <b>agreed</b> with the seller's yes</span></div>` +
-      `<div class="tr-col lose"><b>${d.dissent.meanPctOfListing}%</b><span>of asking price — the ${d.dissent.n.toLocaleString()} deals sellers took <b>against Synod's dissent</b></span></div>` +
+      `<div class="tr-col win"><b>${d.agree.meanPctOfListing}%</b><span>of asking price — when Synod <b>agreed</b> with the human's decision to accept (${d.agree.n.toLocaleString()} deals)</span></div>` +
+      `<div class="tr-col lose"><b>${d.dissent.meanPctOfListing}%</b><span>of asking price — when humans accepted <b>despite Synod's dissent</b> (${d.dissent.n.toLocaleString()} deals)</span></div>` +
     `</div>` +
+    `<div class="tr-verdict">Deals humans took against Synod's dissent settled <b>${gap} points lower</b> — the judgment separates stronger deals from weaker ones on real human behaviour, not just in our environments.</div>` +
     `<div class="tr-note">${d.sellerAcceptCases.toLocaleString()} real seller decisions from ${d.dialoguesTotal.toLocaleString()} human negotiations · ${d.source.split("—")[0].trim()} · no counterfactuals — only the humans' own outcomes, split by Synod's stance · reproduce: <code>npx tsx src/harness/transcripts.ts</code></div>`;
 }
 

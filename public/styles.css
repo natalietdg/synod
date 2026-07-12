@@ -2512,3 +2512,6 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .wr-handoff i { align-self: center; font-style: normal; color: var(--gold-dim, #8a6d1f); }
 .wr-handoff .wh-call { border-color: var(--gold); }
 .wr-handoff .wh-call b { color: var(--gold); }
+
+.tr-verdict { margin: 0.7rem 0 0.4rem; font-family: var(--serif); font-size: 1.05rem; line-height: 1.5; color: var(--ink); max-width: 72ch; }
+.tr-verdict b { color: var(--gold); }
