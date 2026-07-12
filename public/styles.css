@@ -2484,3 +2484,11 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 #live-war.has-run .run-next, #proceedings.has-run .run-next { display: block; }
 
 .vp-null { font-family: var(--sans); font-size: 0.9rem; color: var(--muted); margin: 0.4rem 0 0; }
+
+/* the chair carries the visual weight; the transcript is opt-in */
+.wr-step[data-step="4"] { border: 1px solid var(--gold-dim, #8a6d1f); border-left: 3px solid var(--gold); background: var(--gold-wash, rgba(201,162,39,0.05)); }
+.wr-step[data-step="4"] .wr-step-h { font-size: 1.15em; }
+.wr-chair-crest { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); margin: 0.2rem 0 0.8rem; }
+.wr-arg-fold > summary { cursor: pointer; font-family: var(--sans); font-size: 0.95rem; color: var(--muted); list-style: none; }
+.wr-arg-fold > summary::-webkit-details-marker { display: none; }
+.wr-arg-fold[open] > summary { margin-bottom: 0.8rem; }

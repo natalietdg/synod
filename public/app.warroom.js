@@ -465,6 +465,7 @@ function wrSplitHTML(data) {
 /* Step 4: arbitration as a checklist, not prose. The terrain factors the chair reads,
    each ticked, landing on the verdict — "why the chair chose X" in scannable lines. */
 function wrArbiterHTML(data) {
+  const crest = `<p class="wr-chair-crest">The room argues. The chair reads the terrain. The decision commits.</p>`;
   const t = data.terrain || {};
   const factors = [
     [`Belief unresolved — ${pct(t.infoConfidence ?? 0)} sure who they are`, (t.infoConfidence ?? 1) < 0.5],
@@ -474,7 +475,7 @@ function wrArbiterHTML(data) {
   ];
   const list = factors.map(([txt, on]) =>
     `<div class="wr-arb-f${on ? " on" : ""}">${on ? "✓" : "·"} ${txt}</div>`).join("");
-  return `<div class="wr-verdict"><span class="wr-verdict-tag">WHY THE CHAIR CHOSE</span>` +
+  return `${crest}<div class="wr-verdict"><span class="wr-verdict-tag">WHY THE CHAIR CHOSE</span>` +
     `<span class="wr-verdict-act">${data.councilLabel}</span>` +
     `<div class="wr-arb-checks">${list}</div>` +
     `<div class="wr-verdict-why">${data.why}</div></div>`;
@@ -496,7 +497,10 @@ function wrOutcomeHTML(data) {
 const WR_SHORT = { accept: "Sign", counter_hard: "Press", counter_soft: "Soften", hold: "Hold", probe: "Probe", concede_term: "Trade", walk: "Break" };
 
 function wrDebateStep(data) {
-  return data.deliberation ? wrDeliberationHTML(data) : wrChallengeHTML(data);
+  const body = data.deliberation ? wrDeliberationHTML(data) : wrChallengeHTML(data);
+  // The chair is the innovation, not the transcript: keep the causal beat visible,
+  // fold the room's actual words behind an inspect.
+  return `<details class="wr-arg-fold"><summary>The most-opposed pair exchanged one round — a landed objection can move the defender (clamped, receipted). <span class="hint">inspect the argument — expand</span></summary>${body}</details>`;
 }
 
 /* The verifiable artifact: show the EXACT room that was fed into one general, and the
