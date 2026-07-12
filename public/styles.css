@@ -2501,3 +2501,14 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .wr-contrast { margin-top: 0.9rem; padding: 0.7rem 0.9rem; border-left: 3px solid var(--probe, #5b9bd6);
   font-family: var(--sans); font-size: 0.92rem; color: var(--muted); background: var(--panel); }
 .wr-contrast b { color: var(--ink); }
+
+/* step 4's handoff strip: input → read → call */
+.wr-handoff { display: flex; align-items: stretch; gap: 0.5rem; flex-wrap: wrap; margin: 0 0 1rem; }
+.wr-handoff .wh-item { display: flex; flex-direction: column; gap: 0.15rem; padding: 0.5rem 0.8rem;
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: 3px;
+  font-family: var(--sans); font-size: 0.9rem; color: var(--ink); }
+.wr-handoff .wh-item b { font-family: var(--mono); font-size: 0.56rem; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--muted); }
+.wr-handoff i { align-self: center; font-style: normal; color: var(--gold-dim, #8a6d1f); }
+.wr-handoff .wh-call { border-color: var(--gold); }
+.wr-handoff .wh-call b { color: var(--gold); }

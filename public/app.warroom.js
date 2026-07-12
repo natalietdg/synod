@@ -426,13 +426,11 @@ function wrSplitHTML(data) {
   const ordered = Object.entries(groups).sort((a, b) => b[1].length - a[1].length);
 
   // Hero: the split, big.
-  const hero = ordered.map(([action, gs]) => {
-    const win = action === data.council;
-    return `<div class="wr-split-col${win ? " win" : ""}">` +
+  const hero = ordered.map(([action, gs]) =>
+    `<div class="wr-split-col">` +
       `<span class="wr-split-n">${gs.length}</span>` +
-      `<span class="wr-split-act">${data.actions[action]}</span>` +
-      `${win ? `<span class="wr-split-win">◄ the chair's call</span>` : ""}</div>`;
-  }).join(`<span class="wr-split-sep">vs</span>`);
+      `<span class="wr-split-act">${data.actions[action]}</span></div>`,
+  ).join(`<span class="wr-split-sep">vs</span>`);
 
   // Grouped: who landed where, reasoning demoted.
   const groupCards = ordered.map(([action, gs]) => {
@@ -445,7 +443,7 @@ function wrSplitHTML(data) {
         `<div class="wr-gc-proc">${WR_PROC[g.leadLens] || ""}</div>` +
         `<div class="wr-gc-say">“${g.doctrine}”</div></div>`;
     }).join("");
-    return `<div class="wr-group${win ? " win" : ""}">` +
+    return `<div class="wr-group">` +
       `<div class="wr-group-h"><span class="wr-group-act">${data.actions[action]}</span>` +
         `<span class="wr-group-n">${gs.length} general${gs.length > 1 ? "s" : ""}</span></div>` +
       `<div class="wr-group-rows">${rows}</div></div>`;
@@ -479,7 +477,19 @@ function wrArbiterHTML(data) {
   ];
   const list = factors.map(([txt, on]) =>
     `<div class="wr-arb-f${on ? " on" : ""}">${on ? "✓" : "·"} ${txt}</div>`).join("");
-  return `${crest}<div class="wr-verdict"><span class="wr-verdict-tag">WHY THE CHAIR CHOSE</span>` +
+  // The handoff, made visible: the disagreement is the chair's INPUT.
+  const campGroups = {};
+  data.generals.forEach((g) => { (campGroups[g.action] ??= []).push(g); });
+  const campLine = Object.entries(campGroups)
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([a, gs]) => `${WR_SHORT[a] || a} ${gs.length}`).join(" · ");
+  const handoff =
+    `<div class="wr-handoff">` +
+      `<span class="wh-item"><b>THE ROOM HANDS IT</b>${campLine} — no consensus</span><i>→</i>` +
+      `<span class="wh-item"><b>THE CHAIR READS</b>the terrain, not the argument</span><i>→</i>` +
+      `<span class="wh-item wh-call"><b>THE CALL</b>${data.councilLabel}</span>` +
+    `</div>`;
+  return `${crest}${handoff}<div class="wr-verdict"><span class="wr-verdict-tag">WHY THE CHAIR CHOSE</span>` +
     `<span class="wr-verdict-act">${data.councilLabel}</span>` +
     `<div class="wr-arb-checks">${list}</div>` +
     `<div class="wr-verdict-why">${data.why}</div></div>`;
