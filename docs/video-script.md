@@ -27,16 +27,19 @@ verdict the screen doesn't show.
 Speak slower than everything else. "All ten runs" is on screen — don't
 say it.
 
-**VO:** One AI walks away from a deal worth three thousand dollars.
-*(beat)* Five independent judges stop, verify the claim, and close it
-instead. Same model. Same opponent. The only difference is how the
-decision gets made.
+**VO:** A single agent walks away from a deal worth three thousand
+dollars. *(beat)* Five independent judges stop, verify the claim, and
+close it instead. Same model. Same opponent. The only difference is how
+the decision gets made.
+*("a single agent" echoes the card on screen — keep it verbatim)*
 
 ## 2 · 0:20–0:40 · THE IDEA
 
 **SCREEN:** Page top. "Agent societies argue to agreement." crossfades to
-gold: "Synod bets that's the flaw." Then the pipeline, pausing on
-"Judges never converge. Only the chair commits."
+gold: "Synod bets that's the flaw." Then the pipeline, pausing on its
+caption — the small line directly UNDER the chips: "Judges never
+converge. Only the chair commits." (verified on-page; it's easy to scroll
+past — rest the cursor on it).
 
 **VO:** Most multi-agent systems let agents debate until they agree.
 Synod doesn't. *(beat — let the gold line sit)* Five judges stay
@@ -95,10 +98,12 @@ against Synod's dissent got less.
 **SCREEN:** §06 diagram (3s) → the ✓/✗ boundary, linger on the ✗ (3s) →
 footer, hold on the GitHub URL through the final line.
 
-**VO:** Built on Qwen. The models reason. Pure code commits. Every
-decision is signed and reproducible. *(beat)* One claim remains
+**VO:** Built on Qwen. The models reason — the arithmetic decides.
+Every decision is signed and reproducible. *(beat)* One claim remains
 unearned: live human deployment. *(beat)* Most agent societies divide
-labor. **Synod divides judgment.**
+labor. **Synod divides judgment — and preserves it until commitment.**
+*(both closing sentences are the footer's exact rendered words — the
+screen and the VO end in unison)*
 
 ---
 
