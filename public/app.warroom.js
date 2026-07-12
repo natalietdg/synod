@@ -101,6 +101,10 @@ async function loadWarRoom() {
   try { data = await (await fetch("/api/warroom")).json(); }
   catch { box.textContent = "War room unavailable."; return; }
   WR.data = data;
+  // The recorded contrast case: in the deterministic run, the challenge LANDS
+  // (defender concedes within the clamp). Kept so a live run that shows no
+  // concession can still display both boundaries of the dialogue channel.
+  if (!WR.recordedChallenge && Array.isArray(data.challenge)) WR.recordedChallenge = data.challenge;
 
   const step = (n, title, inner) =>
     `<div class="wr-step" data-step="${n}"><div class="wr-step-h"><span class="wr-step-n">${n}</span>${title}</div>${inner}</div>`;
@@ -497,10 +501,17 @@ function wrOutcomeHTML(data) {
 const WR_SHORT = { accept: "Sign", counter_hard: "Press", counter_soft: "Soften", hold: "Hold", probe: "Probe", concede_term: "Trade", walk: "Break" };
 
 function wrDebateStep(data) {
-  const body = data.deliberation ? wrDeliberationHTML(data) : wrChallengeHTML(data);
-  // The chair is the innovation, not the transcript: keep the causal beat visible,
-  // fold the room's actual words behind an inspect.
-  return `<details class="wr-arg-fold"><summary>The most-opposed pair exchanged one round — a landed objection can move the defender (clamped, receipted). <span class="hint">inspect the argument — expand</span></summary>${body}</details>`;
+  const live = !!data.deliberation;
+  const body = live ? wrDeliberationHTML(data) : wrChallengeHTML(data);
+  // Both boundaries of the dialogue channel, always visible together:
+  // a live run where the argument changed nothing is paired with the recorded
+  // deterministic run of the same demo where the challenge LANDED.
+  const def = (WR.recordedChallenge || []).find((c) => c.role === "defense");
+  const landed = def && def.revisedScore !== undefined && def.revisedScore !== def.originalScore;
+  const contrast = live && landed
+    ? `<div class="wr-contrast"><b>The other boundary, recorded:</b> in the deterministic run of this demo, ${def.againstName}’s challenge <em>landed</em> — ${def.fromName} (${def.fromLens}) revised ${def.originalScore.toFixed(2)} → ${def.revisedScore.toFixed(2)} on the contested action, clamped, on the receipt. Dialogue can move a judge. It still can’t move the chair.</div>`
+    : "";
+  return `<details class="wr-arg-fold"><summary>The most-opposed pair exchanged one round — a landed objection can move the defender (clamped, receipted). <span class="hint">inspect the argument — expand</span></summary>${body}${contrast}</details>`;
 }
 
 /* The verifiable artifact: show the EXACT room that was fed into one general, and the

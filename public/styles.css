@@ -2497,3 +2497,7 @@ button:active:not(:disabled), .result-cta:active, .scenario-swap:active { transf
 .stop-line { margin: 2.5rem 0 0; padding: 1rem 1.2rem; border: 1px solid var(--line); border-left: 3px solid var(--gold);
   font-family: var(--serif); font-size: 1.1rem; line-height: 1.55; color: var(--muted); background: var(--panel); }
 .stop-line b { color: var(--ink); }
+
+.wr-contrast { margin-top: 0.9rem; padding: 0.7rem 0.9rem; border-left: 3px solid var(--probe, #5b9bd6);
+  font-family: var(--sans); font-size: 0.92rem; color: var(--muted); background: var(--panel); }
+.wr-contrast b { color: var(--ink); }
