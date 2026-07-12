@@ -8,9 +8,16 @@ VO ≈ 350 words — the silences are scripted, don't fill them. Jump-cut all
 waiting. Rehearse once off-camera so live results are cached (instant on
 camera, honestly labeled as recorded).
 
-The aha moment is engineered for ~1:05: **the chair overrules the
-majority because it values information over commitment.** Everything
-before it builds to that; everything after it is evidence.
+The aha moment is engineered for ~1:05: **the chair decides on the
+terrain, not on who argued loudest.** Everything before it builds to
+that; everything after it is evidence.
+
+⚠ TAKE-DEPENDENT LINES: a fresh live run decides for itself — the split,
+the chair's call, and the outcome text WILL vary between takes. Rehearse
+first, then either (a) record over the cached run you rehearsed (instant,
+honestly labeled as recorded) so the VO matches what's on screen, or
+(b) adapt the three marked lines to your take. Never narrate a split or
+verdict the screen doesn't show.
 
 ---
 
@@ -44,14 +51,19 @@ rhetoric — commits.
 - **VO:** This is live on Qwen.
 - The split renders — five voices, in character. *(2s silence)*
 - **VO:** The room splits. *(2s — let them read a voice or two)*
-  Four different recommendations.
+  No consensus. ⚠ *(if your take shows a clean split, name it: "four
+  different recommendations" — but only if it's on screen)*
 - Scroll to the gold chair block. *(2s silence — let it land)*
 - **VO:** Now watch the chair. *(beat)* It doesn't care who argued
   best. *(the terrain factors are on screen)* It reads uncertainty,
-  exposure, and the value of learning more. *(beat)* **And it overrules
-  the room.** ← the aha, ~1:05
-- The outcome: probe ordered, bluff exposed. *(2s)*
-- **VO:** The bluff collapses. The war never starts.
+  exposure, and the value of learning more. *(beat)* **Then it commits —
+  with or without the room's blessing.** ← the aha, ~1:05
+  ⚠ *(if your take's chair went AGAINST the room's lean — the strongest
+  version — say so: "and it overrules the room." Check the take first.)*
+- The outcome panel. *(2s)* ⚠ read what YOUR take shows.
+- **VO (recorded-run version):** The bluff collapses. The war never
+  starts. *(if your take held the line instead: "It holds the line —
+  and doesn't pay for the bluff.")*
 - Open the argument fold, one beat on the recorded concession.
 - **VO:** A judge can change its own mind after a challenge — nobody can
   persuade the chair. The decision is arithmetic. Signed, and replayable.
