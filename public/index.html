@@ -482,9 +482,23 @@
         <li><b style="color:var(--battle)">Pressure</b> — <b>immediate payoff</b>, with a discount on the future. How much is on the table right now?</li>
         <li><b style="color:var(--risk)">Hedge</b> — <b>the minimax blend:</b> part worst case, part expected value. How bad does it get if we're wrong?</li>
         <li><b style="color:var(--war)">Frame</b> — <b>long-horizon value</b>, priced against the risk of blowing up the deal.</li>
-        <li><b>The chair</b> — turns the situation into weights, multiplies each judge's score, and <b>the highest total wins</b>.</li>
+        <li><b>The chair</b> — takes the moderator's weights, multiplies each judge's score, and <b>the highest total wins</b>.</li>
       </ul>
       <p class="arch-q">Two safety gates guard the edges — walk away when nothing believable beats leaving, and take the sure win on the last round. Then the receipt is signed.</p>
+
+      <h3 class="mp-h">The chair's math, written out</h3>
+      <p class="arch-q">Every formula is the most legible member of its family — simple enough for a skeptic to recompute by hand:</p>
+      <ul class="arch-b">
+        <li><b>The scores</b> — each judge scores <em>every</em> action on [−1, +1]: <b>+1</b> = this doctrine strongly endorses taking that action, <b>−1</b> = strongly opposes it, <b>0</b> = indifferent. How strongly is part of the signal.</li>
+        <li><b>The moderator</b> — reads the terrain and proposes how much each judge's lens should count this round. Code then floors each weight at 0 and divides by the sum, so the five weights always add to 1 — each is a plain share of influence.</li>
+        <li><b>The blend</b> — U(a) = Σ w<sub>d</sub>·s<sub>d</sub>(a): each action's total is every judge's score on it × that judge's weight, summed. A <em>weighted additive model</em> (multi-attribute utility theory; a linear opinion pool in forecast aggregation). Chosen over voting because a vote discards magnitude — a judge at −0.9 and one at −0.1 both just count as "against." Here, you can point at exactly how much each judge contributed to each action's total.</li>
+        <li><b>The decision</b> — the <em>maximum-utility decision rule</em>: a* = argmax U(a), the action with the highest total. No vote, no sampling, no tie-break randomness.</li>
+        <li><b>The margin</b> — m = U(a*) − U(a₂). How clearly the winner beat the runner-up.</li>
+        <li><b>The dispersion</b> — σ = √(Σ w<sub>d</sub>·(s<sub>d</sub>(a*) − U(a*))²). The preserved disagreement on the winner, inside the formula — not a footnote.</li>
+        <li><b>The confidence</b> — logistic(α·m − β·σ), with α = 6, β = 4. A clear win raises it; conflict on the winner lowers it.</li>
+        <li><b>The abstention</b> — deadlock when m &lt; 0.08 (photo-finish) or σ &gt; 0.45 (conflicted winner). The chair says <em>contested</em> rather than faking certainty.</li>
+        <li><b>The guard on debate</b> — a landed objection may move the defender's own score, clamped to ±0.1: a judge can be persuaded, never steamrolled.</li>
+      </ul>
 
       <h3 class="mp-h">Where it runs</h3>
       <!-- The system, in one picture: the load-bearing boundary is models ⟷ code. -->
