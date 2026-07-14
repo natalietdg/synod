@@ -1,0 +1,20 @@
+# systemd unit for the Synod backend on an Alibaba Cloud ECS instance.
+# Installed to /etc/systemd/system/synod.service by setup-ecs.sh.
+[Unit]
+Description=Synod — AI decision society (Express backend, Qwen via Alibaba Cloud Model Studio)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/synod
+EnvironmentFile=/etc/synod.env
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+RestartSec=3
+# Port 80 needs a capability, not root — the service runs as a dedicated user.
+User=synod
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
